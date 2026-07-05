@@ -9,14 +9,14 @@ application credentials stored in environment variables.
 - `NEUP_APP_SECRET`
 - `NEUP_AUTH_URL`
 
-## Available Helper
+## Available Helpers
 
 - `connection.ts`: connected-account identity and `sign&get` helpers.
-- `accounts.ts`: account listing, lookup, and connection creation helpers.
 - `accounts.ts`: account listing, lookup, connection creation, and
   `roles/assign.me` helpers.
 - `profile.ts`: profile and permission helpers.
 - `access.ts`: connection/team access helpers.
+- `team.ts`: unified team-member helper for application or connection lookups.
 - `application.ts`: application export and app catalog sync helpers.
 - `branding.ts`: branding helpers.
 

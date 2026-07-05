@@ -4,13 +4,13 @@
 
 Entry point for portable account-facing bridge helpers.
 
-::public
+ ::public
 
-Import from this file when you want account, profile, access, application, branding, or connection bridge helpers from one place.
+Import from this file when you want account, profile, access, application, branding, connection, or team bridge helpers from one place.
 
-::public end
+ ::public end
 
-::end
+ ::end
 */
 
 export * from './accounts';
@@ -19,3 +19,4 @@ export * from './access';
 export * from './application';
 export * from './branding';
 export * from './connection';
+export * from './team';
