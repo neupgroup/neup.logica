@@ -6,7 +6,7 @@ Statically maps permission helper usage across the project.
 The command scans TypeScript and TSX files with the TypeScript Compiler API,
 recognizes imports from the local permission helper, records usage context,
 and writes a permission catalog with policy and usage metadata to
-`logica/basics/permissions.json`.
+`neup.logica/basics/permissions.json`.
 
 ::end
 */
@@ -19,12 +19,13 @@ import { createProjectScanner } from '../ast/project-scanner';
 const PERMISSION_HELPER_MODULES = new Set([
   '@logica/permission',
   '@/logica/permission',
+  '@/neup.logica/permission',
   './logica/permission',
   '../logica/permission',
 ]);
 
 const HTTP_METHODS = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']);
-const OUTPUT_FILE = 'logica/basics/permissions.json';
+const OUTPUT_FILE = 'neup.logica/basics/permissions.json';
 
 type FileType = 'page' | 'layout' | 'route' | 'middleware' | 'component' | 'hook' | 'utility' | 'unknown';
 
