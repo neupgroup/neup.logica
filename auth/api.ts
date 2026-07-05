@@ -25,7 +25,7 @@ import {
   runNeupBridgeApi,
   type NeupBridgeQuery,
   type NeupBridgeResponse,
-} from '@/logica/core/api-runner';
+} from '@/neup.logica/core/api-runner';
 
 export type BridgeSessionTriplet = {
   aid: string;

@@ -13,7 +13,7 @@ Use this module for `/bridge/api.v1/access/connection` and `/bridge/api.v1/acces
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/core/api-runner';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '@/neup.logica/core/api-runner';
 
 type AccessAuth = {
   authAccountToken?: string | null;
