@@ -232,6 +232,10 @@ function staticStringFromExpression(
   return null;
 }
 
+function normalizePermissionName(permissionName: string): string {
+  return permissionName.replace(/\.(self|managed|root)$/u, '');
+}
+
 function findStaticStringDeclaration(identifier: ts.Identifier): string | null {
   const parent = identifier.parent;
   if (!parent) return null;
@@ -378,7 +382,7 @@ function scanSourceFile(projectRoot: string, sourceFile: ts.SourceFile): { usage
           const position = positionFor(sourceFile, node.expression);
           const context = contextForNode(node, type);
           usages.push({
-            permission: permissionName,
+            permission: normalizePermissionName(permissionName),
             scope,
             file,
             line: position.line,
@@ -404,7 +408,7 @@ function scanSourceFile(projectRoot: string, sourceFile: ts.SourceFile): { usage
         const position = positionFor(sourceFile, idProperty);
         const context = contextForNode(node, type);
         usages.push({
-          permission: idProperty.text,
+          permission: normalizePermissionName(idProperty.text),
           scope: getStringProperty(node, 'scopeFor')?.text ?? null,
           file,
           line: position.line,
