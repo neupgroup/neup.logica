@@ -3,6 +3,10 @@
 Shared account-facing helpers that talk to the Neup auth bridge using the
 application credentials stored in environment variables.
 
+## Documentation
+
+- `guide.md`: canonical account, access, role, and permission modeling guide for other apps.
+
 ## Environment
 
 - `NEUP_APP_ID`
