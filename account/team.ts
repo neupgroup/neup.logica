@@ -16,8 +16,8 @@ Use this module when you need team members for either an application (`/bridge/a
 import {
   getBridgeConnectionAccess,
   getBridgeTeamAccess,
-} from '@/neup.logica/account/access';
-import type { NeupBridgeResponse } from '@/neup.logica/core/api-runner';
+} from '@/logica/account/access';
+import type { NeupBridgeResponse } from '@/logica/core/api-runner';
 
 type TeamAuth = {
   authAccountToken?: string | null;

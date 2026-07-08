@@ -13,7 +13,7 @@ Use this module for `/bridge/api.v1/application/*` exports and `/bridge/api.v1/a
 ::end
 */
 
-import { getNeupBridgeEnvironment, runNeupBridgeApi, type NeupBridgeQuery, type NeupBridgeResponse } from '@/neup.logica/core/api-runner';
+import { getNeupBridgeEnvironment, runNeupBridgeApi, type NeupBridgeQuery, type NeupBridgeResponse } from '@/logica/core/api-runner';
 
 function getApplicationCredentials(input?: { app?: string; appSecret?: string }) {
   const env = getNeupBridgeEnvironment();

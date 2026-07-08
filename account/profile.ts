@@ -13,7 +13,7 @@ Use this module for `/bridge/api.v1/profile`, `/bridge/api.v1/profile/public`, `
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/neup.logica/core/api-runner';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/core/api-runner';
 
 export async function getBridgeProfile(input: {
   tempToken?: string;
