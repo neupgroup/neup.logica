@@ -47,7 +47,7 @@ function asStringOrNull(value: unknown): string | null {
 export async function getAccountInfo(
   input: GetAccountInfoInput,
 ): Promise<NeupBridgeResponse<GetAccountInfoResponseBody>> {
-  const url = new URL('/bridge/api.v1/accounts/lookup', baseJson.baseEndpoints);
+  const url = new URL('/bridge/api.v1/accounts/lookup', baseJson.baseEndpoint);
 
   const response = await fetch(url.toString(), {
     method: 'POST',
