@@ -19,3 +19,4 @@ export * from './application';
 export * from './branding';
 export * from './connection';
 export * from './team';
+export * from './accounts';
