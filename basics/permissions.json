@@ -2109,6 +2109,197 @@
     ]
   },
   {
+    "id": "cap-appmanage-application-account-view",
+    "title": "application.account.view",
+    "scopeFor": [
+      "for_individual",
+      "for_dependent"
+    ],
+    "scopeLevel": [
+      "publiclyEnrollable",
+      "assignable",
+      "rootManaged"
+    ],
+    "acquisitionType": "assignment",
+    "approvalPolicy": "none",
+    "rules": null,
+    "status": null,
+    "tag": "application",
+    "usages": [
+      {
+        "permission": "application.account.view",
+        "scope": "for_individual",
+        "file": "app/bridge/api.v1/application/access/route.ts",
+        "line": 6,
+        "column": 3,
+        "route": "/bridge/api.v1/application/access",
+        "type": "route",
+        "function": null,
+        "class": null,
+        "component": null,
+        "method": null
+      },
+      {
+        "permission": "application.account.view",
+        "scope": "for_individual",
+        "file": "app/bridge/api.v1/application/users/route.ts",
+        "line": 9,
+        "column": 3,
+        "route": "/bridge/api.v1/application/users",
+        "type": "route",
+        "function": null,
+        "class": null,
+        "component": null,
+        "method": null
+      },
+      {
+        "permission": "application.account.view",
+        "scope": "for_individual",
+        "file": "services/applications/manage.ts",
+        "line": 100,
+        "column": 3,
+        "route": null,
+        "type": "unknown",
+        "function": null,
+        "class": null,
+        "component": null,
+        "method": null
+      }
+    ]
+  },
+  {
+    "id": "cap-appmanage-application-account-delete",
+    "title": "application.account.delete",
+    "scopeFor": [
+      "for_individual",
+      "for_dependent"
+    ],
+    "scopeLevel": [
+      "publiclyEnrollable",
+      "assignable",
+      "rootManaged"
+    ],
+    "acquisitionType": "assignment",
+    "approvalPolicy": "none",
+    "rules": null,
+    "status": null,
+    "tag": "application",
+    "usages": [
+      {
+        "permission": "application.account.delete",
+        "scope": "for_individual",
+        "file": "services/applications/manage.ts",
+        "line": 101,
+        "column": 3,
+        "route": null,
+        "type": "unknown",
+        "function": null,
+        "class": null,
+        "component": null,
+        "method": null
+      }
+    ]
+  },
+  {
+    "id": "cap-appmanage-application-account-profile-update",
+    "title": "application.account.profile.update",
+    "scopeFor": [
+      "for_individual",
+      "for_dependent"
+    ],
+    "scopeLevel": [
+      "publiclyEnrollable",
+      "assignable",
+      "rootManaged"
+    ],
+    "acquisitionType": "assignment",
+    "approvalPolicy": "none",
+    "rules": null,
+    "status": null,
+    "tag": "application",
+    "usages": [
+      {
+        "permission": "application.account.profile.update",
+        "scope": "for_individual",
+        "file": "services/applications/manage.ts",
+        "line": 102,
+        "column": 3,
+        "route": null,
+        "type": "unknown",
+        "function": null,
+        "class": null,
+        "component": null,
+        "method": null
+      }
+    ]
+  },
+  {
+    "id": "cap-appmanage-application-account-role-update",
+    "title": "application.account.role.update",
+    "scopeFor": [
+      "for_individual",
+      "for_dependent"
+    ],
+    "scopeLevel": [
+      "publiclyEnrollable",
+      "assignable",
+      "rootManaged"
+    ],
+    "acquisitionType": "assignment",
+    "approvalPolicy": "none",
+    "rules": null,
+    "status": null,
+    "tag": "application",
+    "usages": [
+      {
+        "permission": "application.account.role.update",
+        "scope": "for_individual",
+        "file": "services/applications/manage.ts",
+        "line": 103,
+        "column": 3,
+        "route": null,
+        "type": "unknown",
+        "function": null,
+        "class": null,
+        "component": null,
+        "method": null
+      }
+    ]
+  },
+  {
+    "id": "cap-appmanage-application-account-connection-assign",
+    "title": "application.account.connection.assign",
+    "scopeFor": [
+      "for_individual",
+      "for_dependent"
+    ],
+    "scopeLevel": [
+      "publiclyEnrollable",
+      "assignable",
+      "rootManaged"
+    ],
+    "acquisitionType": "assignment",
+    "approvalPolicy": "none",
+    "rules": null,
+    "status": null,
+    "tag": "application",
+    "usages": [
+      {
+        "permission": "application.account.connection.assign",
+        "scope": "for_individual",
+        "file": "services/applications/manage.ts",
+        "line": 104,
+        "column": 3,
+        "route": null,
+        "type": "unknown",
+        "function": null,
+        "class": null,
+        "component": null,
+        "method": null
+      }
+    ]
+  },
+  {
     "id": "cap-def-application-user-remove",
     "title": "application.user.remove",
     "scopeFor": [],

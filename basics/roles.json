@@ -15,6 +15,7 @@
       "owner"
     ],
     "permissions": [
+      "application.account.view",
       "application.config.view",
       "application.devlogs.view",
       "application.roles.view",
@@ -38,6 +39,27 @@
     "permissions": []
   },
   {
+    "id": "account.dependent",
+    "title": "account.dependent",
+    "description": "Default application account-management set for dependent accounts.",
+    "scopeFor": [
+      "for_dependent"
+    ],
+    "scopeLevel": "publiclyEnrollable",
+    "acquisitionType": "public_request",
+    "approvalPolicy": "none",
+    "pushed": false,
+    "applicableFor": [],
+    "permissions": [
+      "access.connection.create.dependent.self",
+      "application.account.view",
+      "application.account.delete",
+      "application.account.role.update",
+      "application.account.profile.update",
+      "application.account.connection.assign"
+    ]
+  },
+  {
     "id": "application.manage",
     "title": "application.manage",
     "description": "Manage application settings, roles, and permissions.",
@@ -50,6 +72,11 @@
     "pushed": false,
     "applicableFor": [],
     "permissions": [
+      "application.account.view",
+      "application.account.delete",
+      "application.account.role.update",
+      "application.account.profile.update",
+      "application.account.connection.assign",
       "application.basics.edit",
       "application.config.update",
       "application.config.view",
@@ -179,6 +206,11 @@
       "payment.purchase_neup_pro.view",
       "linked_accounts.brand.manage",
       "linked_accounts.brand.manager",
+      "application.account.view",
+      "application.account.delete",
+      "application.account.role.update",
+      "application.account.profile.update",
+      "application.account.connection.assign",
       "application.view",
       "application.edit",
       "application.delete",
@@ -246,6 +278,11 @@
       "application.roles.manage",
       "application.roles.resetPush",
       "application.roles.view",
+      "application.account.view",
+      "application.account.delete",
+      "application.account.role.update",
+      "application.account.profile.update",
+      "application.account.connection.assign",
       "application.user.remove",
       "application.user.updateBasics",
       "application.user.updateRole",
@@ -305,6 +342,11 @@
       "root.account.impersonate",
       "root.account.edit_pro_status",
       "root.account.edit_neupid",
+      "application.account.view",
+      "application.account.delete",
+      "application.account.role.update",
+      "application.account.profile.update",
+      "application.account.connection.assign",
       "application.view",
       "application.edit",
       "application.delete",
@@ -373,7 +415,12 @@
       "account.brand.kyc.view",
       "account.brand.members.manage",
       "root.dashboard.view",
-      "root.account.view"
+      "root.account.view",
+      "application.account.view",
+      "application.account.delete",
+      "application.account.role.update",
+      "application.account.profile.update",
+      "application.account.connection.assign"
     ]
   },
   {
