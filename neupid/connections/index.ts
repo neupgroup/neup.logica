@@ -15,3 +15,5 @@ Import from this file when you want connection-oriented account and lookup helpe
 
 export * from './getConnections';
 export * from './getInfo';
+export * from './permissions';
+export * from './create';
