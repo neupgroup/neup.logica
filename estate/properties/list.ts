@@ -8,6 +8,43 @@ Portable SDK helper for `GET /bridge/api.v1/property/list`.
 
 Fetches active bridge property payloads for exactly one agency or account.
 
+Pagination defaults to `limit: 10` and `offset: 0` when omitted. The endpoint
+returns at most 15 properties per request, so larger `limit` values are capped
+to 15.
+
+Pass `fields` to limit each returned property to selected values. The value may
+be a comma-separated string or a string array.
+
+Accepted `fields` values:
+
+- Identity: `id`, `slug`
+- Copy: `title`, `description`
+- Pricing: `price`, `pricing`
+- Location: `location`, `structuredLocation`
+- Classification: `purpose`, `purposes`, `category`, `type`
+- Media and content: `images`, `amenities`, `documents`
+- Listing accounts: `agency`, `listingAgent`, `isOwnerListing`
+- Flags and status: `isFeatured`, `isApproved`, `status`
+- Dates: `createdAt`, `updatedAt`
+- Simple measurements: `area`, `areaUnit`, `facing`, `roadAccess`, `buildStart`,
+  `buildCompleted`
+- Spacing: `property.spacing`, `spacing`
+- Property details: `property.details`, `details`
+
+Request `property.spacing` to return one `spacing` object with `bedrooms`,
+`bathrooms`, `floors`, `onFloor`, `kitchens`, `diningRooms`, `livingRooms`,
+`carParkingSpots`, and `bikeParkingSpots`.
+
+Request `property.details` when the caller does not know the property type. It
+returns one `details` object with the available type-specific details:
+`landDetails`, `plots`, `apartmentDetails`, `apartmentUnits`, `details`,
+`roadAccessDetails`, `distancing`, `earnings`, `specifics.rooms`, and
+`specifics.space`. `specifics.space` only includes the general area values
+`area` and `areaUnit`.
+
+Dot paths return nested JSON objects. The `property.` prefix is accepted for
+field paths and is removed from the returned property object.
+
 ::public end
 
 ::end
@@ -15,6 +52,10 @@ Fetches active bridge property payloads for exactly one agency or account.
 
 import baseJson from '@/logica/estate/base.json';
 import type { NeupBridgeResponse } from '@/logica/core/api-runner';
+
+const DEFAULT_LIMIT = 10;
+const DEFAULT_OFFSET = 0;
+const MAX_LIMIT = 15;
 
 export type EstatePropertyListInput = {
   agencyId?: string | null;
@@ -26,11 +67,9 @@ export type EstatePropertyListInput = {
 
 export type EstatePropertyListResponseBody = {
   success: boolean;
-  filter?: { type: 'agency' | 'account' | 'agent'; accountId?: string };
-  properties?: unknown[];
-  total?: number;
-  limit?: number;
-  offset?: number;
+  limit: number;
+  offset: number;
+  properties: unknown[];
   error?: string;
 };
 
@@ -38,6 +77,18 @@ function serializeFields(fields: EstatePropertyListInput['fields']): string | un
   if (!fields) return undefined;
   if (Array.isArray(fields)) return fields.map((field) => field.trim()).filter(Boolean).join(',');
   return fields.trim() || undefined;
+}
+
+function normalizeLimit(limit: EstatePropertyListInput['limit']): number {
+  if (!Number.isInteger(limit) || !limit || limit <= 0) return DEFAULT_LIMIT;
+  return Math.min(limit, MAX_LIMIT);
+}
+
+function normalizeOffset(offset: EstatePropertyListInput['offset']): number {
+  if (!Number.isInteger(offset) || offset === null || offset === undefined || offset < 0) {
+    return DEFAULT_OFFSET;
+  }
+  return offset;
 }
 
 export async function listEstateProperties(
@@ -48,8 +99,8 @@ export async function listEstateProperties(
     agency_id: input.agencyId,
     account_id: input.accountId,
     fields: serializeFields(input.fields),
-    limit: input.limit,
-    offset: input.offset,
+    limit: normalizeLimit(input.limit),
+    offset: normalizeOffset(input.offset),
   };
 
   for (const [key, value] of Object.entries(query)) {
