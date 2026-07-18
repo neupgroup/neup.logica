@@ -51,6 +51,7 @@ field paths and is removed from the returned property object.
 */
 
 import baseJson from '@/logica/estate/base.json';
+import { makeUrl } from '@/core/helpers/url';
 import type { NeupBridgeResponse } from '@/logica/core/api-runner';
 
 const DEFAULT_LIMIT = 10;
@@ -98,7 +99,7 @@ function getErrorMessage(error: unknown): string {
 export async function listEstateProperties(
   input: EstatePropertyListInput,
 ): Promise<NeupBridgeResponse<EstatePropertyListResponseBody>> {
-  const url = new URL('/bridge/api.v1/property/list', baseJson.baseEndpoint);
+  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/list');
   const limit = normalizeLimit(input.limit);
   const offset = normalizeOffset(input.offset);
   const query = {
