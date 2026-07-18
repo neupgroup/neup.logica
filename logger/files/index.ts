@@ -10,13 +10,13 @@ Server-side error logging for the account application.
 
 Use `logError()` for structured server/file error logging.
 
-Use `logSystemError()` or `logErrorToDatabase()` when a persisted system-error row is required.
+Use `logSystemError()` or `logErrorToDatabase()` for compatibility with older callers; both functions now write through the file-backed logger.
 
 ::public end
 
 ::private
 
-This logger writes file-backed entries to `neup.core/logs/error.log` and persists system errors to the `SystemError` table.
+This logger writes file-backed entries to `neup.core/logs/error.log`. The legacy `SystemError` table is not part of this application's Prisma schema.
 
 ::private end
 
@@ -27,7 +27,6 @@ import { headers } from 'next/headers';
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import prisma from '@/core/database/prisma';
 
 type LogType = 'ai' | 'database' | 'validation' | 'auth' | 'unknown' | 'webhook';
 type ReportType = 'auto' | 'submitted';
@@ -137,23 +136,7 @@ export async function logSystemError(
   message: string,
   context: string = 'No context',
 ) {
-  const ip = await getRequestIp();
-  const accountId = await getActiveAccountId();
-
-  try {
-    await prisma.systemError.create({
-      data: {
-        message,
-        context,
-        accountId,
-        ipAddress: ip,
-        timestamp: new Date(),
-      },
-    });
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('CRITICAL: Could not write system error record.', error);
-  }
+  await logError('unknown', message, context);
 }
 
 export async function logErrorToDatabase(
@@ -166,13 +149,7 @@ export async function logErrorToDatabase(
       details: params.details,
     };
 
-    await prisma.systemError.create({
-      data: {
-        message: params.message,
-        context: params.source || JSON.stringify(metadata),
-        timestamp: new Date(),
-      },
-    });
+    await logError('unknown', params.message, params.source || JSON.stringify(metadata));
 
     return { success: true };
   } catch (error) {
