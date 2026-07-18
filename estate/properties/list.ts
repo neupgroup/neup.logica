@@ -91,16 +91,22 @@ function normalizeOffset(offset: EstatePropertyListInput['offset']): number {
   return offset;
 }
 
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error || 'Failed to fetch property list.');
+}
+
 export async function listEstateProperties(
   input: EstatePropertyListInput,
 ): Promise<NeupBridgeResponse<EstatePropertyListResponseBody>> {
   const url = new URL('/bridge/api.v1/property/list', baseJson.baseEndpoint);
+  const limit = normalizeLimit(input.limit);
+  const offset = normalizeOffset(input.offset);
   const query = {
     agency_id: input.agencyId,
     account_id: input.accountId,
     fields: serializeFields(input.fields),
-    limit: normalizeLimit(input.limit),
-    offset: normalizeOffset(input.offset),
+    limit,
+    offset,
   };
 
   for (const [key, value] of Object.entries(query)) {
@@ -108,17 +114,47 @@ export async function listEstateProperties(
     url.searchParams.set(key, String(value));
   }
 
-  const response = await fetch(url.toString(), {
-    method: 'GET',
-    cache: 'no-store',
-  });
+  try {
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      cache: 'no-store',
+    });
 
-  const body = (await response.json().catch(() => null)) as EstatePropertyListResponseBody;
+    const body = (await response.json().catch(() => null)) as EstatePropertyListResponseBody | null;
 
-  return {
-    ok: response.ok,
-    status: response.status,
-    body,
-    headers: response.headers,
-  };
+    if (!body) {
+      return {
+        ok: false,
+        status: response.status,
+        body: {
+          success: false,
+          limit,
+          offset,
+          properties: [],
+          error: 'Invalid property list response.',
+        },
+        headers: response.headers,
+      };
+    }
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      body,
+      headers: response.headers,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      status: 0,
+      body: {
+        success: false,
+        limit,
+        offset,
+        properties: [],
+        error: getErrorMessage(error),
+      },
+      headers: new Headers(),
+    };
+  }
 }

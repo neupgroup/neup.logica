@@ -62,6 +62,10 @@ function serializeFields(fields: ViewEstatePropertyInput['fields']): string | un
   return fields.trim() || undefined;
 }
 
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error || 'Failed to fetch property.');
+}
+
 export async function viewEstateProperty(
   input: ViewEstatePropertyInput,
 ): Promise<NeupBridgeResponse<ViewEstatePropertyResponseBody>> {
@@ -70,17 +74,35 @@ export async function viewEstateProperty(
   const fields = serializeFields(input.fields);
   if (fields) url.searchParams.set('fields', fields);
 
-  const response = await fetch(url.toString(), {
-    method: 'GET',
-    cache: 'no-store',
-  });
+  try {
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      cache: 'no-store',
+    });
 
-  const body = (await response.json().catch(() => null)) as ViewEstatePropertyResponseBody;
+    const body = (await response.json().catch(() => null)) as ViewEstatePropertyResponseBody | null;
 
-  return {
-    ok: response.ok,
-    status: response.status,
-    body,
-    headers: response.headers,
-  };
+    if (!body) {
+      return {
+        ok: false,
+        status: response.status,
+        body: { success: false, error: 'Invalid property response.' },
+        headers: response.headers,
+      };
+    }
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      body,
+      headers: response.headers,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      status: 0,
+      body: { success: false, error: getErrorMessage(error) },
+      headers: new Headers(),
+    };
+  }
 }
