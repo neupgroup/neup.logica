@@ -21,3 +21,5 @@ export * from './connection';
 export * from './connections';
 export * from './team';
 export * from './accounts';
+export * from './token/authenticate';
+export * from './token/verify';
