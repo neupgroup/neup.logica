@@ -51,7 +51,7 @@ field paths and is removed from the returned property object.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import { makeUrl } from '@neupgroup/core/helpers/url';
+import { makeUrl } from '@/core/helpers/url';
 import type { NeupBridgeResponse } from '@/logica/core/api-runner';
 
 const DEFAULT_LIMIT = 10;
