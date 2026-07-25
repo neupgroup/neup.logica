@@ -1,7 +1,8 @@
 # Logica Account
 
-Shared account-facing helpers that talk to the Neup auth bridge using the
-application credentials stored in environment variables.
+Shared account-facing helpers that talk to the Neup auth bridge using
+application credentials from environment variables and base URLs from
+`base.json`.
 
 ## Documentation
 
@@ -11,7 +12,11 @@ application credentials stored in environment variables.
 
 - `NEUP_APP_ID`
 - `NEUP_APP_SECRET`
-- `NEUP_AUTH_URL`
+
+## Base Configuration
+
+- `baseEndpoint`
+- `baseEndpointBridge`
 
 ## Available Helpers
 

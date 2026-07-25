@@ -118,7 +118,7 @@ export async function hasPermission(
     };
   }
 
-  const url = new URL('/bridge/api.v1/accounts/lookup', baseJson.baseEndpoint);
+  const url = new URL('/bridge/api.v1/accounts/lookup', baseJson.baseEndpointBridge);
 
   const headers = new Headers(options.headers);
   headers.set('content-type', 'application/json');

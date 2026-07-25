@@ -6,18 +6,20 @@ Shared fetch runner for Neup bridge API calls from portable `logica` helpers.
 
 ::public
 
-Use this module to build bridge URLs, read required environment variables, and execute JSON-oriented bridge requests from `logica/auth` and `logica/account`.
+Use this module to build bridge URLs, read required credentials, and execute JSON-oriented bridge requests from `logica/auth` and `logica/account`.
 
 ::public end
 
 ::private
 
-The runner intentionally depends only on standard web APIs and the three required Neup environment variables so it can move between apps without service-layer imports.
+The runner intentionally depends only on standard web APIs, required Neup app credentials, and the auth base URLs stored in `logica/neupid/base.json` so it can move between apps without service-layer imports.
 
 ::private end
 
 ::end
 */
+
+import baseJson from '@/logica/neupid/base.json';
 
 export type NeupBridgeEnvironment = {
   appId: string;
@@ -46,10 +48,18 @@ export type NeupBridgeRequestOptions = {
   bearerToken?: string | null;
 };
 
-function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET' | 'NEUP_AUTH_URL'): string {
+function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET'): string {
   const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(`${name} is required.`);
+  }
+  return value;
+}
+
+function requireBaseJsonUrl(name: 'baseEndpoint' | 'baseEndpointBridge'): string {
+  const value = baseJson[name]?.trim();
+  if (!value) {
+    throw new Error(`logica/neupid/base.json ${name} is required.`);
   }
   return value;
 }
@@ -62,7 +72,7 @@ function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET' | 'NEUP_AUTH_URL'): 
  *
  * ::public
  *
- * The helper reads only `NEUP_APP_ID`, `NEUP_APP_SECRET`, and `NEUP_AUTH_URL`.
+ * The helper reads `NEUP_APP_ID` and `NEUP_APP_SECRET` from the environment, and reads the auth bridge base URL from `logica/neupid/base.json`.
  *
  * ::public end
  *
@@ -78,7 +88,7 @@ export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {
   return {
     appId: requireEnv('NEUP_APP_ID'),
     appSecret: requireEnv('NEUP_APP_SECRET'),
-    authUrl: requireEnv('NEUP_AUTH_URL'),
+    authUrl: requireBaseJsonUrl('baseEndpointBridge'),
   };
 }
 

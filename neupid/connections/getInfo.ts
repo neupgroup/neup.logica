@@ -86,7 +86,7 @@ function asArray(value: unknown): unknown[] {
 async function getLookup(
   input: GetLookupInput,
 ): Promise<NeupBridgeResponse<AccountLookupResponseBody>> {
-  const url = new URL('/bridge/api.v1/accounts/lookup', baseJson.baseEndpoint);
+  const url = new URL('/bridge/api.v1/accounts/lookup', baseJson.baseEndpointBridge);
 
   const response = await fetch(url.toString(), {
     method: 'POST',
@@ -114,7 +114,7 @@ async function getLookup(
 async function getAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
-  const url = new URL('/bridge/api.v1/accounts', baseJson.baseEndpoint);
+  const url = new URL('/bridge/api.v1/accounts', baseJson.baseEndpointBridge);
 
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     url.searchParams.set('appSecret', input.appSecret.trim());
