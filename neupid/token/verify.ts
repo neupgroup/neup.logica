@@ -66,11 +66,17 @@ function readPublicKey(options?: VerifyNeupIdTokenOptions): string {
   return publicKey;
 }
 
+function normalizePublicKeyPem(publicKey: string): string {
+  const normalized = publicKey.trim().replace(/\\n/g, '\n');
+  return normalized.includes('-----/n') || normalized.includes('/n-----')
+    ? normalized.replace(/\/n/g, '\n')
+    : normalized;
+}
+
 async function importPublicKey(publicKey: string): Promise<CryptoKey> {
-  const pemBody = publicKey
+  const pemBody = normalizePublicKeyPem(publicKey)
     .replace(/-----BEGIN PUBLIC KEY-----/g, '')
     .replace(/-----END PUBLIC KEY-----/g, '')
-    .replace(/\\n/g, '')
     .replace(/\n/g, '')
     .replace(/\r/g, '')
     .trim();
