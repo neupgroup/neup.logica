@@ -43,6 +43,7 @@ field paths and is removed from the returned property object.
 */
 
 import baseJson from '@/logica/estate/base.json';
+import { makeUrl } from '@/core/helpers/url';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 export type ViewEstatePropertyInput = {
@@ -69,7 +70,7 @@ function getErrorMessage(error: unknown): string {
 export async function viewEstateProperty(
   input: ViewEstatePropertyInput,
 ): Promise<NeupBridgeResponse<ViewEstatePropertyResponseBody>> {
-  const url = new URL('/bridge/api.v1/property/view', baseJson.baseEndpoint);
+  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/view');
   url.searchParams.set('propertyId', input.propertyId);
   const fields = serializeFields(input.fields);
   if (fields) url.searchParams.set('fields', fields);

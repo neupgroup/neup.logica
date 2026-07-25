@@ -15,6 +15,7 @@ pending create draft or `propertyId` for an approved property.
 */
 
 import baseJson from '@/logica/estate/base.json';
+import { makeUrl } from '@/core/helpers/url';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 export type ModifyEstatePropertyInput = {
@@ -37,7 +38,7 @@ export type ModifyEstatePropertyResponseBody = {
 export async function modifyEstateProperty(
   input: ModifyEstatePropertyInput,
 ): Promise<NeupBridgeResponse<ModifyEstatePropertyResponseBody>> {
-  const url = new URL('/bridge/api.v1/property/edit', baseJson.baseEndpoint);
+  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/edit');
   const response = await fetch(url.toString(), {
     method: 'POST',
     headers: {

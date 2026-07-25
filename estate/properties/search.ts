@@ -14,6 +14,7 @@ Searches active estate properties using bridge query parameters.
 */
 
 import baseJson from '@/logica/estate/base.json';
+import { makeUrl } from '@/core/helpers/url';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 export type SearchEstatePropertiesInput = {
@@ -59,7 +60,7 @@ function serializeList(value: string[] | string | null | undefined): string | un
 export async function searchEstateProperties(
   input: SearchEstatePropertiesInput = {},
 ): Promise<NeupBridgeResponse<SearchEstatePropertiesResponseBody>> {
-  const url = new URL('/bridge/api.v1/property/search', baseJson.baseEndpoint);
+  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/search');
   const query = {
     q: input.q,
     page: input.page,

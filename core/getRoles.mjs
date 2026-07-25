@@ -19,6 +19,19 @@ const BRIDGE_URL = (process.env.NEUP_BRIDGE_URL || 'http://127.0.0.1:2226').repl
 const NEUP_APP_ID = process.env.NEUP_APP_ID || process.env.neup_app_id;
 const NEUP_APP_SECRET = process.env.NEUP_APP_SECRET || process.env.neup_app_secret;
 
+function makeUrl(basePath, endpoint) {
+  const baseUrl = new URL(basePath);
+  const endpointUrl = new URL(endpoint, baseUrl.origin);
+  const baseUrlPath = baseUrl.pathname.replace(/\/+$/, '');
+  const endpointPath = endpointUrl.pathname.replace(/^\/+/, '');
+
+  baseUrl.pathname = [baseUrlPath, endpointPath].filter(Boolean).join('/');
+  baseUrl.search = endpointUrl.searchParams.toString();
+  baseUrl.hash = endpointUrl.hash;
+
+  return baseUrl;
+}
+
 function requireCredentials() {
   if (!NEUP_APP_ID || !NEUP_APP_SECRET) {
     throw new Error('NEUP_APP_ID and NEUP_APP_SECRET are required.');
@@ -26,7 +39,7 @@ function requireCredentials() {
 }
 
 function endpoint(pathname) {
-  const url = new URL(`${BRIDGE_URL}${pathname}`);
+  const url = makeUrl(BRIDGE_URL, pathname);
   url.searchParams.set('neup_app_id', NEUP_APP_ID);
   url.searchParams.set('neup_app_secret', NEUP_APP_SECRET);
   return url;
