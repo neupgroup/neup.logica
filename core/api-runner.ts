@@ -67,6 +67,10 @@ function requireBaseJsonUrl(name: 'baseEndpoint' | 'baseEndpointBridge'): string
   return value;
 }
 
+function getNeupBridgeBaseUrl(): string {
+  return requireBaseJsonUrl('baseEndpointBridge');
+}
+
 /**
  * ::neup.documentation::logica-core-api-runner-env
  * ::function getNeupBridgeEnvironment()
@@ -91,7 +95,7 @@ export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {
   return {
     appId: requireEnv('NEUP_APP_ID'),
     appSecret: requireEnv('NEUP_APP_SECRET'),
-    authUrl: requireBaseJsonUrl('baseEndpointBridge'),
+    authUrl: getNeupBridgeBaseUrl(),
   };
 }
 
@@ -110,7 +114,7 @@ export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {
  * ::end
  */
 export function createNeupBridgeUrl(path: string, query?: NeupBridgeQuery): string {
-  const { authUrl } = getNeupBridgeEnvironment();
+  const authUrl = getNeupBridgeBaseUrl();
   const url = makeUrl(authUrl, path);
 
   if (query) {
