@@ -1,4 +1,4 @@
 {
-    "baseEndpoint": "https://neupgroup.com/account",
-    "baseEndpointBridge": "https://neupgroup.com/account"
+    "baseEndpoint": "https://localhost:2226/account",
+    "baseEndpointBridge": "https://localhost:2226/account"
 }

@@ -15,7 +15,7 @@ Use this module to fetch connection-access info, normalized profile fields, and 
 
 import baseJson from '@/logica/neupid/base.json';
 import { makeUrl } from '@/core/helpers/url';
-import type { NeupBridgeResponse } from '@/logica/core/api-runner';
+import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 type NeupAccessibleAccount = {
   id: string;

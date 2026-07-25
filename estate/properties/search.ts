@@ -14,7 +14,7 @@ Searches active estate properties using bridge query parameters.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import type { NeupBridgeResponse } from '@/logica/core/api-runner';
+import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 export type SearchEstatePropertiesInput = {
   q?: string | null;

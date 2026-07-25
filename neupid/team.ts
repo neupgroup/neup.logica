@@ -17,7 +17,7 @@ import {
   getBridgeConnectionAccess,
   getBridgeTeamAccess,
 } from '@/logica/neupid/access';
-import type { NeupBridgeResponse } from '@/logica/core/api-runner';
+import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 type TeamAuth = {
   authAccountToken?: string | null;

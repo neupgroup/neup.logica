@@ -21,7 +21,7 @@ connection creation should live in a different flow with its own creation token.
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/core/api-runner';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/neupid/api';
 
 export type CreateInternalNeupConnectionInput = {
   accountId: string;

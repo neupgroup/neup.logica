@@ -15,7 +15,7 @@ Use this helper to fetch a normalized account profile snapshot that returns only
 
 import baseJson from '@/logica/neupid/base.json';
 import { makeUrl } from '@/core/helpers/url';
-import type { NeupBridgeResponse } from '@/logica/core/api-runner';
+import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 type GetAccountInfoInput = {
   appId: string;

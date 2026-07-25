@@ -15,7 +15,7 @@ pending create draft or `propertyId` for an approved property.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import type { NeupBridgeResponse } from '@/logica/core/api-runner';
+import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 export type ModifyEstatePropertyInput = {
   requestId?: string | null;
