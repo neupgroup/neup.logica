@@ -20,6 +20,7 @@ The runner intentionally depends only on standard web APIs, required Neup app cr
 */
 
 import baseJson from '@/logica/neupid/base.json';
+import { makeUrl } from '@/core/helpers/url';
 
 export type NeupBridgeEnvironment = {
   appId: string;
@@ -49,6 +50,7 @@ export type NeupBridgeRequestOptions = {
 };
 
 function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET'): string {
+  // App credentials stay environment-specific because each consuming app owns them.
   const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(`${name} is required.`);
@@ -57,21 +59,12 @@ function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET'): string {
 }
 
 function requireBaseJsonUrl(name: 'baseEndpoint' | 'baseEndpointBridge'): string {
+  // Auth API base URLs are shared Logica config, not per-app environment values.
   const value = baseJson[name]?.trim();
   if (!value) {
     throw new Error(`logica/neupid/base.json ${name} is required.`);
   }
   return value;
-}
-
-export function createUrlFromBasePath(baseUrl: string, path: string): URL {
-  const base = new URL(baseUrl);
-  const basePath = base.pathname.replace(/\/+$/, '');
-  const nextPath = path.replace(/^\/+/, '');
-  base.pathname = [basePath, nextPath].filter(Boolean).join('/');
-  base.search = '';
-  base.hash = '';
-  return base;
 }
 
 /**
@@ -118,10 +111,11 @@ export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {
  */
 export function createNeupBridgeUrl(path: string, query?: NeupBridgeQuery): string {
   const { authUrl } = getNeupBridgeEnvironment();
-  const url = createUrlFromBasePath(authUrl, path);
+  const url = makeUrl(authUrl, path);
 
   if (query) {
     for (const [key, value] of Object.entries(query)) {
+      // Keep generated URLs clean and avoid sending empty optional parameters.
       if (value === null || value === undefined || value === '') continue;
       url.searchParams.set(key, String(value));
     }
@@ -146,9 +140,11 @@ function normalizeCookieHeader(existingCookieHeader: string | null, authAccountT
 async function parseBridgeResponseBody(response: Response): Promise<unknown> {
   const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
   if (contentType.includes('application/json')) {
+    // Bridge routes should return JSON, but callers still get `null` for malformed bodies.
     return response.json().catch(() => null);
   }
 
+  // Non-JSON responses are preserved as text for debugging or passthrough errors.
   return response.text().catch(() => '');
 }
 
@@ -180,10 +176,12 @@ export async function runNeupBridgeApi<TBody = unknown>(
   const headers = new Headers(options.headers);
 
   if (options.bearerToken?.trim()) {
+    // App-scoped bridge tokens are sent as bearer credentials.
     headers.set('authorization', `Bearer ${options.bearerToken.trim()}`);
   }
 
   if (options.authAccountToken?.trim()) {
+    // Browser account sessions are forwarded through the same cookie name used by Neup Account.
     headers.set(
       'cookie',
       normalizeCookieHeader(headers.get('cookie'), options.authAccountToken.trim()),
@@ -193,6 +191,7 @@ export async function runNeupBridgeApi<TBody = unknown>(
   let requestBody: BodyInit | undefined;
   if (options.body !== undefined && options.body !== null) {
     if (Array.isArray(options.body) || isPlainObject(options.body)) {
+      // Plain JSON payloads are the common bridge API case.
       if (!headers.has('content-type')) {
         headers.set('content-type', 'application/json');
       }

@@ -14,7 +14,8 @@ Use this module to fetch accounts that can create connections and accounts whose
 */
 
 import baseJson from '@/logica/neupid/base.json';
-import { createUrlFromBasePath, type NeupBridgeResponse } from '@/logica/core/api-runner';
+import { makeUrl } from '@/core/helpers/url';
+import type { NeupBridgeResponse } from '@/logica/core/api-runner';
 
 type NeupConnection = {
   connectionId: string;
@@ -98,7 +99,7 @@ function filterConnectionsByType(
 export async function getConnections(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const url = createUrlFromBasePath(baseJson.baseEndpointBridge, '/bridge/api.v1/application/users');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/application/users');
 
   if (input.offset !== null && input.offset !== undefined && input.offset !== '') {
     url.searchParams.set('offset', String(input.offset));
@@ -148,7 +149,7 @@ export async function getConnections(
 export async function getCreatableConnections(
   input: GetCreatableConnectionsInput = {},
 ): Promise<NeupBridgeResponse<GetCreatableConnectionsResponseBody>> {
-  const url = createUrlFromBasePath(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts');
 
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     url.searchParams.set('appSecret', input.appSecret.trim());

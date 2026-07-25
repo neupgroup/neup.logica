@@ -14,7 +14,8 @@ Use this module to fetch connection-access info, normalized profile fields, and 
 */
 
 import baseJson from '@/logica/neupid/base.json';
-import { createUrlFromBasePath, type NeupBridgeResponse } from '@/logica/core/api-runner';
+import { makeUrl } from '@/core/helpers/url';
+import type { NeupBridgeResponse } from '@/logica/core/api-runner';
 
 type NeupAccessibleAccount = {
   id: string;
@@ -86,7 +87,7 @@ function asArray(value: unknown): unknown[] {
 async function getLookup(
   input: GetLookupInput,
 ): Promise<NeupBridgeResponse<AccountLookupResponseBody>> {
-  const url = createUrlFromBasePath(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts/lookup');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts/lookup');
 
   const response = await fetch(url.toString(), {
     method: 'POST',
@@ -114,7 +115,7 @@ async function getLookup(
 async function getAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
-  const url = createUrlFromBasePath(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts');
 
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     url.searchParams.set('appSecret', input.appSecret.trim());

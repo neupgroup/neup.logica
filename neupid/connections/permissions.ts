@@ -20,7 +20,8 @@ The helper reads `/bridge/api.v1/accounts/lookup`, which returns the permission 
 */
 
 import baseJson from '@/logica/neupid/base.json';
-import { createUrlFromBasePath, type NeupBridgeResponse } from '@/logica/core/api-runner';
+import { makeUrl } from '@/core/helpers/url';
+import type { NeupBridgeResponse } from '@/logica/core/api-runner';
 
 type AccountAccessEntry = {
   accessOf: string | null;
@@ -118,7 +119,7 @@ export async function hasPermission(
     };
   }
 
-  const url = createUrlFromBasePath(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts/lookup');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts/lookup');
 
   const headers = new Headers(options.headers);
   headers.set('content-type', 'application/json');
