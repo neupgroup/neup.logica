@@ -6,13 +6,13 @@ Portable JWT verification helpers for NeupID tokens.
 
 ::public
 
-Use this module to decode a NeupID JWT, check local expiry, and verify its RS256 signature with the public key from the environment.
+Use this module to decode a NeupID JWT, check local expiry, and verify its RS256 signature with the bundled NeupID public key.
 
 ::public end
 
 ::private
 
-The verifier reads `NEUPID_PUBLIC_KEY` first, then falls back to the existing `NEUP_AUTH_PUBLIC_KEY` name used by this app.
+The verifier prefers an explicit `publicKey` option, then the checked-in `_key/public.key` file, and finally the legacy `NEUPID_PUBLIC_KEY` or `NEUP_AUTH_PUBLIC_KEY` environment variables.
 
 ::private end
 
@@ -39,6 +39,8 @@ type VerifyNeupIdTokenOptions = {
   now?: Date;
 };
 
+let bundledPublicKeyPromise: Promise<string | null> | undefined;
+
 function b64urlToBase64(input: string): string {
   const base64 = input.replace(/-/g, '+').replace(/_/g, '/');
   const pad = base64.length % 4;
@@ -50,17 +52,48 @@ function b64urlToBytes(input: string): Uint8Array {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+}
+
 function b64urlDecode(input: string): string {
   return atob(b64urlToBase64(input));
 }
 
-function readPublicKey(options?: VerifyNeupIdTokenOptions): string {
+async function readBundledPublicKey(): Promise<string | null> {
+  if (bundledPublicKeyPromise) {
+    return bundledPublicKeyPromise;
+  }
+
+  bundledPublicKeyPromise = (async () => {
+    if (typeof process === 'undefined' || !process.versions?.node) {
+      return null;
+    }
+
+    try {
+      const [{ readFile }, { fileURLToPath }] = await Promise.all([
+        import('node:fs/promises'),
+        import('node:url'),
+      ]);
+      const publicKeyPath = fileURLToPath(new URL('../_key/public.key', import.meta.url));
+      const publicKey = (await readFile(publicKeyPath, 'utf8')).trim();
+      return publicKey || null;
+    } catch {
+      return null;
+    }
+  })();
+
+  return bundledPublicKeyPromise;
+}
+
+async function readPublicKey(options?: VerifyNeupIdTokenOptions): Promise<string> {
   const publicKey = options?.publicKey?.trim()
+    || await readBundledPublicKey()
     || process.env.NEUPID_PUBLIC_KEY?.trim()
     || process.env.NEUP_AUTH_PUBLIC_KEY?.trim();
 
   if (!publicKey) {
-    throw new Error('NEUPID_PUBLIC_KEY or NEUP_AUTH_PUBLIC_KEY is required.');
+    throw new Error('NeupID public key is required.');
   }
 
   return publicKey;
@@ -87,7 +120,7 @@ async function importPublicKey(publicKey: string): Promise<CryptoKey> {
 
   return crypto.subtle.importKey(
     'spki',
-    Uint8Array.from(atob(pemBody), (character) => character.charCodeAt(0)),
+    toArrayBuffer(Uint8Array.from(atob(pemBody), (character) => character.charCodeAt(0))),
     { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
     false,
     ['verify'],
@@ -133,12 +166,12 @@ export async function verifyNeupIdToken(
   }
 
   try {
-    const publicKey = await importPublicKey(readPublicKey(options));
+    const publicKey = await importPublicKey(await readPublicKey(options));
     const verified = await crypto.subtle.verify(
       { name: 'RSASSA-PKCS1-v1_5' },
       publicKey,
-      b64urlToBytes(parts[2]),
-      new TextEncoder().encode(`${parts[0]}.${parts[1]}`),
+      toArrayBuffer(b64urlToBytes(parts[2])),
+      toArrayBuffer(new TextEncoder().encode(`${parts[0]}.${parts[1]}`)),
     );
 
     if (!verified) {

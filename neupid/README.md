@@ -13,6 +13,9 @@ application credentials from environment variables and base URLs from
 - `NEUP_APP_ID`
 - `NEUP_APP_SECRET`
 
+JWT verification uses the bundled `./_key/public.key` by default.
+`NEUPID_PUBLIC_KEY` and `NEUP_AUTH_PUBLIC_KEY` remain optional legacy overrides.
+
 ## Base Configuration
 
 - `baseEndpoint`
