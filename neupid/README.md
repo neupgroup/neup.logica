@@ -29,6 +29,7 @@ JWT verification uses the bundled `./_key/public.key` by default.
 - `team.ts`: unified team-member helper for application or connection lookups.
 - `application.ts`: application export and app catalog sync helpers.
 - `branding.ts`: branding helpers.
+- `lookup/`: user-info lookup helpers for app-secret and auth-cookie lookup modes.
 
 ## Notes
 

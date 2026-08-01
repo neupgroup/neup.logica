@@ -19,6 +19,7 @@ export * from './application';
 export * from './branding';
 export * from './connection';
 export * from './connections';
+export * from './lookup';
 export * from './team';
 export * from './accounts';
 export * from './token/authenticate';
