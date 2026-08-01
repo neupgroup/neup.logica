@@ -14,7 +14,7 @@ Use this module to fetch accounts that can create connections and accounts whose
 */
 
 import baseJson from '@/logica/neupid/base.json';
-import { makeUrl } from '@/core/helpers/url';
+import { makeUrl } from '@/core/helpers/link/url';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 type NeupConnection = {

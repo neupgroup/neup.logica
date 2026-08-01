@@ -14,7 +14,7 @@ Submits a property creation payload as an awaiting-review draft.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import { makeUrl } from '@/core/helpers/url';
+import { makeUrl } from '@/core/helpers/link/url';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 export type CreateEstatePropertyInput = {

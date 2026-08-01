@@ -46,7 +46,7 @@ headers or query parameters.
 */
 
 import baseJson from '@/logica/neupid/base.json';
-import { makeUrl } from '@/core/helpers/url';
+import { makeUrl } from '@/core/helpers/link/url';
 import { getNeupBridgeEnvironment, type NeupBridgeResponse } from '@/logica/neupid/api';
 
 export const neupUserInfoBasicFields = [

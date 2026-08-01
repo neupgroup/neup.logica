@@ -30,7 +30,7 @@ import {
   resolveBackNavigationHref,
   resolvePreviousRawPath,
   type NavigationBackTargets,
-} from '@/core/helpers/navigation';
+} from '@/core/helpers/link/navigation';
 
 export const LOGICA_NAVIGATION_BACK_TARGETS = {
   ...CORE_NAVIGATION_BACK_TARGETS,
@@ -76,4 +76,4 @@ export {
   resolveBackNavigationHref,
   resolvePreviousRawPath,
 };
-export type { NavigationBackTargetConfig, NavigationBackTargets } from '@/core/helpers/navigation';
+export type { NavigationBackTargetConfig, NavigationBackTargets } from '@/core/helpers/link/navigation';

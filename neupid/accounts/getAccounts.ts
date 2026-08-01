@@ -14,7 +14,7 @@ Use this helper to fetch the accessible accounts that the authenticated caller m
 */
 
 import baseJson from '@/logica/neupid/base.json';
-import { makeUrl } from '@/core/helpers/url';
+import { makeUrl } from '@/core/helpers/link/url';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 type NeupAccessibleAccount = {

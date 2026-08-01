@@ -20,7 +20,7 @@ The helper reads `/bridge/api.v1/accounts/lookup`, which returns the permission 
 */
 
 import baseJson from '@/logica/neupid/base.json';
-import { makeUrl } from '@/core/helpers/url';
+import { makeUrl } from '@/core/helpers/link/url';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
 type AccountAccessEntry = {
