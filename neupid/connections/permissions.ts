@@ -119,7 +119,7 @@ export async function hasPermission(
     };
   }
 
-  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts/lookup');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/accounts/lookup');
 
   const headers = new Headers(options.headers);
   headers.set('content-type', 'application/json');

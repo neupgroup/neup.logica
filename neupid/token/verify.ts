@@ -12,7 +12,7 @@ Use this module to decode a NeupID JWT, check local expiry, and verify its RS256
 
 ::private
 
-The verifier prefers an explicit `publicKey` option, then the checked-in `_key/public.key` file, and finally the legacy `NEUPID_PUBLIC_KEY` or `NEUP_AUTH_PUBLIC_KEY` environment variables.
+The verifier reads the checked-in `logica/neupid/public.key` file.
 
 ::private end
 
@@ -35,7 +35,6 @@ export type VerifyNeupIdTokenResult =
   | { valid: false; reason: string; payload?: Partial<NeupIdTokenPayload> };
 
 type VerifyNeupIdTokenOptions = {
-  publicKey?: string;
   now?: Date;
 };
 
@@ -71,11 +70,11 @@ async function readBundledPublicKey(): Promise<string | null> {
     }
 
     try {
-      const [{ readFile }, { fileURLToPath }] = await Promise.all([
+      const [{ readFile }, path] = await Promise.all([
         import('node:fs/promises'),
-        import('node:url'),
+        import('node:path'),
       ]);
-      const publicKeyPath = fileURLToPath(new URL('../_key/public.key', import.meta.url));
+      const publicKeyPath = path.join(process.cwd(), 'logica/neupid/public.key');
       const publicKey = (await readFile(publicKeyPath, 'utf8')).trim();
       return publicKey || null;
     } catch {
@@ -86,11 +85,8 @@ async function readBundledPublicKey(): Promise<string | null> {
   return bundledPublicKeyPromise;
 }
 
-async function readPublicKey(options?: VerifyNeupIdTokenOptions): Promise<string> {
-  const publicKey = options?.publicKey?.trim()
-    || await readBundledPublicKey()
-    || process.env.NEUPID_PUBLIC_KEY?.trim()
-    || process.env.NEUP_AUTH_PUBLIC_KEY?.trim();
+async function readPublicKey(): Promise<string> {
+  const publicKey = await readBundledPublicKey();
 
   if (!publicKey) {
     throw new Error('NeupID public key is required.');
@@ -166,7 +162,7 @@ export async function verifyNeupIdToken(
   }
 
   try {
-    const publicKey = await importPublicKey(await readPublicKey(options));
+    const publicKey = await importPublicKey(await readPublicKey());
     const verified = await crypto.subtle.verify(
       { name: 'RSASSA-PKCS1-v1_5' },
       publicKey,

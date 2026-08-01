@@ -99,7 +99,7 @@ function filterConnectionsByType(
 export async function getConnections(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/application/users');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/application/users');
 
   if (input.offset !== null && input.offset !== undefined && input.offset !== '') {
     url.searchParams.set('offset', String(input.offset));
@@ -149,7 +149,7 @@ export async function getConnections(
 export async function getCreatableConnections(
   input: GetCreatableConnectionsInput = {},
 ): Promise<NeupBridgeResponse<GetCreatableConnectionsResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/accounts');
 
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     url.searchParams.set('appSecret', input.appSecret.trim());

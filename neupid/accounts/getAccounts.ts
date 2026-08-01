@@ -60,7 +60,7 @@ function filterAccountsByType(
 export async function getAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/accounts');
 
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     url.searchParams.set('appSecret', input.appSecret.trim());

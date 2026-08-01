@@ -40,6 +40,13 @@ The auth-cookie mode forwards `authAccountToken` as an `auth_account` cookie
 header because the bridge rejects account authentication supplied through custom
 headers or query parameters.
 
+For personal identification, this helper is intended to work without callers
+manually passing identity parameters. When testing from `localhost` against the
+`neupgroup.com` account domain, the browser may not send or recognize the
+account-domain cookie across domains. In that interdomain setup, auth-cookie
+lookup can return no profile value even though the same flow works when the app
+and account service run under compatible domains.
+
 ::private end
 
 ::end
@@ -167,12 +174,13 @@ export async function lookup(
 ): Promise<NeupBridgeResponse<LookupResponseBody>> {
   const fields = normalizeFields(input.fields);
   const env = getNeupBridgeEnvironment();
-  const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts/lookup');
+  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/accounts/lookup');
   const headers: Record<string, string> = {
     'content-type': 'application/json',
   };
 
   // The bridge accepts auth_account only as a cookie, not as a custom auth header.
+  // Localhost-to-neupgroup.com testing can fail here because the account cookie is domain-bound.
   if ('authAccountToken' in input && typeof input.authAccountToken === 'string') {
     const authAccountToken = input.authAccountToken.trim();
     if (authAccountToken) {

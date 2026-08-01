@@ -32,7 +32,6 @@ type AuthenticateNeupIdTokenOptions = {
   path?: string;
   now?: Date;
   verifyLocally?: boolean;
-  publicKey?: string;
 };
 
 export type AuthenticateNeupIdTokenResult<TBody = unknown> =
@@ -70,7 +69,6 @@ export async function authenticateNeupIdToken<TBody = unknown>(
 
   if (options.verifyLocally !== false) {
     const verification = await verifyNeupIdToken(trimmed, {
-      publicKey: options.publicKey,
       now: options.now,
     });
 
