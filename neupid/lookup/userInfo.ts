@@ -12,11 +12,14 @@ is provided, the response is limited to the requested user-info fields. The help
 supports app-secret lookup by `accountId` or `connectionId`, and auth-cookie lookup
 for the signed-in account.
 
+`NEUP_APP_ID` and `NEUP_APP_SECRET` must be present in `process.env`; the helper
+throws when either value is missing.
+
 Input modes:
 
-- `{ appId, appSecret, accountId }`
-- `{ appId, appSecret, connectionId }`
-- `{ appId, authAccountToken }`
+- `{ accountId }`
+- `{ connectionId }`
+- `{ authAccountToken }`
 
 Default fields are `displayName`, `displayImage`, `connectionId`, `accountId`,
 and `accountType`.
@@ -44,7 +47,7 @@ headers or query parameters.
 
 import baseJson from '@/logica/neupid/base.json';
 import { makeUrl } from '@/core/helpers/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import { getNeupBridgeEnvironment, type NeupBridgeResponse } from '@/logica/neupid/api';
 
 export const neupUserInfoBasicFields = [
   'displayName',
@@ -87,19 +90,16 @@ export type NeupUserInfoPayload = {
 };
 
 type GetUserInfoBaseInput = {
-  appId: string;
   fields?: readonly NeupUserInfoField[] | null;
 };
 
 export type GetUserInfoInput =
   | (GetUserInfoBaseInput & {
-      appSecret: string;
       accountId: string;
       connectionId?: never;
       authAccountToken?: never;
     })
   | (GetUserInfoBaseInput & {
-      appSecret: string;
       connectionId: string;
       accountId?: never;
       authAccountToken?: never;
@@ -166,6 +166,7 @@ export async function getUserInfo(
   input: GetUserInfoInput,
 ): Promise<NeupBridgeResponse<GetUserInfoResponseBody>> {
   const fields = normalizeFields(input.fields);
+  const env = getNeupBridgeEnvironment();
   const url = makeUrl(baseJson.baseEndpointBridge, '/bridge/api.v1/accounts/lookup');
   const headers: Record<string, string> = {
     'content-type': 'application/json',
@@ -183,9 +184,10 @@ export async function getUserInfo(
     method: 'POST',
     headers,
     body: JSON.stringify({
-      appId: input.appId,
-      // Only one lookup mode is emitted because GetUserInfoInput is a discriminated union by shape.
-      ...('appSecret' in input ? { appSecret: input.appSecret } : {}),
+      appId: env.appId,
+      // App credentials are owned by env so callers cannot accidentally send the wrong application identity.
+      ...(!('authAccountToken' in input) ? { appSecret: env.appSecret } : {}),
+      // Only one lookup target is emitted because GetUserInfoInput is a discriminated union by shape.
       ...('accountId' in input ? { accountId: input.accountId } : {}),
       ...('connectionId' in input ? { connectionId: input.connectionId } : {}),
       ...(fields ? { fields } : {}),
