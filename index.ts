@@ -6,7 +6,8 @@ Root object facade for Logica SDK modules.
 
 ::public
 
-Use `logica.estate.*` to access estate API helpers.
+Use `logica.account.*` for account bridge helpers and `logica.estate.*` to
+access estate API helpers.
 
 ::public end
 
@@ -14,11 +15,13 @@ Use `logica.estate.*` to access estate API helpers.
 */
 
 import { estate } from '@/logica/estate';
+import { account } from '@/logica/account';
 
 export const logica = {
+  account,
   estate,
 } as const;
 
-export { estate };
+export { account, estate };
 
 export default logica;

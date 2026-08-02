@@ -13,7 +13,7 @@ Use this helper to fetch a normalized account profile snapshot that returns only
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
 
 type GetAccountInfoInput = {
   appId: string;
@@ -43,6 +43,21 @@ function asStringOrNull(value: unknown): string | null {
   return trimmed || null;
 }
 
+/*
+::neup.documentation::logica-account-get-account-info-function
+::function getAccountInfo(input)
+
+Fetches normalized account display information.
+
+::public
+
+Calls `/bridge/api.v1/accounts/lookup` with application credentials and returns
+display name and display image values.
+
+::public end
+
+::end
+*/
 export async function getAccountInfo(
   input: GetAccountInfoInput,
 ): Promise<NeupBridgeResponse<GetAccountInfoResponseBody>> {

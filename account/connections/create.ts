@@ -21,8 +21,23 @@ connection creation should live in a different flow with its own creation token.
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
 
+/*
+::neup.documentation::logica-account-create-internal-neup-connection-input-type
+::type CreateInternalNeupConnectionInput
+
+Input for trusted internal application connection creation.
+
+::public
+
+Carries account id, auth-account token, application credentials, and optional
+headers for creating or reusing a bridge connection.
+
+::public end
+
+::end
+*/
 export type CreateInternalNeupConnectionInput = {
   accountId: string;
   authAccountToken: string;
@@ -31,6 +46,20 @@ export type CreateInternalNeupConnectionInput = {
   headers?: HeadersInit;
 };
 
+/*
+::neup.documentation::logica-account-create-neup-connection-response-body-type
+::type CreateNeupConnectionResponseBody
+
+Bridge body returned by connection creation.
+
+::public
+
+Contains success state, optional connection id/status, and bridge error fields.
+
+::public end
+
+::end
+*/
 export type CreateNeupConnectionResponseBody = {
   success?: boolean;
   connectionId?: string;
@@ -68,12 +97,40 @@ async function createInternalConnection(
   });
 }
 
+/*
+::neup.documentation::logica-account-connect-brand-account-function
+::function connectBrandAccount(input)
+
+Creates or reuses a brand account connection.
+
+::public
+
+Delegates to the trusted internal connection creation flow.
+
+::public end
+
+::end
+*/
 export async function connectBrandAccount(
   input: CreateInternalNeupConnectionInput,
 ): Promise<NeupBridgeResponse<CreateNeupConnectionResponseBody>> {
   return createInternalConnection(input);
 }
 
+/*
+::neup.documentation::logica-account-connect-individual-account-function
+::function connectIndividualAccount(input)
+
+Creates or reuses an individual account connection.
+
+::public
+
+Delegates to the trusted internal connection creation flow.
+
+::public end
+
+::end
+*/
 export async function connectIndividualAccount(
   input: CreateInternalNeupConnectionInput,
 ): Promise<NeupBridgeResponse<CreateNeupConnectionResponseBody>> {

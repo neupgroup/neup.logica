@@ -13,8 +13,23 @@ Use this module when an app needs a normalized connected-account identity snapsh
 ::end
 */
 
-import { getNeupBridgeEnvironment, runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { getNeupBridgeEnvironment, runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
 
+/*
+::neup.documentation::logica-account-neup-connection-account-info-type
+::type NeupConnectionAccountInfo
+
+Normalized current application connection identity.
+
+::public
+
+Contains account id, connection id, display name, and display image returned by
+the connection sign-and-get flow.
+
+::public end
+
+::end
+*/
 export type NeupConnectionAccountInfo = {
   accountId: string;
   connectionId: string;
@@ -71,6 +86,21 @@ function parseNeupConnectionAccountInfo(body: SignAndGetResponse): NeupConnectio
   };
 }
 
+/*
+::neup.documentation::logica-account-connect-current-account-function
+::function connectCurrentAccount(authAccountToken)
+
+Creates or fetches the current account's application connection.
+
+::public
+
+Uses the auth-account token and application credentials to call the bridge
+`connection/sign&get` route.
+
+::public end
+
+::end
+*/
 export async function connectCurrentAccount(
   authAccountToken: string,
 ): Promise<NeupBridgeResponse<SignAndGetResponse>> {
@@ -91,6 +121,21 @@ export async function connectCurrentAccount(
   });
 }
 
+/*
+::neup.documentation::logica-account-get-current-application-account-function
+::function getCurrentApplicationAccount(authAccountToken)
+
+Returns normalized current application account connection info.
+
+::public
+
+Runs the current-account connection flow and validates the required identity
+fields before returning them.
+
+::public end
+
+::end
+*/
 export async function getCurrentApplicationAccount(
   authAccountToken: string,
 ): Promise<NeupConnectionAccountInfo> {
@@ -110,21 +155,81 @@ export async function getCurrentApplicationAccount(
   return parseNeupConnectionAccountInfo(body);
 }
 
+/*
+::neup.documentation::logica-account-get-current-account-id-function
+::function getCurrentAccountId(authAccountToken)
+
+Returns the current connected account id.
+
+::public
+
+Reads the `accountId` field from the normalized current application account
+connection.
+
+::public end
+
+::end
+*/
 export async function getCurrentAccountId(authAccountToken: string): Promise<string> {
   const info = await getCurrentApplicationAccount(authAccountToken);
   return info.accountId;
 }
 
+/*
+::neup.documentation::logica-account-get-current-connection-id-function
+::function getCurrentConnectionId(authAccountToken)
+
+Returns the current application connection id.
+
+::public
+
+Reads the `connectionId` field from the normalized current application account
+connection.
+
+::public end
+
+::end
+*/
 export async function getCurrentConnectionId(authAccountToken: string): Promise<string> {
   const info = await getCurrentApplicationAccount(authAccountToken);
   return info.connectionId;
 }
 
+/*
+::neup.documentation::logica-account-get-current-account-display-name-function
+::function getCurrentAccountDisplayName(authAccountToken)
+
+Returns the current account display name.
+
+::public
+
+Reads the `displayName` field from the normalized current application account
+connection.
+
+::public end
+
+::end
+*/
 export async function getCurrentAccountDisplayName(authAccountToken: string): Promise<string> {
   const info = await getCurrentApplicationAccount(authAccountToken);
   return info.displayName;
 }
 
+/*
+::neup.documentation::logica-account-get-current-account-display-image-function
+::function getCurrentAccountDisplayImage(authAccountToken)
+
+Returns the current account display image.
+
+::public
+
+Reads the nullable `displayImage` field from the normalized current application
+account connection.
+
+::public end
+
+::end
+*/
 export async function getCurrentAccountDisplayImage(authAccountToken: string): Promise<string | null> {
   const info = await getCurrentApplicationAccount(authAccountToken);
   return info.displayImage;

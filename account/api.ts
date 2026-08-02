@@ -29,18 +29,91 @@ import {
 } from '@/core/infrastructure/api';
 import baseJson from '@/logica/base.json';
 
+/*
+::neup.documentation::logica-account-neup-bridge-environment-type
+::type NeupBridgeEnvironment
+
+Resolved bridge runtime environment.
+
+::public
+
+Contains the application id, application secret, and account bridge base URL used
+by account bridge requests.
+
+::public end
+
+::end
+*/
 export type NeupBridgeEnvironment = {
   appId: string;
   appSecret: string;
   authUrl: string;
 };
 
+/*
+::neup.documentation::logica-account-neup-bridge-method-type
+::type NeupBridgeMethod
+
+HTTP method type accepted by account bridge requests.
+
+::public
+
+This aliases the shared core API method type.
+
+::public end
+
+::end
+*/
 export type NeupBridgeMethod = ApiMethod;
 
+/*
+::neup.documentation::logica-account-neup-bridge-query-type
+::type NeupBridgeQuery
+
+Query parameter shape accepted by account bridge requests.
+
+::public
+
+This aliases the shared core API query type.
+
+::public end
+
+::end
+*/
 export type NeupBridgeQuery = ApiQuery;
 
+/*
+::neup.documentation::logica-account-neup-bridge-response-type
+::type NeupBridgeResponse
+
+Bridge response wrapper returned by account helpers.
+
+::public
+
+Carries status, ok state, parsed body, and headers from the account bridge
+request.
+
+::public end
+
+::end
+*/
 export type NeupBridgeResponse<TBody = unknown> = ApiResponse<TBody>;
 
+/*
+::neup.documentation::logica-account-neup-bridge-request-options-type
+::type NeupBridgeRequestOptions
+
+Options for one account bridge request.
+
+::public
+
+Provides path, method, query, body, headers, auth account cookie token, and
+bearer token inputs for `runNeupBridgeApi`.
+
+::public end
+
+::end
+*/
 export type NeupBridgeRequestOptions = {
   path: string;
   method?: NeupBridgeMethod;
@@ -71,6 +144,21 @@ function getNeupBridgeBaseUrl(): string {
   return requireBaseJsonUrl('neupid');
 }
 
+/*
+::neup.documentation::logica-account-get-neup-bridge-environment-function
+::function getNeupBridgeEnvironment()
+
+Reads account bridge environment configuration.
+
+::public
+
+Returns required `NEUP_APP_ID`, `NEUP_APP_SECRET`, and the base account bridge
+URL from `logica/base.json`.
+
+::public end
+
+::end
+*/
 export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {
   return {
     appId: requireEnv('NEUP_APP_ID'),
@@ -79,10 +167,40 @@ export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {
   };
 }
 
+/*
+::neup.documentation::logica-account-create-neup-bridge-url-function
+::function createNeupBridgeUrl(path, query)
+
+Creates an absolute account bridge URL.
+
+::public
+
+Uses the configured account bridge base URL and appends the provided path and
+query parameters.
+
+::public end
+
+::end
+*/
 export function createNeupBridgeUrl(path: string, query?: NeupBridgeQuery): string {
   return createApiUrl(getNeupBridgeBaseUrl(), path, query);
 }
 
+/*
+::neup.documentation::logica-account-run-neup-bridge-api-function
+::function runNeupBridgeApi(options)
+
+Executes one account bridge request.
+
+::public
+
+Wraps the shared core API runner with the account bridge base URL and account
+cookie handling.
+
+::public end
+
+::end
+*/
 export async function runNeupBridgeApi<TBody = unknown>(
   options: NeupBridgeRequestOptions,
 ): Promise<NeupBridgeResponse<TBody>> {

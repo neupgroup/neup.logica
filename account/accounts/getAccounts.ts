@@ -13,7 +13,7 @@ Use this helper to fetch the accessible accounts that the authenticated caller m
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
 
 type NeupAccessibleAccount = {
   id: string;
@@ -55,6 +55,21 @@ function filterAccountsByType(
   };
 }
 
+/*
+::neup.documentation::logica-account-get-accounts-function
+::function getAccounts(input)
+
+Lists accounts available to the caller.
+
+::public
+
+Uses auth-account or bearer credentials to fetch accounts that may be used for
+application connection flows.
+
+::public end
+
+::end
+*/
 export async function getAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {

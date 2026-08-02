@@ -12,13 +12,27 @@ Use this module to decode a NeupID JWT, check local expiry, and verify its RS256
 
 ::private
 
-The verifier reads the checked-in `logica/neupid/public.key` file.
+The verifier reads the checked-in `logica/account/public.key` file.
 
 ::private end
 
 ::end
 */
 
+/*
+::neup.documentation::logica-account-neup-id-token-payload-type
+::type NeupIdTokenPayload
+
+Decoded NeupID token payload.
+
+::public
+
+Contains known NeupID claims and allows additional token claims from the issuer.
+
+::public end
+
+::end
+*/
 export type NeupIdTokenPayload = {
   aid?: string;
   sid?: string;
@@ -30,6 +44,21 @@ export type NeupIdTokenPayload = {
   [claim: string]: unknown;
 };
 
+/*
+::neup.documentation::logica-account-verify-neup-id-token-result-type
+::type VerifyNeupIdTokenResult
+
+Result of local NeupID token verification.
+
+::public
+
+Returns a valid payload on success, or a failure reason with optional decoded
+payload when verification fails.
+
+::public end
+
+::end
+*/
 export type VerifyNeupIdTokenResult =
   | { valid: true; payload: NeupIdTokenPayload }
   | { valid: false; reason: string; payload?: Partial<NeupIdTokenPayload> };
@@ -74,7 +103,7 @@ async function readBundledPublicKey(): Promise<string | null> {
         import('node:fs/promises'),
         import('node:path'),
       ]);
-      const publicKeyPath = path.join(process.cwd(), 'logica/neupid/public.key');
+      const publicKeyPath = path.join(process.cwd(), 'logica/account/public.key');
       const publicKey = (await readFile(publicKeyPath, 'utf8')).trim();
       return publicKey || null;
     } catch {
@@ -123,6 +152,21 @@ async function importPublicKey(publicKey: string): Promise<CryptoKey> {
   );
 }
 
+/*
+::neup.documentation::logica-account-decode-neup-id-token-function
+::function decodeNeupIdToken(token)
+
+Decodes a NeupID JWT payload without verifying it.
+
+::public
+
+Returns `null` when the token is missing, malformed, or has an invalid JSON
+payload.
+
+::public end
+
+::end
+*/
 export function decodeNeupIdToken(token: string | null | undefined): NeupIdTokenPayload | null {
   const trimmed = token?.trim();
   if (!trimmed) return null;
@@ -137,6 +181,20 @@ export function decodeNeupIdToken(token: string | null | undefined): NeupIdToken
   }
 }
 
+/*
+::neup.documentation::logica-account-is-neup-id-token-expired-function
+::function isNeupIdTokenExpired(payload, now)
+
+Checks local NeupID token expiry.
+
+::public
+
+Returns true when the payload has an `exp` claim at or before the provided time.
+
+::public end
+
+::end
+*/
 export function isNeupIdTokenExpired(
   payload: Pick<NeupIdTokenPayload, 'exp'> | null | undefined,
   now: Date = new Date(),
@@ -144,6 +202,21 @@ export function isNeupIdTokenExpired(
   return typeof payload?.exp === 'number' && payload.exp * 1000 <= now.getTime();
 }
 
+/*
+::neup.documentation::logica-account-verify-neup-id-token-function
+::function verifyNeupIdToken(token, options)
+
+Verifies a NeupID token locally.
+
+::public
+
+Checks structure, payload, expiry, and RS256 signature using the bundled account
+public key.
+
+::public end
+
+::end
+*/
 export async function verifyNeupIdToken(
   token: string | null | undefined,
   options: VerifyNeupIdTokenOptions = {},

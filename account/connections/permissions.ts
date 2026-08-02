@@ -19,7 +19,7 @@ The helper reads `/bridge/api.v1/accounts/lookup`, which returns the permission 
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
 
 type AccountAccessEntry = {
   accessOf: string | null;
@@ -34,11 +34,41 @@ type AccountLookupResponseBody = {
   reason?: string;
 };
 
+/*
+::neup.documentation::logica-account-has-permission-options-type
+::type HasPermissionOptions
+
+Options for account permission checks.
+
+::public
+
+Provides optional application secret and headers for the permission lookup
+bridge request.
+
+::public end
+
+::end
+*/
 export type HasPermissionOptions = {
   appSecret?: string | null;
   headers?: HeadersInit;
 };
 
+/*
+::neup.documentation::logica-account-has-permission-response-body-type
+::type HasPermissionResponseBody
+
+Bridge-style body returned by `hasAccountPermission`.
+
+::public
+
+Includes success, allowed state, requested permission context, matching access
+entries, and optional error fields.
+
+::public end
+
+::end
+*/
 export type HasPermissionResponseBody = {
   success: boolean;
   allowed: boolean;

@@ -13,7 +13,7 @@ Use this module to fetch accounts that can create connections and accounts whose
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
 
 type NeupConnection = {
   connectionId: string;
@@ -94,6 +94,21 @@ function filterConnectionsByType(
   };
 }
 
+/*
+::neup.documentation::logica-account-get-application-connections-function
+::function getApplicationConnections(input)
+
+Lists application connections.
+
+::public
+
+Calls the application users bridge route with application credentials and
+optional pagination/date filters.
+
+::public end
+
+::end
+*/
 export async function getApplicationConnections(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
@@ -144,6 +159,20 @@ export async function getApplicationConnections(
   };
 }
 
+/*
+::neup.documentation::logica-account-get-connectable-accounts-function
+::function getConnectableAccounts(input)
+
+Lists accounts that can be connected.
+
+::public
+
+Calls the accounts bridge route with auth-account or bearer credentials.
+
+::public end
+
+::end
+*/
 export async function getConnectableAccounts(
   input: GetCreatableConnectionsInput = {},
 ): Promise<NeupBridgeResponse<GetCreatableConnectionsResponseBody>> {
@@ -179,6 +208,20 @@ export async function getConnectableAccounts(
   };
 }
 
+/*
+::neup.documentation::logica-account-get-connected-brand-accounts-function
+::function getConnectedBrandAccounts(input)
+
+Lists connected brand accounts.
+
+::public
+
+Filters application connections to brand account records.
+
+::public end
+
+::end
+*/
 export async function getConnectedBrandAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
@@ -186,6 +229,20 @@ export async function getConnectedBrandAccounts(
   return filterConnectionsByType(response, 'brand');
 }
 
+/*
+::neup.documentation::logica-account-get-connected-individual-accounts-function
+::function getConnectedIndividualAccounts(input)
+
+Lists connected individual accounts.
+
+::public
+
+Filters application connections to individual account records.
+
+::public end
+
+::end
+*/
 export async function getConnectedIndividualAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
@@ -193,6 +250,20 @@ export async function getConnectedIndividualAccounts(
   return filterConnectionsByType(response, 'individual');
 }
 
+/*
+::neup.documentation::logica-account-get-connected-dependent-accounts-function
+::function getConnectedDependentAccounts(input)
+
+Lists connected dependent accounts.
+
+::public
+
+Filters application connections to dependent account records.
+
+::public end
+
+::end
+*/
 export async function getConnectedDependentAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
@@ -200,6 +271,20 @@ export async function getConnectedDependentAccounts(
   return filterConnectionsByType(response, 'dependent');
 }
 
+/*
+::neup.documentation::logica-account-get-connected-subbrand-accounts-function
+::function getConnectedSubBrandAccounts(input)
+
+Lists connected subbrand accounts.
+
+::public
+
+Filters application connections to subbrand account records.
+
+::public end
+
+::end
+*/
 export async function getConnectedSubBrandAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {

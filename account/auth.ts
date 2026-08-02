@@ -18,7 +18,12 @@ On `neupgroup.com`, the helper calls the account auth endpoint from the client w
 */
 
 import { APP_BASE_PATH } from '@/core/appconfig';
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
+import {
+  authenticateNeupIdToken,
+  type AuthenticateNeupIdTokenResult,
+} from '@/logica/account/token/authenticate';
+import { verifyNeupIdToken } from '@/logica/account/token/verify';
 
 type AuthCheckBody = {
   success?: boolean;
@@ -26,6 +31,21 @@ type AuthCheckBody = {
   [key: string]: unknown;
 };
 
+/*
+::neup.documentation::logica-account-check-neup-authentication-input-type
+::type CheckNeupAuthenticationInput
+
+Input for checking the current account authentication session.
+
+::public
+
+Carries optional auth-account token, selected working profile, hostname, and
+headers used by `checkAuthSession`.
+
+::public end
+
+::end
+*/
 export type CheckNeupAuthenticationInput = {
   authAccountToken?: string | null;
   workingProfile?: string | null;
@@ -33,6 +53,21 @@ export type CheckNeupAuthenticationInput = {
   headers?: HeadersInit;
 };
 
+/*
+::neup.documentation::logica-account-check-neup-authentication-result-type
+::type CheckNeupAuthenticationResult
+
+Result of an account authentication session check.
+
+::public
+
+Returns either an authenticated response wrapper or a rejected state with a
+reason and optional bridge response.
+
+::public end
+
+::end
+*/
 export type CheckNeupAuthenticationResult<TBody = AuthCheckBody> =
   | {
       authenticated: true;
@@ -161,4 +196,52 @@ export async function checkAuthSession<TBody = AuthCheckBody>(
   };
 }
 
+/*
+::neup.documentation::logica-account-is-authenticated-function
+::function isAuthenticated(input)
+
+Alias for `checkAuthSession`.
+
+::public
+
+Use this when call-site language reads better as an authentication predicate.
+
+::public end
+
+::end
+*/
 export const isAuthenticated = checkAuthSession;
+
+/*
+::neup.documentation::logica-account-auth-object
+::function auth
+
+Authentication child object for `logica.account.auth`.
+
+::public
+
+Exposes session check, authentication predicate, token authentication, and token
+verification through the account object tree.
+
+::public end
+
+::end
+*/
+export const auth = {
+  check(input: CheckNeupAuthenticationInput = {}) {
+    return checkAuthSession(input);
+  },
+
+  isAuthenticated(input: CheckNeupAuthenticationInput = {}) {
+    return isAuthenticated(input);
+  },
+
+  authenticate<TBody = unknown>(
+    token: string | null | undefined,
+    options: Parameters<typeof authenticateNeupIdToken>[1] = {},
+  ): Promise<AuthenticateNeupIdTokenResult<TBody>> {
+    return authenticateNeupIdToken<TBody>(token, options);
+  },
+
+  verify: verifyNeupIdToken,
+} as const;

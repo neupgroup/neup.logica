@@ -13,7 +13,7 @@ Use this module to fetch connection-access info, normalized profile fields, and 
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
 
 type NeupAccessibleAccount = {
   id: string;
@@ -161,6 +161,21 @@ function filterAccountsByType(
   };
 }
 
+/*
+::neup.documentation::logica-account-get-account-access-function
+::function getAccountAccess(input)
+
+Fetches access rows for one account lookup.
+
+::public
+
+Calls account lookup and returns the normalized access array from the bridge
+payload.
+
+::public end
+
+::end
+*/
 export async function getAccountAccess(
   input: GetLookupInput,
 ): Promise<NeupBridgeResponse<GetAccessResponseBody>> {
@@ -178,6 +193,21 @@ export async function getAccountAccess(
   };
 }
 
+/*
+::neup.documentation::logica-account-get-account-basics-by-id-function
+::function getAccountBasicsById(input)
+
+Fetches basic profile fields for one account id.
+
+::public
+
+Calls account lookup and returns normalized NeupID, account id, display name,
+and display image fields.
+
+::public end
+
+::end
+*/
 export async function getAccountBasicsById(
   input: GetLookupInput,
 ): Promise<NeupBridgeResponse<GetProfileResponseBody>> {
@@ -198,6 +228,20 @@ export async function getAccountBasicsById(
   };
 }
 
+/*
+::neup.documentation::logica-account-get-accessible-brand-accounts-function
+::function getAccessibleBrandAccounts(input)
+
+Lists accessible brand accounts.
+
+::public
+
+Filters accessible accounts to brand account records.
+
+::public end
+
+::end
+*/
 export async function getAccessibleBrandAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
@@ -205,12 +249,40 @@ export async function getAccessibleBrandAccounts(
   return filterAccountsByType(response, 'brand');
 }
 
+/*
+::neup.documentation::logica-account-get-accessible-accounts-function
+::function getAccessibleAccounts(input)
+
+Lists accounts accessible to the caller.
+
+::public
+
+Returns the accessible account collection used by `logica.account.accessible`.
+
+::public end
+
+::end
+*/
 export async function getAccessibleAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
   return getAccounts(input);
 }
 
+/*
+::neup.documentation::logica-account-get-accessible-dependent-accounts-function
+::function getAccessibleDependentAccounts(input)
+
+Lists accessible dependent accounts.
+
+::public
+
+Filters accessible accounts to dependent account records.
+
+::public end
+
+::end
+*/
 export async function getAccessibleDependentAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
@@ -218,6 +290,20 @@ export async function getAccessibleDependentAccounts(
   return filterAccountsByType(response, 'dependent');
 }
 
+/*
+::neup.documentation::logica-account-get-accessible-subbrand-accounts-function
+::function getAccessibleSubBrandAccounts(input)
+
+Lists accessible subbrand accounts.
+
+::public
+
+Filters accessible accounts to subbrand account records.
+
+::public end
+
+::end
+*/
 export async function getAccessibleSubBrandAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {

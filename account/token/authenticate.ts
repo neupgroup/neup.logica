@@ -19,7 +19,7 @@ The remote check defaults to `/bridge/api.v1/auth/validate` through the shared b
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
 import {
   decodeNeupIdToken,
   isNeupIdTokenExpired,
@@ -34,6 +34,21 @@ type AuthenticateNeupIdTokenOptions = {
   verifyLocally?: boolean;
 };
 
+/*
+::neup.documentation::logica-account-authenticate-neup-id-token-result-type
+::type AuthenticateNeupIdTokenResult
+
+Result of NeupID token authentication.
+
+::public
+
+Returns authenticated payload and bridge response on success, or a reason,
+optional payload, and optional response on failure.
+
+::public end
+
+::end
+*/
 export type AuthenticateNeupIdTokenResult<TBody = unknown> =
   | { authenticated: true; payload: NeupIdTokenPayload; response: NeupBridgeResponse<TBody> }
   | {
@@ -53,6 +68,21 @@ function isApiValidationSuccess(body: unknown): boolean {
     || record.ok === true;
 }
 
+/*
+::neup.documentation::logica-account-authenticate-neup-id-token-function
+::function authenticateNeupIdToken(token, options)
+
+Authenticates a NeupID token.
+
+::public
+
+Decodes and optionally verifies the token locally before validating it against
+the account bridge authentication endpoint.
+
+::public end
+
+::end
+*/
 export async function authenticateNeupIdToken<TBody = unknown>(
   token: string | null | undefined,
   options: AuthenticateNeupIdTokenOptions = {},

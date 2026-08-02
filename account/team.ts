@@ -16,14 +16,29 @@ Use this module when you need team members for either an application (`/bridge/a
 import {
   getApplicationTeamMembers,
   getConnectionTeamMembers,
-} from '@/logica/neupid/access';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+} from '@/logica/account/access';
+import type { NeupBridgeResponse } from '@/logica/account/api';
 
 type TeamAuth = {
   authAccountToken?: string | null;
   authTokenHeader?: string | null;
 };
 
+/*
+::neup.documentation::logica-account-get-team-members-input-type
+::type GetTeamMembersInput
+
+Input for the unified team-member helper.
+
+::public
+
+Accepts either a connection id or application id plus optional profile and auth
+headers.
+
+::public end
+
+::end
+*/
 export type GetTeamMembersInput = TeamAuth & {
   app?: string;
   application?: string;

@@ -52,8 +52,28 @@ and account service run under compatible domains.
 ::end
 */
 
-import { createNeupBridgeUrl, getNeupBridgeEnvironment, type NeupBridgeResponse } from '@/logica/neupid/api';
+import {
+  createNeupBridgeUrl,
+  getNeupBridgeEnvironment,
+  runNeupBridgeApi,
+  type NeupBridgeResponse,
+} from '@/logica/account/api';
 
+/*
+::neup.documentation::logica-account-neup-user-info-basic-fields-constant
+::function neupUserInfoBasicFields
+
+Default account user-info fields.
+
+::public
+
+Lists the fields requested when a caller needs the standard basic profile
+payload.
+
+::public end
+
+::end
+*/
 export const neupUserInfoBasicFields = [
   'displayName',
   'displayImage',
@@ -62,6 +82,20 @@ export const neupUserInfoBasicFields = [
   'accountType',
 ] as const;
 
+/*
+::neup.documentation::logica-account-neup-user-info-fields-constant
+::function neupUserInfoFields
+
+Supported account user-info fields.
+
+::public
+
+Lists all fields accepted by account lookup field normalization.
+
+::public end
+
+::end
+*/
 export const neupUserInfoFields = [
   'neupid',
   'displayName',
@@ -77,8 +111,38 @@ export const neupUserInfoFields = [
   'createdAt',
 ] as const;
 
+/*
+::neup.documentation::logica-account-neup-user-info-field-type
+::type NeupUserInfoField
+
+Single supported account user-info field name.
+
+::public
+
+Derived from `neupUserInfoFields` so lookup field selectors stay aligned with
+the supported bridge field names.
+
+::public end
+
+::end
+*/
 export type NeupUserInfoField = (typeof neupUserInfoFields)[number];
 
+/*
+::neup.documentation::logica-account-neup-user-info-payload-type
+::type NeupUserInfoPayload
+
+Normalized account user-info payload.
+
+::public
+
+Contains nullable account identity, profile, connection, demographic, and
+created-at fields returned by account lookup.
+
+::public end
+
+::end
+*/
 export type NeupUserInfoPayload = {
   neupid: string | null;
   displayName: string | null;
@@ -98,6 +162,21 @@ type LookupBaseInput = {
   fields?: readonly NeupUserInfoField[] | null;
 };
 
+/*
+::neup.documentation::logica-account-lookup-input-type
+::type LookupInput
+
+Input modes accepted by `getAccountBasics`.
+
+::public
+
+Allows exactly one lookup target: account id, connection id, or auth-account
+token.
+
+::public end
+
+::end
+*/
 export type LookupInput =
   | (LookupBaseInput & {
       accountId: string;
@@ -116,6 +195,21 @@ export type LookupInput =
       connectionId?: never;
     });
 
+/*
+::neup.documentation::logica-account-lookup-response-body-type
+::type LookupResponseBody
+
+Normalized body returned by `getAccountBasics`.
+
+::public
+
+Carries success/error state plus the requested subset of account user-info
+fields.
+
+::public end
+
+::end
+*/
 export type LookupResponseBody = {
   success: boolean;
   error?: string;
@@ -131,6 +225,17 @@ type AccountLookupResponseBody = {
 
 const userInfoFieldSet = new Set<string>(neupUserInfoFields);
 
+type AccountFields = string | readonly string[] | readonly NeupUserInfoField[] | null;
+
+type ProfileLookupInput = {
+  tempToken?: string;
+  appId?: string;
+  requestedAid?: string;
+  aid?: string;
+  sid?: string;
+  skey?: string;
+};
+
 function asStringOrNull(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
@@ -144,6 +249,20 @@ function asBooleanOrNull(value: unknown): boolean | null {
 function normalizeFields(fields?: readonly NeupUserInfoField[] | null): NeupUserInfoField[] | undefined {
   if (!fields?.length) return undefined;
   return Array.from(new Set(fields)).filter((field) => userInfoFieldSet.has(field));
+}
+
+function normalizeObjectFields(fields?: AccountFields): NeupUserInfoField[] | undefined {
+  if (!fields) return undefined;
+
+  const values = typeof fields === 'string'
+    ? fields.split(',')
+    : Array.from(fields);
+
+  const normalized = values
+    .map((field) => field.trim())
+    .filter((field): field is NeupUserInfoField => userInfoFieldSet.has(field));
+
+  return normalized.length ? Array.from(new Set(normalized)) : undefined;
 }
 
 function normalizeProfile(profile: Record<string, unknown> | undefined): Partial<NeupUserInfoPayload> {
@@ -167,6 +286,21 @@ function normalizeProfile(profile: Record<string, unknown> | undefined): Partial
   return output;
 }
 
+/*
+::neup.documentation::logica-account-get-account-basics-function
+::function getAccountBasics(input)
+
+Fetches normalized account basics.
+
+::public
+
+Looks up account user-info by account id, connection id, or current auth-account
+token.
+
+::public end
+
+::end
+*/
 export async function getAccountBasics(
   input: LookupInput,
 ): Promise<NeupBridgeResponse<LookupResponseBody>> {
@@ -215,3 +349,64 @@ export async function getAccountBasics(
     headers: response.headers,
   };
 }
+
+/*
+::neup.documentation::logica-account-lookup-object
+::function lookup
+
+Lookup child object for `logica.account.lookup`.
+
+::public
+
+Provides object traversal for lookup by account id, connection id, NeupID, and
+current auth-account token.
+
+::public end
+
+::end
+*/
+export const lookup = {
+  byId(accountId: string) {
+    return {
+      get(fields?: AccountFields) {
+        return getAccountBasics({ accountId, fields: normalizeObjectFields(fields) });
+      },
+    } as const;
+  },
+
+  byConnection(connectionId: string) {
+    return {
+      get(fields?: AccountFields) {
+        return getAccountBasics({ connectionId, fields: normalizeObjectFields(fields) });
+      },
+    } as const;
+  },
+
+  byNeupId(neupId: string) {
+    return {
+      get(input: ProfileLookupInput = {}) {
+        return runNeupBridgeApi({
+          path: '/bridge/api.v1/profile',
+          method: 'GET',
+          query: {
+            tempToken: input.tempToken,
+            appId: input.appId,
+            aid: input.requestedAid,
+            neupid: neupId,
+          },
+          headers: {
+            ...(input.aid ? { aid: input.aid } : {}),
+            ...(input.sid ? { sid: input.sid } : {}),
+            ...(input.skey ? { skey: input.skey } : {}),
+          },
+        });
+      },
+    } as const;
+  },
+
+  current: {
+    get(authAccountToken: string, fields?: AccountFields) {
+      return getAccountBasics({ authAccountToken, fields: normalizeObjectFields(fields) });
+    },
+  },
+} as const;

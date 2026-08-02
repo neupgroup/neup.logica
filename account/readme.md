@@ -1,3 +1,28 @@
+<!--
+::neup.documentation::logica-account-folder
+::title Logica Account Folder
+
+Account SDK object and bridge helper folder.
+
+::public
+
+This folder owns the `logica.account` object tree. Consumers enter through
+`logica.account` and traverse child objects such as `auth`, `lookup`,
+`current`, `accessible`, `connection`, and `application`.
+
+::public end
+
+::private
+
+Bridge helper files remain local implementation details for the account object
+surface. New public behavior should be exposed through a child object instead of
+barrel-exporting helper functions from the folder index.
+
+::private end
+
+::end
+-->
+
 # Logica Account
 
 Shared account-facing helpers that talk to the Neup auth bridge using
