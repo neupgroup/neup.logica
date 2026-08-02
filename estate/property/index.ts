@@ -2,12 +2,14 @@
 ::neup.documentation::logica-estate-property-object
 ::title Logica Estate Property Object
 
-Property methods for the nested estate object API.
+Callable property object for the estate SDK.
 
 ::public
 
-Use `logica.estate.property(propertyId).*` for one property and
-`logica.estate.property.*` for collection-level property helpers.
+Use `logica.estate.property.create(data)` and
+`logica.estate.property.search(filters)` for collection operations.
+
+Use `logica.estate.property(propertyId).*` for one property's scoped operations.
 
 ::public end
 
@@ -21,18 +23,90 @@ import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEs
 import { viewEstateProperty, type ViewEstatePropertyResponseBody } from '@/logica/estate/property/view';
 import type { EstateObjectRecord, EstatePropertyCreateData } from '@/logica/estate/types';
 
-type PropertyFields = string[] | string | null;
+type Fields = string[] | string | null;
 
-function serializeFields(fields: PropertyFields | undefined): string | undefined {
+function serializeFields(fields: Fields | undefined): string | undefined {
   if (!fields) return undefined;
   if (Array.isArray(fields)) return fields.map((field) => field.trim()).filter(Boolean).join(',');
   return fields.trim() || undefined;
 }
 
-function getPropertyByCode(
-  propertyCode: string,
-  fields?: PropertyFields,
-): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
+function requestScopedList(kind: 'reaction' | 'save' | 'comment' | 'inquiry', propertyId: string) {
+  return requestEstateApi({
+    path: `/bridge/api.v1/${kind}/list`,
+    query: { propertyId },
+  });
+}
+
+function createCollectionScope(kind: 'reaction' | 'save' | 'comment', propertyId: string) {
+  return {
+    add(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
+      return requestEstateApi({
+        path: `/bridge/api.v1/${kind}/add`,
+        method: 'POST',
+        body: { propertyId, ...data },
+      });
+    },
+
+    remove(id?: string): Promise<EstateApiResponse> {
+      return requestEstateApi({
+        path: `/bridge/api.v1/${kind}/remove`,
+        method: 'POST',
+        body: { propertyId, id },
+      });
+    },
+
+    list(): Promise<EstateApiResponse> {
+      return requestScopedList(kind, propertyId);
+    },
+  } as const;
+}
+
+function createInquiryScope(propertyId: string) {
+  function create(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
+    return requestEstateApi({
+      path: '/bridge/api.v1/inquiry',
+      method: 'POST',
+      query: { property: propertyId },
+      body: { propertyId, ...data },
+    });
+  }
+
+  return {
+    add: create,
+    create,
+    list(): Promise<EstateApiResponse> {
+      return requestScopedList('inquiry', propertyId);
+    },
+  } as const;
+}
+
+function createOfferScope(propertyId: string) {
+  const offer = function offer(offerJson: EstateObjectRecord = {}) {
+    return {
+      create(): Promise<EstateApiResponse> {
+        return requestEstateApi({
+          path: '/bridge/api.v1/offer/create',
+          method: 'POST',
+          body: { propertyId, ...offerJson },
+        });
+      },
+    } as const;
+  };
+
+  offer.get = function get(): Promise<EstateApiResponse> {
+    return requestEstateApi({
+      path: '/bridge/api.v1/offer/list',
+      query: { propertyId },
+    });
+  };
+
+  offer.list = offer.get;
+
+  return offer;
+}
+
+function getPropertyByCode(propertyCode: string, fields?: Fields) {
   return requestEstateApi<ViewEstatePropertyResponseBody>({
     path: '/bridge/api.v1/property/view',
     query: {
@@ -42,80 +116,41 @@ function getPropertyByCode(
   });
 }
 
-function updateProperty(
-  propertyId: string,
-  data: EstateObjectRecord,
-): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
-  return modifyEstateProperty({ propertyId, property: data });
-}
-
-function publishProperty(propertyId: string): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path: '/bridge/api.v1/property/publish',
-    method: 'POST',
-    body: { propertyId },
-  });
-}
-
-function archiveProperty(propertyId: string): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path: '/bridge/api.v1/property/archive',
-    method: 'POST',
-    body: { propertyId },
-  });
-}
-
 export function property(propertyId: string) {
   return {
-    get(fields?: PropertyFields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
+    get(fields?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
       return viewEstateProperty({ propertyId, fields });
     },
 
     update(data: EstateObjectRecord): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
-      return updateProperty(propertyId, data);
+      return modifyEstateProperty({ propertyId, property: data });
     },
 
     publish(): Promise<EstateApiResponse> {
-      return publishProperty(propertyId);
+      return requestEstateApi({
+        path: '/bridge/api.v1/property/publish',
+        method: 'POST',
+        body: { propertyId },
+      });
     },
 
     archive(): Promise<EstateApiResponse> {
-      return archiveProperty(propertyId);
+      return requestEstateApi({
+        path: '/bridge/api.v1/property/archive',
+        method: 'POST',
+        body: { propertyId },
+      });
     },
+
+    reaction: createCollectionScope('reaction', propertyId),
+    save: createCollectionScope('save', propertyId),
+    comment: createCollectionScope('comment', propertyId),
+    inquiry: createInquiryScope(propertyId),
+    offer: createOfferScope(propertyId),
   } as const;
 }
 
-property.getById = function getById(
-  propertyId: string,
-  fields?: PropertyFields,
-): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-  return property(propertyId).get(fields);
-};
-
-property.getByCode = function getByCode(
-  propertyCode: string,
-  fields?: PropertyFields,
-): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-  return getPropertyByCode(propertyCode, fields);
-};
-
-property.code = function code(propertyCode: string) {
-  return {
-    get(fields?: PropertyFields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-      return getPropertyByCode(propertyCode, fields);
-    },
-  } as const;
-};
-
-property.search = function search(
-  filters: SearchEstatePropertiesInput = {},
-): Promise<EstateApiResponse<SearchEstatePropertiesResponseBody>> {
-  return searchEstateProperties(filters);
-};
-
-property.create = function create(
-  data: EstatePropertyCreateData,
-): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
+property.create = function create(data: EstatePropertyCreateData): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
   if (data.property && typeof data.accountId === 'string') {
     return createEstateProperty({
       accountId: data.accountId,
@@ -132,82 +167,39 @@ property.create = function create(
   });
 };
 
-property.update = function update(
-  propertyId: string,
-  data: EstateObjectRecord,
-): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
-  return updateProperty(propertyId, data);
+property.search = function search(
+  filters: SearchEstatePropertiesInput = {},
+): Promise<EstateApiResponse<SearchEstatePropertiesResponseBody>> {
+  return searchEstateProperties(filters);
 };
 
-property.publish = function publish(propertyId: string): Promise<EstateApiResponse> {
-  return publishProperty(propertyId);
+property.getById = function getById(propertyId: string, fields?: Fields) {
+  return property(propertyId).get(fields);
 };
 
-property.archive = function archive(propertyId: string): Promise<EstateApiResponse> {
-  return archiveProperty(propertyId);
+property.getByCode = function getByCode(propertyCode: string, fields?: Fields) {
+  return getPropertyByCode(propertyCode, fields);
 };
 
-property.scoped = function scoped(propertyId: string) {
-  return property(propertyId);
+property.code = function code(propertyCode: string) {
+  return {
+    get(fields?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
+      return getPropertyByCode(propertyCode, fields);
+    },
+  } as const;
 };
 
-property.collection = {
-  search: property.search,
-  create: property.create,
-} as const;
+property.update = function update(propertyId: string, data: EstateObjectRecord) {
+  return property(propertyId).update(data);
+};
 
-export const propertyObject = property;
+property.publish = function publish(propertyId: string) {
+  return property(propertyId).publish();
+};
 
-/*
- * Intentionally no `list()` exists on `property(propertyId)`.
- * Listing belongs to scoped collections such as `agency(id).property.list()`.
- */
-
-/*
- * Backward-compatible collection methods stay attached to the callable
- * function while item actions move to `property(propertyId).*`.
- */
-
-export type EstatePropertyScope = ReturnType<typeof property>;
-
-export type EstatePropertyCodeScope = ReturnType<typeof property.code>;
-
-export type EstatePropertyCollection = typeof property;
-
-export const estateProperty = property;
-
-/*
- * Deprecated aliases. Prefer `property(id).get()` and `property(id).update()`.
- */
-export const propertyApi = {
-  getById(propertyId: string): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-    return property.getById(propertyId);
-  },
-
-  getByCode(propertyCode: string): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-    return property.getByCode(propertyCode);
-  },
-
-  search(filters: SearchEstatePropertiesInput = {}): Promise<EstateApiResponse<SearchEstatePropertiesResponseBody>> {
-    return property.search(filters);
-  },
-
-  create(data: EstatePropertyCreateData): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
-    return property.create(data);
-  },
-
-  update(propertyId: string, data: EstateObjectRecord): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
-    return property.update(propertyId, data);
-  },
-
-  publish(propertyId: string): Promise<EstateApiResponse> {
-    return property.publish(propertyId);
-  },
-
-  archive(propertyId: string): Promise<EstateApiResponse> {
-    return property.archive(propertyId);
-  },
-} as const;
+property.archive = function archive(propertyId: string) {
+  return property(propertyId).archive();
+};
 
 export {
   createEstateProperty,
@@ -224,5 +216,7 @@ export type {
   SearchEstatePropertiesResponseBody,
   ViewEstatePropertyResponseBody,
 };
+
+export type EstatePropertyScope = ReturnType<typeof property>;
 
 export default property;

@@ -21,6 +21,11 @@ import { inquiry } from '@/logica/estate/inquiry';
 import { lead } from '@/logica/estate/lead';
 import { offer } from '@/logica/estate/offer';
 import { property } from '@/logica/estate/property';
+import { reaction } from '@/logica/estate/reaction';
+import { save } from '@/logica/estate/save';
+import { comment } from '@/logica/estate/comment';
+import { user } from '@/logica/estate/user';
+import { visit } from '@/logica/estate/visit';
 import { viewing } from '@/logica/estate/viewing';
 
 export const estate = {
@@ -32,16 +37,26 @@ export const estate = {
   favorite,
   viewing,
   offer,
+  reaction,
+  save,
+  comment,
+  user,
+  visit,
 } as const;
 
 export {
   agency,
   agent,
+  comment,
   favorite,
   inquiry,
   lead,
   offer,
   property,
+  reaction,
+  save,
+  user,
+  visit,
   viewing,
 };
 

@@ -2,11 +2,12 @@
 ::neup.documentation::logica-estate-inquiry-object
 ::title Logica Estate Inquiry Object
 
-Inquiry methods for the nested estate object API.
+Callable inquiry object for the estate SDK.
 
 ::public
 
-Use `logica.estate.inquiry.*` for inquiry API helpers.
+Use `logica.estate.inquiry.create(data)` for new inquiries and
+`logica.estate.inquiry(inquiryId).*` for one inquiry.
 
 ::public end
 
@@ -14,34 +15,69 @@ Use `logica.estate.inquiry.*` for inquiry API helpers.
 */
 
 import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
-import type { EstateInquiryCreateData } from '@/logica/estate/types';
+import type { EstateInquiryCreateData, EstateObjectRecord } from '@/logica/estate/types';
 
-export const inquiry = {
-  create(data: EstateInquiryCreateData): Promise<EstateApiResponse> {
-    const propertyId = data.propertyId ?? data.property ?? data.property_id;
-    return requestEstateApi({
-      path: '/bridge/api.v1/inquiry',
-      method: 'POST',
-      query: { property: propertyId },
-      body: data,
-    });
-  },
+function createInquiry(data: EstateInquiryCreateData = {}): Promise<EstateApiResponse> {
+  const propertyId = data.propertyId ?? data.property ?? data.property_id;
+  return requestEstateApi({
+    path: '/bridge/api.v1/inquiry',
+    method: 'POST',
+    query: { property: propertyId },
+    body: data,
+  });
+}
 
-  listForProperty(propertyId: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/inquiry/list',
-      query: { propertyId },
-    });
-  },
+export function inquiry(inquiryId: string) {
+  return {
+    get(): Promise<EstateApiResponse> {
+      return requestEstateApi({
+        path: '/bridge/api.v1/inquiry/view',
+        query: { inquiryId },
+      });
+    },
 
-  assignToAgent(inquiryId: string, agentId: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/inquiry/assign-agent',
-      method: 'POST',
-      body: { inquiryId, agentId },
-    });
-  },
-} as const;
+    drop(): Promise<EstateApiResponse> {
+      return requestEstateApi({
+        path: '/bridge/api.v1/inquiry/drop',
+        method: 'POST',
+        body: { inquiryId },
+      });
+    },
+
+    update(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
+      return requestEstateApi({
+        path: '/bridge/api.v1/inquiry/update',
+        method: 'POST',
+        body: { inquiryId, ...data },
+      });
+    },
+
+    convert(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
+      return requestEstateApi({
+        path: '/bridge/api.v1/lead/from-inquiry',
+        method: 'POST',
+        body: { inquiryId, ...data },
+      });
+    },
+  } as const;
+}
+
+inquiry.create = createInquiry;
+
+inquiry.listForProperty = function listForProperty(propertyId: string): Promise<EstateApiResponse> {
+  return requestEstateApi({
+    path: '/bridge/api.v1/inquiry/list',
+    query: { propertyId },
+  });
+};
+
+inquiry.assignToAgent = function assignToAgent(inquiryId: string, agentId: string): Promise<EstateApiResponse> {
+  return requestEstateApi({
+    path: '/bridge/api.v1/inquiry/assign-agent',
+    method: 'POST',
+    body: { inquiryId, agentId },
+  });
+};
 
 export type { EstateInquiryCreateData };
 
