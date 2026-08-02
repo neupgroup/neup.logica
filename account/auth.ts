@@ -10,7 +10,7 @@ Use `checkAuthSession()` to check whether an `auth_account` session is currently
 
 ::private
 
-On `neupgroup.com`, the helper calls the account auth endpoint from the client with browser credentials. On other domains, callers must pass the `auth_account` cookie value so it can be forwarded in request headers.
+On `neupgroup.com`, the helper calls the account auth endpoint from the client with browser credentials. On other domains, callers may pass the `auth_account` cookie value, or server-side calls can read it from the current request cookies before forwarding it to the account bridge.
 
 ::private end
 
@@ -132,13 +132,11 @@ async function runClientAuthCheck<TBody = AuthCheckBody>(
 
 async function runForwardedAuthCheck<TBody = AuthCheckBody>(
   input: CheckNeupAuthenticationInput,
+  authAccountToken: string,
 ): Promise<NeupBridgeResponse<TBody>> {
-  const authAccountToken = input.authAccountToken?.trim();
   const headers = new Headers(input.headers);
 
-  if (authAccountToken) {
-    headers.set('x-auth-account', authAccountToken);
-  }
+  headers.set('x-auth-account', authAccountToken);
 
   return runNeupBridgeApi<TBody>({
     path: AUTH_ME_PATH,
@@ -151,6 +149,23 @@ async function runForwardedAuthCheck<TBody = AuthCheckBody>(
   });
 }
 
+async function getServerAuthAccountToken(): Promise<string | null> {
+  if (typeof window !== 'undefined') return null;
+
+  try {
+    const { getCookie } = await import('@/core/helpers/cookie');
+    return (await getCookie('auth_account'))?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveAuthAccountToken(
+  input: CheckNeupAuthenticationInput,
+): Promise<string | null> {
+  return input.authAccountToken?.trim() || await getServerAuthAccountToken();
+}
+
 /*
 ::neup.documentation::check-auth-session
 ::function checkAuthSession(input)
@@ -159,7 +174,7 @@ Checks whether a Neup account session is authenticated.
 
 ::public
 
-When running in a browser on `neupgroup.com`, this function calls `/account/bridge/api.v1/auth/me` with browser credentials. On other domains, pass `authAccountToken` so the account cookie can be forwarded to the bridge endpoint.
+When running in a browser on `neupgroup.com`, this function calls `/account/bridge/api.v1/auth/me` with browser credentials. On other domains, it forwards the explicit `authAccountToken`, or reads `auth_account` from the current server request cookies when called server-side.
 
 ::public end
 
@@ -167,7 +182,7 @@ When running in a browser on `neupgroup.com`, this function calls `/account/brid
 ::datatype string
 ::required false
 
-The raw `auth_account` cookie value to forward when the caller is not running on `neupgroup.com`.
+The raw `auth_account` cookie value to forward when the caller is not running on `neupgroup.com`. When omitted in a server context, the helper reads the current request cookie automatically.
 
 ::end
 */
@@ -176,14 +191,19 @@ export async function checkAuthSession<TBody = AuthCheckBody>(
 ): Promise<CheckNeupAuthenticationResult<TBody>> {
   const hostname = getRuntimeHostname(input.hostname);
   const shouldUseClientEndpoint = typeof window !== 'undefined' && isNeupGroupHostname(hostname);
+  let response: NeupBridgeResponse<TBody>;
 
-  if (!shouldUseClientEndpoint && !input.authAccountToken?.trim()) {
-    return { authenticated: false, reason: 'missing_auth_account_token' };
+  if (shouldUseClientEndpoint) {
+    response = await runClientAuthCheck<TBody>(input);
+  } else {
+    const authAccountToken = await resolveAuthAccountToken(input);
+
+    if (!authAccountToken) {
+      return { authenticated: false, reason: 'missing_auth_account_token' };
+    }
+
+    response = await runForwardedAuthCheck<TBody>(input, authAccountToken);
   }
-
-  const response = shouldUseClientEndpoint
-    ? await runClientAuthCheck<TBody>(input)
-    : await runForwardedAuthCheck<TBody>(input);
 
   if (isAuthenticatedResponse(response as NeupBridgeResponse<AuthCheckBody>)) {
     return { authenticated: true, response };
