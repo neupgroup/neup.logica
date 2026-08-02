@@ -15,7 +15,7 @@ Use this module for `/bridge/api.v1/branding/logo`.
 
 import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/neupid/api';
 
-export async function getBridgeBrandingLogo(): Promise<NeupBridgeResponse> {
+export async function getApplicationLogo(): Promise<NeupBridgeResponse> {
   return runNeupBridgeApi({
     path: '/bridge/api.v1/branding/logo',
     method: 'GET',

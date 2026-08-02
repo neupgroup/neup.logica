@@ -35,7 +35,7 @@ function withApplicationQuery(
   };
 }
 
-export async function getBridgeApplicationAccess(input: {
+export async function getApplicationAccountAccessList(input: {
   app?: string;
   appSecret?: string;
   start?: string | number;
@@ -52,7 +52,7 @@ export async function getBridgeApplicationAccess(input: {
   });
 }
 
-export async function postBridgeApplicationAccess(input: {
+export async function getApplicationAccountAccess(input: {
   accountId: string;
   forAccount?: string;
   app?: string;
@@ -85,7 +85,7 @@ export async function postBridgeApplicationAccess(input: {
   });
 }
 
-export async function getBridgeApplicationRoles(input: {
+export async function getApplicationAccountRoles(input: {
   app?: string;
   appSecret?: string;
   account?: string;
@@ -103,7 +103,7 @@ export async function getBridgeApplicationRoles(input: {
   });
 }
 
-export async function postBridgeApplicationUsers(input: {
+export async function getApplicationAccounts(input: {
   app?: string;
   appSecret?: string;
   offset?: string | number;
@@ -144,7 +144,7 @@ function getSyncCredentials() {
   };
 }
 
-export async function getBridgeAppPermissions(): Promise<NeupBridgeResponse> {
+export async function getRegisteredApplicationPermissions(): Promise<NeupBridgeResponse> {
   return runNeupBridgeApi({
     path: '/bridge/api.v1/app/permissions',
     method: 'GET',
@@ -152,7 +152,7 @@ export async function getBridgeAppPermissions(): Promise<NeupBridgeResponse> {
   });
 }
 
-export async function postBridgeAppPermissions(
+export async function syncApplicationPermissions(
   permissions: unknown,
 ): Promise<NeupBridgeResponse> {
   return runNeupBridgeApi({
@@ -165,7 +165,7 @@ export async function postBridgeAppPermissions(
   });
 }
 
-export async function getBridgeAppRoles(): Promise<NeupBridgeResponse> {
+export async function getRegisteredApplicationRoles(): Promise<NeupBridgeResponse> {
   return runNeupBridgeApi({
     path: '/bridge/api.v1/app/roles',
     method: 'GET',
@@ -173,7 +173,7 @@ export async function getBridgeAppRoles(): Promise<NeupBridgeResponse> {
   });
 }
 
-export async function postBridgeAppRoles(roles: unknown): Promise<NeupBridgeResponse> {
+export async function syncApplicationRoles(roles: unknown): Promise<NeupBridgeResponse> {
   return runNeupBridgeApi({
     path: '/bridge/api.v1/app/roles',
     method: 'POST',

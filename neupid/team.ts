@@ -14,8 +14,8 @@ Use this module when you need team members for either an application (`/bridge/a
 */
 
 import {
-  getBridgeConnectionAccess,
-  getBridgeTeamAccess,
+  getApplicationTeamMembers,
+  getConnectionTeamMembers,
 } from '@/logica/neupid/access';
 import type { NeupBridgeResponse } from '@/logica/neupid/api';
 
@@ -62,7 +62,7 @@ export async function getTeamMembers(
   }
 
   if (connection) {
-    return getBridgeConnectionAccess({
+    return getConnectionTeamMembers({
       connection,
       profile: input.profile,
       authAccountToken: input.authAccountToken,
@@ -71,7 +71,7 @@ export async function getTeamMembers(
   }
 
   if (app) {
-    return getBridgeTeamAccess({
+    return getApplicationTeamMembers({
       app,
       profile: input.profile,
       authAccountToken: input.authAccountToken,

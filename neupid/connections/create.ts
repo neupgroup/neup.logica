@@ -68,13 +68,13 @@ async function createInternalConnection(
   });
 }
 
-export async function createBrandConnection(
+export async function connectBrandAccount(
   input: CreateInternalNeupConnectionInput,
 ): Promise<NeupBridgeResponse<CreateNeupConnectionResponseBody>> {
   return createInternalConnection(input);
 }
 
-export async function createIndividualConnection(
+export async function connectIndividualAccount(
   input: CreateInternalNeupConnectionInput,
 ): Promise<NeupBridgeResponse<CreateNeupConnectionResponseBody>> {
   return createInternalConnection(input);

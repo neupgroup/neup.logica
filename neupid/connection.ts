@@ -71,7 +71,7 @@ function parseNeupConnectionAccountInfo(body: SignAndGetResponse): NeupConnectio
   };
 }
 
-export async function postBridgeConnectionSignAndGet(
+export async function connectCurrentAccount(
   authAccountToken: string,
 ): Promise<NeupBridgeResponse<SignAndGetResponse>> {
   const token = authAccountToken.trim();
@@ -91,10 +91,10 @@ export async function postBridgeConnectionSignAndGet(
   });
 }
 
-export async function getNeupConnectionAccountInfo(
+export async function getCurrentApplicationAccount(
   authAccountToken: string,
 ): Promise<NeupConnectionAccountInfo> {
-  const response = await postBridgeConnectionSignAndGet(authAccountToken);
+  const response = await connectCurrentAccount(authAccountToken);
   const body = response.body;
 
   if (!response.ok) {
@@ -110,22 +110,22 @@ export async function getNeupConnectionAccountInfo(
   return parseNeupConnectionAccountInfo(body);
 }
 
-export async function getNeupAccountId(authAccountToken: string): Promise<string> {
-  const info = await getNeupConnectionAccountInfo(authAccountToken);
+export async function getCurrentAccountId(authAccountToken: string): Promise<string> {
+  const info = await getCurrentApplicationAccount(authAccountToken);
   return info.accountId;
 }
 
-export async function getNeupConnectionId(authAccountToken: string): Promise<string> {
-  const info = await getNeupConnectionAccountInfo(authAccountToken);
+export async function getCurrentConnectionId(authAccountToken: string): Promise<string> {
+  const info = await getCurrentApplicationAccount(authAccountToken);
   return info.connectionId;
 }
 
-export async function getNeupDisplayName(authAccountToken: string): Promise<string> {
-  const info = await getNeupConnectionAccountInfo(authAccountToken);
+export async function getCurrentAccountDisplayName(authAccountToken: string): Promise<string> {
+  const info = await getCurrentApplicationAccount(authAccountToken);
   return info.displayName;
 }
 
-export async function getNeupDisplayImage(authAccountToken: string): Promise<string | null> {
-  const info = await getNeupConnectionAccountInfo(authAccountToken);
+export async function getCurrentAccountDisplayImage(authAccountToken: string): Promise<string | null> {
+  const info = await getCurrentApplicationAccount(authAccountToken);
   return info.displayImage;
 }

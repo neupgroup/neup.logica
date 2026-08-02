@@ -161,7 +161,7 @@ function filterAccountsByType(
   };
 }
 
-export async function getAccess(
+export async function getAccountAccess(
   input: GetLookupInput,
 ): Promise<NeupBridgeResponse<GetAccessResponseBody>> {
   const response = await getLookup(input);
@@ -178,7 +178,7 @@ export async function getAccess(
   };
 }
 
-export async function getProfile(
+export async function getAccountBasicsById(
   input: GetLookupInput,
 ): Promise<NeupBridgeResponse<GetProfileResponseBody>> {
   const response = await getLookup(input);
@@ -198,27 +198,27 @@ export async function getProfile(
   };
 }
 
-export async function getManagableBrands(
+export async function getAccessibleBrandAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'brand');
 }
 
-export async function getManagableAccounts(
+export async function getAccessibleAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
   return getAccounts(input);
 }
 
-export async function getManagableDependents(
+export async function getAccessibleDependentAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'dependent');
 }
 
-export async function getManagableSubBrands(
+export async function getAccessibleSubBrandAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);

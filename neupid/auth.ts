@@ -4,7 +4,7 @@
 
 ::public
 
-Use `checkNeupAuthentication()` to check whether an `auth_account` session is currently authenticated.
+Use `checkAuthSession()` to check whether an `auth_account` session is currently authenticated.
 
 ::public end
 
@@ -117,8 +117,8 @@ async function runForwardedAuthCheck<TBody = AuthCheckBody>(
 }
 
 /*
-::neup.documentation::check-neup-authentication
-::function checkNeupAuthentication(input)
+::neup.documentation::check-auth-session
+::function checkAuthSession(input)
 
 Checks whether a Neup account session is authenticated.
 
@@ -136,7 +136,7 @@ The raw `auth_account` cookie value to forward when the caller is not running on
 
 ::end
 */
-export async function checkNeupAuthentication<TBody = AuthCheckBody>(
+export async function checkAuthSession<TBody = AuthCheckBody>(
   input: CheckNeupAuthenticationInput = {},
 ): Promise<CheckNeupAuthenticationResult<TBody>> {
   const hostname = getRuntimeHostname(input.hostname);
@@ -161,4 +161,4 @@ export async function checkNeupAuthentication<TBody = AuthCheckBody>(
   };
 }
 
-export const isNeupAuthenticated = checkNeupAuthentication;
+export const isAuthenticated = checkAuthSession;

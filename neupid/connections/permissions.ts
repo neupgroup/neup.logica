@@ -6,7 +6,7 @@ Portable wrapper for checking whether one application user has a permission for 
 
 ::public
 
-Use `hasPermission(permissionName, forApplicationID, forAccount, byAccount, options)` to fetch `byAccount` from the bridge and verify whether that user has `permissionName` for `forAccount`.
+Use `hasAccountPermission(permissionName, forApplicationID, forAccount, byAccount, options)` to fetch `byAccount` from the bridge and verify whether that user has `permissionName` for `forAccount`.
 
 ::public end
 
@@ -68,7 +68,7 @@ function accessEntryAppliesToAccount(entry: AccountAccessEntry, forAccount: stri
 
 /**
  * ::neup.documentation::logica-account-connections-has-permission
- * ::function hasPermission(permissionName, forApplicationID, forAccount, byAccount, options)
+ * ::function hasAccountPermission(permissionName, forApplicationID, forAccount, byAccount, options)
  *
  * Checks whether `byAccount` has `permissionName` for `forAccount` in one application.
  *
@@ -86,7 +86,7 @@ function accessEntryAppliesToAccount(entry: AccountAccessEntry, forAccount: stri
  *
  * ::end
  */
-export async function hasPermission(
+export async function hasAccountPermission(
   permissionName: string,
   forApplicationID: string,
   forAccount: string,

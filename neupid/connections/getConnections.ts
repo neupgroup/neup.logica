@@ -94,7 +94,7 @@ function filterConnectionsByType(
   };
 }
 
-export async function getConnections(
+export async function getApplicationConnections(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
   const url = new URL(createNeupBridgeUrl('/bridge/api.v1/application/users'));
@@ -144,7 +144,7 @@ export async function getConnections(
   };
 }
 
-export async function getCreatableConnections(
+export async function getConnectableAccounts(
   input: GetCreatableConnectionsInput = {},
 ): Promise<NeupBridgeResponse<GetCreatableConnectionsResponseBody>> {
   const url = new URL(createNeupBridgeUrl('/bridge/api.v1/accounts'));
@@ -179,36 +179,30 @@ export async function getCreatableConnections(
   };
 }
 
-export async function getCreatedConnections(
+export async function getConnectedBrandAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  return getConnections(input);
-}
-
-export async function getBrandConnections(
-  input: GetNeupConnectionsInput,
-): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const response = await getConnections(input);
+  const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'brand');
 }
 
-export async function getIndividualConnections(
+export async function getConnectedIndividualAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const response = await getConnections(input);
+  const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'individual');
 }
 
-export async function getDependentConnections(
+export async function getConnectedDependentAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const response = await getConnections(input);
+  const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'dependent');
 }
 
-export async function getSubBrandConnections(
+export async function getConnectedSubBrandAccounts(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const response = await getConnections(input);
+  const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'subbrand');
 }

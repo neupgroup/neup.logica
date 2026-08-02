@@ -6,7 +6,7 @@ Portable wrapper for checking a connected user's account information.
 
 ::public
 
-Use `lookup` to fetch basic user information from `/bridge/api.v1/accounts/lookup`.
+Use `getAccountBasics` to fetch basic user information from `/bridge/api.v1/accounts/lookup`.
 When `fields` is omitted, the bridge returns the default basic fields. When `fields`
 is provided, the response is limited to the requested user-info fields. The helper
 supports app-secret lookup by `accountId` or `connectionId`, and auth-cookie lookup
@@ -167,7 +167,7 @@ function normalizeProfile(profile: Record<string, unknown> | undefined): Partial
   return output;
 }
 
-export async function lookup(
+export async function getAccountBasics(
   input: LookupInput,
 ): Promise<NeupBridgeResponse<LookupResponseBody>> {
   const fields = normalizeFields(input.fields);

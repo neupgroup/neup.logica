@@ -15,7 +15,7 @@ Use this module for `/bridge/api.v1/profile`, `/bridge/api.v1/profile/public`, `
 
 import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/neupid/api';
 
-export async function getBridgeProfile(input: {
+export async function getAccountProfile(input: {
   tempToken?: string;
   appId?: string;
   requestedAid?: string;
@@ -41,7 +41,7 @@ export async function getBridgeProfile(input: {
   });
 }
 
-export async function getPublicBridgeProfile(input: {
+export async function getPublicAccountProfile(input: {
   accountId: string;
   authAccountToken: string;
 }): Promise<NeupBridgeResponse> {
@@ -53,7 +53,7 @@ export async function getPublicBridgeProfile(input: {
   });
 }
 
-export async function getSignedBridgeProfile(
+export async function getCurrentAccount(
   authAccountToken: string,
 ): Promise<NeupBridgeResponse> {
   return runNeupBridgeApi({
@@ -63,7 +63,7 @@ export async function getSignedBridgeProfile(
   });
 }
 
-export async function getBridgePermissions(
+export async function getCurrentAccountPermissions(
   authAccountToken: string,
 ): Promise<NeupBridgeResponse> {
   return runNeupBridgeApi({

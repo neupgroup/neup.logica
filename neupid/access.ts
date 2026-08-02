@@ -25,7 +25,7 @@ function buildAccessHeaders(input: AccessAuth): HeadersInit | undefined {
   return { auth: input.authTokenHeader.trim() };
 }
 
-export async function getBridgeConnectionAccess(input: AccessAuth & {
+export async function getConnectionTeamMembers(input: AccessAuth & {
   connection: string;
   profile?: string;
 }): Promise<NeupBridgeResponse> {
@@ -41,7 +41,7 @@ export async function getBridgeConnectionAccess(input: AccessAuth & {
   });
 }
 
-export async function postBridgeConnectionAccess(input: AccessAuth & {
+export async function getConnectionTeamMemberAccess(input: AccessAuth & {
   connection: string;
   profile?: string;
 }): Promise<NeupBridgeResponse> {
@@ -57,7 +57,7 @@ export async function postBridgeConnectionAccess(input: AccessAuth & {
   });
 }
 
-export async function getBridgeTeamAccess(input: AccessAuth & {
+export async function getApplicationTeamMembers(input: AccessAuth & {
   app: string;
   profile?: string;
 }): Promise<NeupBridgeResponse> {
@@ -73,7 +73,7 @@ export async function getBridgeTeamAccess(input: AccessAuth & {
   });
 }
 
-export async function postBridgeTeamAccess(input: AccessAuth & {
+export async function getApplicationTeamMemberAccess(input: AccessAuth & {
   app: string;
   profile?: string;
 }): Promise<NeupBridgeResponse> {
