@@ -1,12 +1,12 @@
 /*
-::neup.documentation::logica-estate-properties-search
+::neup.documentation::logica-estate-property-search
 ::title Logica Estate Property Search Helper
 
 Portable SDK helper for `GET /bridge/api.v1/property/search`.
 
 ::public
 
-Searches active estate properties using bridge query parameters.
+Searches active estate properties using API query parameters.
 
 ::public end
 
@@ -15,7 +15,7 @@ Searches active estate properties using bridge query parameters.
 
 import baseJson from '@/logica/estate/base.json';
 import { makeUrl } from '@/core/helpers/link/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import type { EstateApiResponse } from '@/logica/estate/api';
 
 export type SearchEstatePropertiesInput = {
   q?: string | null;
@@ -59,7 +59,7 @@ function serializeList(value: string[] | string | null | undefined): string | un
 
 export async function searchEstateProperties(
   input: SearchEstatePropertiesInput = {},
-): Promise<NeupBridgeResponse<SearchEstatePropertiesResponseBody>> {
+): Promise<EstateApiResponse<SearchEstatePropertiesResponseBody>> {
   const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/search');
   const query = {
     q: input.q,

@@ -1,5 +1,5 @@
 /*
-::neup.documentation::logica-estate-properties-create
+::neup.documentation::logica-estate-property-create
 ::title Logica Estate Property Create Helper
 
 Portable SDK helper for `POST /bridge/api.v1/property/create`.
@@ -15,7 +15,7 @@ Submits a property creation payload as an awaiting-review draft.
 
 import baseJson from '@/logica/estate/base.json';
 import { makeUrl } from '@/core/helpers/link/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import type { EstateApiResponse } from '@/logica/estate/api';
 
 export type CreateEstatePropertyInput = {
   accountId: string;
@@ -34,7 +34,7 @@ export type CreateEstatePropertyResponseBody = {
 
 export async function createEstateProperty(
   input: CreateEstatePropertyInput,
-): Promise<NeupBridgeResponse<CreateEstatePropertyResponseBody>> {
+): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
   const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/create');
   const response = await fetch(url.toString(), {
     method: 'POST',

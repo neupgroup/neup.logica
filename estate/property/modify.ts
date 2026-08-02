@@ -1,5 +1,5 @@
 /*
-::neup.documentation::logica-estate-properties-modify
+::neup.documentation::logica-estate-property-modify
 ::title Logica Estate Property Modify Helper
 
 Portable SDK helper for `POST /bridge/api.v1/property/edit`.
@@ -16,7 +16,7 @@ pending create draft or `propertyId` for an approved property.
 
 import baseJson from '@/logica/estate/base.json';
 import { makeUrl } from '@/core/helpers/link/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import type { EstateApiResponse } from '@/logica/estate/api';
 
 export type ModifyEstatePropertyInput = {
   requestId?: string | null;
@@ -37,7 +37,7 @@ export type ModifyEstatePropertyResponseBody = {
 
 export async function modifyEstateProperty(
   input: ModifyEstatePropertyInput,
-): Promise<NeupBridgeResponse<ModifyEstatePropertyResponseBody>> {
+): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
   const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/edit');
   const response = await fetch(url.toString(), {
     method: 'POST',

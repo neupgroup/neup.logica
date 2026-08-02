@@ -1,12 +1,12 @@
 /*
-::neup.documentation::logica-estate-properties-list
+::neup.documentation::logica-estate-property-list
 ::title Logica Estate Property List Helper
 
 Portable SDK helper for `GET /bridge/api.v1/property/list`.
 
 ::public
 
-Fetches active bridge property payloads for exactly one agency or account.
+Fetches active API property payloads for exactly one agency or account.
 
 Pagination defaults to `limit: 10` and `offset: 0` when omitted. The endpoint
 returns at most 15 properties per request, so larger `limit` values are capped
@@ -52,7 +52,7 @@ field paths and is removed from the returned property object.
 
 import baseJson from '@/logica/estate/base.json';
 import { makeUrl } from '@/core/helpers/link/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import type { EstateApiResponse } from '@/logica/estate/api';
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_OFFSET = 0;
@@ -98,7 +98,7 @@ function getErrorMessage(error: unknown): string {
 
 export async function listEstateProperties(
   input: EstatePropertyListInput,
-): Promise<NeupBridgeResponse<EstatePropertyListResponseBody>> {
+): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
   const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/list');
   const limit = normalizeLimit(input.limit);
   const offset = normalizeOffset(input.offset);

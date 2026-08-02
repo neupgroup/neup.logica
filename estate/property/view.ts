@@ -1,12 +1,12 @@
 /*
-::neup.documentation::logica-estate-properties-view
+::neup.documentation::logica-estate-property-view
 ::title Logica Estate Property View Helper
 
 Portable SDK helper for `GET /bridge/api.v1/property/view`.
 
 ::public
 
-Fetches one approved property's public bridge payload by `propertyId`.
+Fetches one approved property's public API payload by `propertyId`.
 
 Pass `fields` to limit the returned `property` object to selected values. The
 value may be a comma-separated string or a string array.
@@ -44,7 +44,7 @@ field paths and is removed from the returned property object.
 
 import baseJson from '@/logica/estate/base.json';
 import { makeUrl } from '@/core/helpers/link/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import type { EstateApiResponse } from '@/logica/estate/api';
 
 export type ViewEstatePropertyInput = {
   propertyId: string;
@@ -69,7 +69,7 @@ function getErrorMessage(error: unknown): string {
 
 export async function viewEstateProperty(
   input: ViewEstatePropertyInput,
-): Promise<NeupBridgeResponse<ViewEstatePropertyResponseBody>> {
+): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
   const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/view');
   url.searchParams.set('propertyId', input.propertyId);
   const fields = serializeFields(input.fields);
