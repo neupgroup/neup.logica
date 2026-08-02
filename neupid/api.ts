@@ -27,7 +27,7 @@ import {
   type ApiQuery,
   type ApiResponse,
 } from '@/core/infrastructure/api';
-import baseJson from '@/logica/neupid/base.json';
+import baseJson from '@/logica/base.json';
 
 export type NeupBridgeEnvironment = {
   appId: string;
@@ -59,16 +59,16 @@ function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET'): string {
   return value;
 }
 
-function requireBaseJsonUrl(name: 'baseEndpoint' | 'baseEndpointBridge'): string {
+function requireBaseJsonUrl(name: 'neupid'): string {
   const value = baseJson[name]?.trim();
   if (!value) {
-    throw new Error(`logica/neupid/base.json ${name} is required.`);
+    throw new Error(`logica/base.json ${name} is required.`);
   }
   return value;
 }
 
 function getNeupBridgeBaseUrl(): string {
-  return requireBaseJsonUrl('baseEndpointBridge');
+  return requireBaseJsonUrl('neupid');
 }
 
 export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {

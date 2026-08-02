@@ -13,9 +13,7 @@ Use this helper to fetch the accessible accounts that the authenticated caller m
 ::end
 */
 
-import baseJson from '@/logica/neupid/base.json';
-import { makeUrl } from '@/core/helpers/link/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/neupid/api';
 
 type NeupAccessibleAccount = {
   id: string;
@@ -60,7 +58,7 @@ function filterAccountsByType(
 export async function getAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/accounts');
+  const url = new URL(createNeupBridgeUrl('/bridge/api.v1/accounts'));
 
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     url.searchParams.set('appSecret', input.appSecret.trim());

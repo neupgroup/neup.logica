@@ -52,9 +52,7 @@ and account service run under compatible domains.
 ::end
 */
 
-import baseJson from '@/logica/neupid/base.json';
-import { makeUrl } from '@/core/helpers/link/url';
-import { getNeupBridgeEnvironment, type NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, getNeupBridgeEnvironment, type NeupBridgeResponse } from '@/logica/neupid/api';
 
 export const neupUserInfoBasicFields = [
   'displayName',
@@ -174,7 +172,7 @@ export async function lookup(
 ): Promise<NeupBridgeResponse<LookupResponseBody>> {
   const fields = normalizeFields(input.fields);
   const env = getNeupBridgeEnvironment();
-  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/accounts/lookup');
+  const url = createNeupBridgeUrl('/bridge/api.v1/accounts/lookup');
   const headers: Record<string, string> = {
     'content-type': 'application/json',
   };
@@ -188,7 +186,7 @@ export async function lookup(
     }
   }
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(url, {
     method: 'POST',
     headers,
     body: JSON.stringify({

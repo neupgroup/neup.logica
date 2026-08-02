@@ -13,9 +13,7 @@ Use this helper to fetch a normalized account profile snapshot that returns only
 ::end
 */
 
-import baseJson from '@/logica/neupid/base.json';
-import { makeUrl } from '@/core/helpers/link/url';
-import type { NeupBridgeResponse } from '@/logica/neupid/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/neupid/api';
 
 type GetAccountInfoInput = {
   appId: string;
@@ -48,9 +46,9 @@ function asStringOrNull(value: unknown): string | null {
 export async function getAccountInfo(
   input: GetAccountInfoInput,
 ): Promise<NeupBridgeResponse<GetAccountInfoResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpointBridge, '/api.v1/accounts/lookup');
+  const url = createNeupBridgeUrl('/bridge/api.v1/accounts/lookup');
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',

@@ -14,6 +14,7 @@ Import from this file when you want portable profile, access, application, brand
 */
 
 export * from './profile';
+export * from './auth';
 export * from './access';
 export * from './application';
 export * from './branding';
