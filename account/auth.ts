@@ -17,8 +17,9 @@ On `neupgroup.com`, the helper calls the account auth endpoint from the client w
 ::end
 */
 
-import { APP_BASE_PATH } from '@/core/appconfig';
+import { makeAppPath } from '@/core/appconfig';
 import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
+import baseJson from '@/logica/base.json';
 import {
   authenticateNeupIdToken,
   type AuthenticateNeupIdTokenResult,
@@ -92,7 +93,7 @@ function isNeupGroupHostname(hostname: string): boolean {
 }
 
 function createAuthMePath(workingProfile?: string | null): string {
-  const path = `${APP_BASE_PATH}${AUTH_ME_PATH}`;
+  const path = makeAppPath(AUTH_ME_PATH, baseJson.neupid);
   const query = new URLSearchParams();
   const normalizedWorkingProfile = workingProfile?.trim();
 
@@ -174,7 +175,7 @@ Checks whether a Neup account session is authenticated.
 
 ::public
 
-When running in a browser on `neupgroup.com`, this function calls `/account/bridge/api.v1/auth/me` with browser credentials. On other domains, it forwards the explicit `authAccountToken`, or reads `auth_account` from the current server request cookies when called server-side.
+When running in a browser on `neupgroup.com`, this function calls the app-scoped auth endpoint built from `APP_BASEPATH` and `/bridge/api.v1/auth/me` with browser credentials. On other domains, it forwards the explicit `authAccountToken`, or reads `auth_account` from the current server request cookies when called server-side.
 
 ::public end
 
