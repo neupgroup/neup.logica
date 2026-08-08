@@ -17,7 +17,7 @@ On `neupgroup.com`, the helper calls the account auth endpoint from the client w
 ::end
 */
 
-import { makeAppPath } from '@/core/appconfig';
+import { url } from '@/core/helpers/link/url';
 import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
 import baseJson from '@/logica/base.json';
 import {
@@ -93,7 +93,7 @@ function isNeupGroupHostname(hostname: string): boolean {
 }
 
 function createAuthMePath(workingProfile?: string | null): string {
-  const path = makeAppPath(AUTH_ME_PATH, baseJson.neupid);
+  const path = url().setBasePath(baseJson.neupid).addCustomPath(AUTH_ME_PATH).get();
   const query = new URLSearchParams();
   const normalizedWorkingProfile = workingProfile?.trim();
 

@@ -12,24 +12,13 @@ Set `NEUP_APP_ID`, `NEUP_APP_SECRET`, and optionally `NEUP_BRIDGE_URL`.
 import 'dotenv/config';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { url } from '@/core/helpers/link/url';
+import baseJson from '@/logica/base.json';
 
 const ROOT = process.cwd();
 const BRIDGE_URL = (process.env.NEUP_BRIDGE_URL || 'http://127.0.0.1:2226').replace(/\/+$/, '');
 const NEUP_APP_ID = process.env.NEUP_APP_ID || process.env.neup_app_id;
 const NEUP_APP_SECRET = process.env.NEUP_APP_SECRET || process.env.neup_app_secret;
-
-function makeUrl(basePath, endpoint) {
-  const baseUrl = new URL(basePath);
-  const endpointUrl = new URL(endpoint, baseUrl.origin);
-  const baseUrlPath = baseUrl.pathname.replace(/\/+$/, '');
-  const endpointPath = endpointUrl.pathname.replace(/^\/+/, '');
-
-  baseUrl.pathname = [baseUrlPath, endpointPath].filter(Boolean).join('/');
-  baseUrl.search = endpointUrl.searchParams.toString();
-  baseUrl.hash = endpointUrl.hash;
-
-  return baseUrl;
-}
 
 function requireCredentials() {
   if (!NEUP_APP_ID || !NEUP_APP_SECRET) {
@@ -42,7 +31,7 @@ async function readJson(relativePath) {
 }
 
 async function postJson(pathname, body) {
-  const response = await fetch(makeUrl(BRIDGE_URL, pathname), {
+  const response = await fetch(url().setBasePath(baseJson.neupid).addCustomPath(pathname).get(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

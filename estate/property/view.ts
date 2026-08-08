@@ -43,7 +43,7 @@ field paths and is removed from the returned property object.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import { makeUrl } from '@/core/helpers/link/url';
+import { url } from '@/core/helpers/link/url';
 import type { EstateApiResponse } from '@/logica/estate/api';
 
 export type ViewEstatePropertyInput = {
@@ -70,13 +70,15 @@ function getErrorMessage(error: unknown): string {
 export async function viewEstateProperty(
   input: ViewEstatePropertyInput,
 ): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/view');
-  url.searchParams.set('propertyId', input.propertyId);
+  const requestUrl = url()
+    .setBasePath(baseJson.baseEndpoint)
+    .addCustomPath('/bridge/api.v1/property/view')
+    .addParams('propertyId', input.propertyId);
   const fields = serializeFields(input.fields);
-  if (fields) url.searchParams.set('fields', fields);
+  requestUrl.addParams('fields', fields);
 
   try {
-    const response = await fetch(url.toString(), {
+    const response = await fetch(requestUrl.get(), {
       method: 'GET',
       cache: 'no-store',
     });

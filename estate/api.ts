@@ -15,6 +15,7 @@ specialized helper.
 */
 
 import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@/core/infrastructure/api';
+import { url } from '@/core/helpers/link/url';
 import baseJson from '@/logica/estate/base.json';
 
 export type EstateApiMethod = ApiMethod;
@@ -37,8 +38,8 @@ export async function requestEstateApi<TBody = unknown>(
   options: EstateApiRequestOptions,
 ): Promise<EstateApiResponse<TBody>> {
   return runApi<TBody>({
-    baseUrl: baseJson.baseEndpoint,
-    path: options.path,
+    baseUrl: new URL(baseJson.baseEndpoint).origin,
+    path: url().setBasePath(baseJson.baseEndpoint).addCustomPath(options.path).get(),
     method: options.method,
     query: options.query,
     body: options.body,

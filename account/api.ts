@@ -27,6 +27,7 @@ import {
   type ApiQuery,
   type ApiResponse,
 } from '@/core/infrastructure/api';
+import { url } from '@/core/helpers/link/url';
 import baseJson from '@/logica/base.json';
 
 /*
@@ -144,6 +145,10 @@ function getNeupBridgeBaseUrl(): string {
   return requireBaseJsonUrl('neupid');
 }
 
+function getNeupBridgeOrigin(): string {
+  return new URL(getNeupBridgeBaseUrl()).origin;
+}
+
 /*
 ::neup.documentation::logica-account-get-neup-bridge-environment-function
 ::function getNeupBridgeEnvironment()
@@ -183,7 +188,11 @@ query parameters.
 ::end
 */
 export function createNeupBridgeUrl(path: string, query?: NeupBridgeQuery): string {
-  return createApiUrl(getNeupBridgeBaseUrl(), path, query);
+  return createApiUrl(
+    getNeupBridgeOrigin(),
+    url().setBasePath(getNeupBridgeBaseUrl()).addCustomPath(path).get(),
+    query,
+  );
 }
 
 /*
@@ -205,8 +214,8 @@ export async function runNeupBridgeApi<TBody = unknown>(
   options: NeupBridgeRequestOptions,
 ): Promise<NeupBridgeResponse<TBody>> {
   return runApi<TBody>({
-    baseUrl: getNeupBridgeBaseUrl(),
-    path: options.path,
+    baseUrl: getNeupBridgeOrigin(),
+    path: url().setBasePath(getNeupBridgeBaseUrl()).addCustomPath(options.path).get(),
     method: options.method,
     query: options.query,
     body: options.body,

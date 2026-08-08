@@ -51,7 +51,7 @@ field paths and is removed from the returned property object.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import { makeUrl } from '@/core/helpers/link/url';
+import { url } from '@/core/helpers/link/url';
 import type { EstateApiResponse } from '@/logica/estate/api';
 
 const DEFAULT_LIMIT = 10;
@@ -99,7 +99,7 @@ function getErrorMessage(error: unknown): string {
 export async function listEstateProperties(
   input: EstatePropertyListInput,
 ): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/list');
+  const requestUrl = url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/property/list');
   const limit = normalizeLimit(input.limit);
   const offset = normalizeOffset(input.offset);
   const query = {
@@ -111,12 +111,11 @@ export async function listEstateProperties(
   };
 
   for (const [key, value] of Object.entries(query)) {
-    if (value === null || value === undefined || value === '') continue;
-    url.searchParams.set(key, String(value));
+    requestUrl.addParams(key, value);
   }
 
   try {
-    const response = await fetch(url.toString(), {
+    const response = await fetch(requestUrl.get(), {
       method: 'GET',
       cache: 'no-store',
     });

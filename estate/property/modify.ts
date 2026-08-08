@@ -15,7 +15,7 @@ pending create draft or `propertyId` for an approved property.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import { makeUrl } from '@/core/helpers/link/url';
+import { url } from '@/core/helpers/link/url';
 import type { EstateApiResponse } from '@/logica/estate/api';
 
 export type ModifyEstatePropertyInput = {
@@ -38,8 +38,7 @@ export type ModifyEstatePropertyResponseBody = {
 export async function modifyEstateProperty(
   input: ModifyEstatePropertyInput,
 ): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/edit');
-  const response = await fetch(url.toString(), {
+  const response = await fetch(url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/property/edit').get(), {
     method: 'POST',
     headers: {
       'content-type': 'application/json',

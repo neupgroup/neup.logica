@@ -14,7 +14,7 @@ Submits a property creation payload as an awaiting-review draft.
 */
 
 import baseJson from '@/logica/estate/base.json';
-import { makeUrl } from '@/core/helpers/link/url';
+import { url } from '@/core/helpers/link/url';
 import type { EstateApiResponse } from '@/logica/estate/api';
 
 export type CreateEstatePropertyInput = {
@@ -35,8 +35,7 @@ export type CreateEstatePropertyResponseBody = {
 export async function createEstateProperty(
   input: CreateEstatePropertyInput,
 ): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
-  const url = makeUrl(baseJson.baseEndpoint, '/bridge/api.v1/property/create');
-  const response = await fetch(url.toString(), {
+  const response = await fetch(url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/property/create').get(), {
     method: 'POST',
     headers: {
       'content-type': 'application/json',

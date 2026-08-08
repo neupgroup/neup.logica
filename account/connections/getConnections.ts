@@ -14,6 +14,7 @@ Use this module to fetch accounts that can create connections and accounts whose
 */
 
 import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
+import { url } from '@/core/helpers/link/url';
 
 type NeupConnection = {
   connectionId: string;
@@ -112,34 +113,19 @@ optional pagination/date filters.
 export async function getApplicationConnections(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const url = new URL(createNeupBridgeUrl('/bridge/api.v1/application/users'));
-
-  if (input.offset !== null && input.offset !== undefined && input.offset !== '') {
-    url.searchParams.set('offset', String(input.offset));
-  }
-  if (input.limit !== null && input.limit !== undefined && input.limit !== '') {
-    url.searchParams.set('limit', String(input.limit));
-  }
-  if (input.start !== null && input.start !== undefined && input.start !== '') {
-    url.searchParams.set('start', String(input.start));
-  }
-  if (input.end !== null && input.end !== undefined && input.end !== '') {
-    url.searchParams.set('end', String(input.end));
-  }
-  if (input.startFrom?.trim()) {
-    url.searchParams.set('startFrom', input.startFrom.trim());
-  }
-  if (input.fromDate?.trim()) {
-    url.searchParams.set('fromDate', input.fromDate.trim());
-  }
-  if (input.toDate?.trim()) {
-    url.searchParams.set('toDate', input.toDate.trim());
-  }
+  const requestUrl = url(createNeupBridgeUrl('/bridge/api.v1/application/users'))
+    .addParams('offset', input.offset)
+    .addParams('limit', input.limit)
+    .addParams('start', input.start)
+    .addParams('end', input.end)
+    .addParams('startFrom', input.startFrom?.trim() || null)
+    .addParams('fromDate', input.fromDate?.trim() || null)
+    .addParams('toDate', input.toDate?.trim() || null);
 
   const headers = new Headers(input.headers);
   headers.set('content-type', 'application/json');
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(requestUrl.get(), {
     method: 'POST',
     headers,
     body: JSON.stringify({
@@ -176,11 +162,8 @@ Calls the accounts bridge route with auth-account or bearer credentials.
 export async function getConnectableAccounts(
   input: GetCreatableConnectionsInput = {},
 ): Promise<NeupBridgeResponse<GetCreatableConnectionsResponseBody>> {
-  const url = new URL(createNeupBridgeUrl('/bridge/api.v1/accounts'));
-
-  if (input.bearerToken?.trim() && input.appSecret?.trim()) {
-    url.searchParams.set('appSecret', input.appSecret.trim());
-  }
+  const requestUrl = url(createNeupBridgeUrl('/bridge/api.v1/accounts'))
+    .addParams('appSecret', input.bearerToken?.trim() && input.appSecret?.trim() ? input.appSecret.trim() : null);
 
   const headers = new Headers();
 
@@ -192,7 +175,7 @@ export async function getConnectableAccounts(
     headers.set('cookie', `auth_account=${input.authAccountToken.trim()}`);
   }
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(requestUrl.get(), {
     method: 'GET',
     headers,
     cache: 'no-store',
