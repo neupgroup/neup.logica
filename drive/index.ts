@@ -18,7 +18,7 @@ portable clients.
 import { account } from '@/logica/drive/account';
 import baseJson from '@/logica/base.json';
 
-export function getBasepath() {
+function getBasepath() {
   return baseJson.drive;
 }
 
