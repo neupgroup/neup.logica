@@ -4,12 +4,12 @@
 
 ::public
 
-Use `logica.logger(config)` to create a scoped logger for one project.
+Use `logica.logger()` to create a scoped logger for the current application.
 
 Use `logica.logger.data(data).type(type).log()` to push structured logs and
 `logica.logger.data(data).log()` when the type should default to `log`.
 
-Use `logica.logger(async () => { ... })` or `logica.logger(config).catch(...)`
+Use `logica.logger(async () => { ... })` or `logica.logger().catch(...)`
 to wrap work, auto-log thrown errors, and rethrow them.
 
 ::public end
@@ -28,13 +28,6 @@ export type LoggerPayload =
   | boolean
   | null
   | undefined;
-
-export type LoggerProjectConfig = {
-  projectId?: string | null;
-  projectName?: string | null;
-  bearerToken?: string | null;
-  headers?: HeadersInit;
-};
 
 export type LoggerDraft = {
   type?: string;
@@ -68,23 +61,27 @@ function trimString(value: unknown) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function inferProjectName(config?: LoggerProjectConfig) {
-  const explicitName = trimString(config?.projectName);
+function requireLoggerEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET') {
+  const value = trimString(process.env[name]);
+
+  if (!value) {
+    throw new Error(`${name} is required.`);
+  }
+
+  return value;
+}
+
+function inferProjectName(projectId: string) {
+  const explicitName = trimString(process.env.NEXT_PUBLIC_APP_NAME)
+    || trimString(process.env.APP_NAME)
+    || trimString(process.env.npm_package_name);
+
   if (explicitName) {
     return explicitName;
   }
 
-  const explicitId = trimString(config?.projectId);
-  if (explicitId) {
-    return explicitId;
-  }
-
-  const envName = trimString(process.env.NEXT_PUBLIC_APP_NAME)
-    || trimString(process.env.APP_NAME)
-    || trimString(process.env.npm_package_name);
-
-  if (envName) {
-    return envName;
+  if (projectId) {
+    return projectId;
   }
 
   const envUrl = trimString(process.env.NEXT_PUBLIC_APP_URL)
@@ -145,13 +142,16 @@ function normalizeCaughtError(error: unknown, context?: LoggerCatchContext) {
 }
 
 function createLoggerScope(
-  config: LoggerProjectConfig = {},
   draft: LoggerDraft = {},
 ): LoggerScope {
-  const projectId = trimString(config.projectId) || undefined;
-  const projectName = inferProjectName(config);
-  const headers = config.headers;
-  const bearerToken = config.bearerToken;
+  const projectId = requireLoggerEnv('NEUP_APP_ID');
+  const appSecret = requireLoggerEnv('NEUP_APP_SECRET');
+  const projectName = inferProjectName(projectId);
+  const headers = {
+    'x-neup-app-id': projectId,
+    'x-neup-app-secret': appSecret,
+  };
+  const bearerToken = appSecret;
 
   async function send(
     path: '/bridge/api.v1/logger' | '/bridge/api.v1/logger/error',
@@ -173,14 +173,14 @@ function createLoggerScope(
 
   return {
     data(data: LoggerPayload) {
-      return createLoggerScope(config, {
+      return createLoggerScope({
         ...draft,
         data,
       });
     },
 
     type(type: string) {
-      return createLoggerScope(config, {
+      return createLoggerScope({
         ...draft,
         type,
       });
@@ -233,18 +233,16 @@ function createLoggerScope(
   };
 }
 
-type LoggerFactoryInput = LoggerProjectConfig | LoggerCallback<unknown>;
+type LoggerFactoryInput = LoggerCallback<unknown>;
 
 type LoggerFactory = {
   (): LoggerScope;
-  (config: LoggerProjectConfig): LoggerScope;
-  <T>(callback: LoggerCallback<T>, config?: LoggerProjectConfig, context?: LoggerCatchContext): Promise<T>;
+  <T>(callback: LoggerCallback<T>, context?: LoggerCatchContext): Promise<T>;
   data(data: LoggerPayload): LoggerScope;
   type(type: string): LoggerScope;
-  error(error?: unknown, config?: LoggerProjectConfig): Promise<LoggerApiResponse<LoggerBridgeBody>>;
+  error(error?: unknown): Promise<LoggerApiResponse<LoggerBridgeBody>>;
   wrap<TArgs extends unknown[], TResult>(
     callback: (...args: TArgs) => Promise<TResult> | TResult,
-    config?: LoggerProjectConfig,
     context?: LoggerCatchContext,
   ): (...args: TArgs) => Promise<TResult>;
   getBasepath(): string;
@@ -255,22 +253,19 @@ function isLoggerCallback<T>(value: LoggerFactoryInput | undefined): value is Lo
 }
 
 function loggerFactory(): LoggerScope;
-function loggerFactory(config: LoggerProjectConfig): LoggerScope;
 function loggerFactory<T>(
   callback: LoggerCallback<T>,
-  config?: LoggerProjectConfig,
   context?: LoggerCatchContext,
 ): Promise<T>;
 function loggerFactory<T>(
-  input?: LoggerProjectConfig | LoggerCallback<T>,
-  config?: LoggerProjectConfig,
+  input?: LoggerCallback<T>,
   context?: LoggerCatchContext,
 ): LoggerScope | Promise<T> {
   if (isLoggerCallback<T>(input)) {
-    return createLoggerScope(config).catch(input, context);
+    return createLoggerScope().catch(input, context);
   }
 
-  return createLoggerScope(input);
+  return createLoggerScope();
 }
 
 export const logger: LoggerFactory = Object.assign(
@@ -284,16 +279,15 @@ export const logger: LoggerFactory = Object.assign(
       return createLoggerScope().type(type);
     },
 
-    error(error?: unknown, config?: LoggerProjectConfig) {
-      return createLoggerScope(config).error(error);
+    error(error?: unknown) {
+      return createLoggerScope().error(error);
     },
 
     wrap<TArgs extends unknown[], TResult>(
       callback: (...args: TArgs) => Promise<TResult> | TResult,
-      config?: LoggerProjectConfig,
       context?: LoggerCatchContext,
     ) {
-      return createLoggerScope(config).wrap(callback, context);
+      return createLoggerScope().wrap(callback, context);
     },
 
     getBasepath() {
