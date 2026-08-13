@@ -17,13 +17,15 @@ helpers, and `logica.estate.*` to access estate API helpers.
 import { estate } from '@/logica/estate';
 import { account } from '@/logica/account';
 import { drive } from '@/logica/drive';
+import { logger } from '@/logica/logger';
 
 export const logica = {
   account,
   drive,
   estate,
+  logger,
 } as const;
 
-export { account, drive, estate };
+export { account, drive, estate, logger };
 
 export default logica;
