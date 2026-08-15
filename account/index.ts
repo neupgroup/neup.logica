@@ -24,6 +24,7 @@ import { accounts } from '@/logica/account/accounts';
 import { application } from '@/logica/account/application';
 import { connection } from '@/logica/account/connections';
 import { lookup } from '@/logica/account/lookup';
+import { self } from '@/logica/account/self';
 import { createAccountScope, type AccountScope } from '@/logica/account/scope';
 
 /*
@@ -52,6 +53,7 @@ account.lookup = lookup;
 account.accessible = accessible;
 account.connection = connection;
 account.application = application;
+account.self = self;
 
 account.list = accounts.list;
 account.type = accounts.type;

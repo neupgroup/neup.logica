@@ -126,7 +126,8 @@ export type NeupBridgeRequestOptions = {
 };
 
 function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET'): string {
-  const value = process.env[name]?.trim();
+  const fallbackName = name.toLowerCase();
+  const value = process.env[name]?.trim() || process.env[fallbackName]?.trim();
   if (!value) {
     throw new Error(`${name} is required.`);
   }
