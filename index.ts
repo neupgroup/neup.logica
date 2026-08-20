@@ -18,14 +18,16 @@ import { estate } from '@/logica/estate';
 import { account } from '@/logica/account';
 import { drive } from '@/logica/drive';
 import { logger } from '@/logica/logger';
+import { analytics } from '@/logica/analytics';
 
 export const logica = {
   account,
+  analytics,
   drive,
   estate,
   logger,
 } as const;
 
-export { account, drive, estate, logger };
+export { account, analytics, drive, estate, logger };
 
 export default logica;
