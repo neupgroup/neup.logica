@@ -29,8 +29,6 @@ export type AnalyticsActivityInput = {
   identifier?: string;
   identifierId?: string;
   type?: string;
-  session?: string;
-  sessionId?: string;
   timespent?: number;
   timeSpent?: number;
   activityOn?: string | Date;
@@ -64,7 +62,6 @@ export function project(projectId: string) {
     Accepted fields per event:
     - `identifier` or `identifierId`: required visitor identifier.
     - `type`: activity type such as `pageview`.
-    - `session` or `sessionId`: session identifier.
     - `timespent` or `timeSpent`: integer time spent value.
     - `activityOn`: ISO datetime string or `Date`.
     - `pageUrl`: page URL for the activity.
@@ -106,7 +103,6 @@ export function project(projectId: string) {
     Accepted fields per event are the same as `postActivity()`:
     - `identifier` or `identifierId`: required visitor identifier.
     - `type`: activity type such as `pageview`.
-    - `session` or `sessionId`: session identifier.
     - `timespent` or `timeSpent`: integer time spent value.
     - `activityOn`: ISO datetime string or `Date`.
     - `pageUrl`: page URL for the activity.
