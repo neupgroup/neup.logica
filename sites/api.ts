@@ -47,10 +47,13 @@ export async function requestSitesApi<TBody = unknown>(
   options: SitesApiRequestOptions,
 ): Promise<SitesApiResponse<TBody>> {
   const sitesBaseUrl = requireSitesBaseUrl();
+  const requestUrl = url().setBasePath(sitesBaseUrl).addCustomPath(options.path).get();
 
-  return runApi<TBody>({
+  console.log('requestSitesApi url:', requestUrl);
+
+  return runApi({
     baseUrl: new URL(sitesBaseUrl).origin,
-    path: url().setBasePath(sitesBaseUrl).addCustomPath(options.path).get(),
+    path: requestUrl,
     method: options.method,
     query: options.query,
     body: options.body,
@@ -59,5 +62,5 @@ export async function requestSitesApi<TBody = unknown>(
     cookies: {
       auth_account: options.authAccountToken,
     },
-  });
+  }) as Promise<SitesApiResponse<TBody>>;
 }

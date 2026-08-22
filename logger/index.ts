@@ -17,6 +17,7 @@ to wrap work, auto-log thrown errors, and rethrow them.
 ::end
 */
 
+import { getEnvVariable } from '@/core/helpers/env';
 import baseJson from '@/logica/base.json';
 import { requestLoggerApi, type LoggerApiResponse } from '@/logica/logger/api';
 
@@ -62,7 +63,7 @@ function trimString(value: unknown) {
 }
 
 function requireLoggerEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET') {
-  const value = trimString(process.env[name]);
+  const value = getEnvVariable(name) || trimString(process.env[name.toLowerCase()]);
 
   if (!value) {
     throw new Error(`${name} is required.`);
@@ -72,8 +73,7 @@ function requireLoggerEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET') {
 }
 
 function inferProjectName(projectId: string) {
-  const explicitName = trimString(process.env.NEXT_PUBLIC_APP_NAME)
-    || trimString(process.env.APP_NAME)
+  const explicitName = getEnvVariable('APP_NAME', true)
     || trimString(process.env.npm_package_name);
 
   if (explicitName) {
@@ -84,8 +84,7 @@ function inferProjectName(projectId: string) {
     return projectId;
   }
 
-  const envUrl = trimString(process.env.NEXT_PUBLIC_APP_URL)
-    || trimString(process.env.APP_URL)
+  const envUrl = getEnvVariable('APP_URL', true)
     || trimString(baseJson.cloud);
 
   if (envUrl) {

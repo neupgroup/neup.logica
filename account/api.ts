@@ -27,6 +27,7 @@ import {
   type ApiQuery,
   type ApiResponse,
 } from '@/core/infrastructure/api';
+import { getEnvVariable } from '@/core/helpers/env';
 import { url } from '@/core/helpers/link/url';
 import baseJson from '@/logica/base.json';
 
@@ -127,7 +128,7 @@ export type NeupBridgeRequestOptions = {
 
 function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET'): string {
   const fallbackName = name.toLowerCase();
-  const value = process.env[name]?.trim() || process.env[fallbackName]?.trim();
+  const value = getEnvVariable(name) || process.env[fallbackName]?.trim();
   if (!value) {
     throw new Error(`${name} is required.`);
   }
