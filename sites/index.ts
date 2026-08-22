@@ -16,6 +16,7 @@ or prefixed slug lookup.
 ::end
 */
 
+import { getEnvVariable } from '@/core/helpers/env';
 import { requestSitesApi, type SitesApiResponse } from '@/logica/sites/api';
 
 export interface SitesMemberDirectoryItem {
@@ -45,12 +46,24 @@ export interface SitesMemberResponseBody {
   error?: string;
 }
 
-export function sites(projectId: string) {
+function resolveProjectId(projectId?: string): string {
+  const resolvedProjectId = projectId?.trim() || getEnvVariable('NEUPSITE_PROJECT_ID', true);
+
+  if (!resolvedProjectId) {
+    throw new Error('NEUPSITE_PROJECT_ID is required to use logica.sites().');
+  }
+
+  return resolvedProjectId;
+}
+
+export function sites(projectId?: string) {
+  const resolvedProjectId = resolveProjectId(projectId);
+
   return {
     members: {
       get(): Promise<SitesApiResponse<SitesMemberListResponseBody>> {
         return requestSitesApi<SitesMemberListResponseBody>({
-          path: `/bridge/api.v1/project/${encodeURIComponent(projectId)}/team`,
+          path: `/bridge/api.v1/project/${encodeURIComponent(resolvedProjectId)}/team`,
         });
       },
     },
@@ -59,7 +72,7 @@ export function sites(projectId: string) {
       return {
         get(): Promise<SitesApiResponse<SitesMemberResponseBody>> {
           return requestSitesApi<SitesMemberResponseBody>({
-            path: `/bridge/api.v1/project/${encodeURIComponent(projectId)}/member/${encodeURIComponent(idOrSlug)}`,
+            path: `/bridge/api.v1/project/${encodeURIComponent(resolvedProjectId)}/member/${encodeURIComponent(idOrSlug)}`,
           });
         },
       } as const;
