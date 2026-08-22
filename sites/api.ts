@@ -49,8 +49,6 @@ export async function requestSitesApi<TBody = unknown>(
   const sitesBaseUrl = requireSitesBaseUrl();
   const requestUrl = url().setBasePath(sitesBaseUrl).addCustomPath(options.path).get();
 
-  console.log('requestSitesApi url:', requestUrl);
-
   return runApi({
     baseUrl: new URL(sitesBaseUrl).origin,
     path: requestUrl,
