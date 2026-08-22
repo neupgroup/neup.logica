@@ -8,7 +8,7 @@ Account object composed from account domain files and folders.
 
 Use `logica.account(accountId).*` for one account's scoped operations.
 Use child objects such as `logica.account.auth`, `logica.account.current`,
-`logica.account.lookup`, `logica.account.accessible`,
+`logica.account.lookup`, `logica.account.linked`, `logica.account.accessible`,
 `logica.account.connection`, and `logica.account.application` for root-level
 account operations.
 
@@ -23,6 +23,7 @@ import { accessible } from '@/logica/account/access';
 import { accounts } from '@/logica/account/accounts';
 import { application } from '@/logica/account/application';
 import { connection } from '@/logica/account/connections';
+import { linked } from '@/logica/account/linked';
 import { lookup } from '@/logica/account/lookup';
 import { self } from '@/logica/account/self';
 import { createAccountScope, type AccountScope } from '@/logica/account/scope';
@@ -50,6 +51,7 @@ export function account(accountId: string) {
 account.auth = auth;
 account.current = current;
 account.lookup = lookup;
+account.linked = linked;
 account.accessible = accessible;
 account.connection = connection;
 account.application = application;
