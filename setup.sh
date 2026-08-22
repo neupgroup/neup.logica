@@ -59,29 +59,41 @@ remove_prisma_account_files() {
 
     if [ -f "$ACCOUNT_DIR/index.ts" ] && [ ! -f "$ACCOUNT_DIR/self.ts" ]; then
         temp_file=$(mktemp)
-        grep -v "account/self" "$ACCOUNT_DIR/index.ts" | grep -v "account.self = self;" > "$temp_file"
+        grep -v "account/self" "$ACCOUNT_DIR/index.ts" |
+            grep -v "account.self = self;" > "$temp_file"
         mv "$temp_file" "$ACCOUNT_DIR/index.ts"
     fi
 }
 
 load_env_file
 
-project_id=$(get_env_value "NEUPSITE_PROJECT_ID" "NEXT_PUBLIC_NEUPSITE_PROJECT_ID")
+project_id=$(get_env_value \
+    "NEUPSITE_PROJECT_ID" \
+    "NEXT_PUBLIC_NEUPSITE_PROJECT_ID"
+)
 
 if [ -z "$project_id" ]; then
     rm -rf "$LOGICA_DIR"
     exit 0
 fi
 
-account_enabled=$(get_env_value "NEUPSITE_ACCOUNT_ENABLED" "NEXT_PUBLIC_NEUPSITE_ACCOUNT_ENABLED")
+account_enabled=$(get_env_value \
+    "NEUPSITE_ACCOUNT_ENABLED" \
+    "NEXT_PUBLIC_NEUPSITE_ACCOUNT_ENABLED"
+)
 
-if [ -z "$account_enabled" ] || [ "$(normalize_bool "$account_enabled")" = "false" ]; then
+if [ -z "$account_enabled" ] || \
+   [ "$(normalize_bool "$account_enabled")" = "false" ]; then
+
     rm -rf "$ACCOUNT_DIR"
     write_disabled_account_stub
     exit 0
 fi
 
-has_local_lookup=$(get_env_value "NEUPSITE_ACCOUNT_HASLOCAL_LOOKUP" "NEXT_PUBLIC_NEUPSITE_ACCOUNT_HASLOCAL_LOOKUP")
+has_local_lookup=$(get_env_value \
+    "NEUPSITE_ACCOUNT_HASLOCAL_LOOKUP" \
+    "NEXT_PUBLIC_NEUPSITE_ACCOUNT_HASLOCAL_LOOKUP"
+)
 
 if [ "$(normalize_bool "$has_local_lookup")" = "false" ]; then
     remove_prisma_account_files
