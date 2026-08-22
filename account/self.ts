@@ -37,6 +37,17 @@ export type AccountSelfBasics = {
   neupid: string | null;
 };
 
+export type AccountSelfRecord = {
+  id: string;
+  displayName: string;
+  displayImage: string;
+  neupId: string | null;
+  type: string;
+  createdOn: string;
+  status: string;
+  moreDetails: unknown;
+};
+
 type AccountSelfLocalAuthenticationResult =
   | { authenticated: true; payload: NeupIdTokenPayload }
   | { authenticated: false; reason: string; payload?: Partial<NeupIdTokenPayload> };
@@ -147,6 +158,103 @@ async function getLocalAccountBasics(authToken: string | null): Promise<AccountS
     return basics ? [basics] : [];
   } catch {
     return [];
+  }
+}
+
+async function ensureLocalAccountRecord(authToken: string | null): Promise<AccountSelfRecord | null> {
+  if (!hasDatabaseEnvironment()) return null;
+
+  const accountId = getAccountIdFromToken(authToken);
+  if (!accountId) return null;
+
+  const authentication = await checkLocalAuthentication(authToken);
+  if (!authentication.authenticated) return null;
+
+  const basics = (await getBasics(authToken))[0] ?? null;
+
+  try {
+    const { default: prisma } = await import('@/core/database/prisma');
+    const accountDelegate = (prisma as unknown as {
+      account?: {
+        upsert: (args: {
+          where: { id: string };
+          create: {
+            id: string;
+            displayName: string;
+            displayImage: string;
+            neupId: string | null;
+            type: string;
+            status: string;
+          };
+          update: {
+            displayName: string;
+            displayImage: string;
+            neupId: string | null;
+          };
+          select: {
+            id: true;
+            displayName: true;
+            displayImage: true;
+            neupId: true;
+            type: true;
+            createdOn: true;
+            status: true;
+            moreDetails: true;
+          };
+        }) => Promise<{
+          id: string;
+          displayName: string;
+          displayImage: string;
+          neupId: string | null;
+          type: string;
+          createdOn: Date;
+          status: string;
+          moreDetails: unknown;
+        }>;
+      };
+    }).account;
+
+    if (!accountDelegate) return null;
+
+    const record = await accountDelegate.upsert({
+      where: { id: accountId },
+      create: {
+        id: accountId,
+        displayName: basics?.displayName ?? '',
+        displayImage: basics?.displayImage ?? '',
+        neupId: basics?.neupid ?? null,
+        type: 'individual',
+        status: 'active',
+      },
+      update: {
+        displayName: basics?.displayName ?? '',
+        displayImage: basics?.displayImage ?? '',
+        neupId: basics?.neupid ?? null,
+      },
+      select: {
+        id: true,
+        displayName: true,
+        displayImage: true,
+        neupId: true,
+        type: true,
+        createdOn: true,
+        status: true,
+        moreDetails: true,
+      },
+    });
+
+    return {
+      id: record.id,
+      displayName: record.displayName,
+      displayImage: record.displayImage,
+      neupId: record.neupId,
+      type: record.type,
+      createdOn: record.createdOn.toISOString(),
+      status: record.status,
+      moreDetails: record.moreDetails,
+    };
+  } catch {
+    return null;
   }
 }
 
@@ -277,6 +385,11 @@ export async function getBasics(authToken?: string | null): Promise<AccountSelfB
   return getRemoteAccountBasics(authAccountToken);
 }
 
+export async function ensureRecord(authToken?: string | null): Promise<AccountSelfRecord | null> {
+  const resolvedAuthToken = await resolveAuthAccountToken(authToken);
+  return ensureLocalAccountRecord(resolvedAuthToken);
+}
+
 /*
 ::neup.documentation::logica-account-self-object
 ::function self
@@ -295,4 +408,5 @@ session.
 export const self = {
   isAuthenticated,
   getBasics,
+  ensureRecord,
 } as const;
