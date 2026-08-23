@@ -6,8 +6,9 @@
 
 Use `logica.notification.get()` for application notifications,
 `logica.notification.filter({...}).get()` for an account or connection,
-`logica.notification.wildcard().get()` for all application-scoped notifications
-when the configured application has party 0 (internal), and
+`logica.notification.wildcard().get()` for notifications across application
+scopes, optionally filtered by account, when the configured application has
+party 0 (internal), and
 `logica.notification.data({...})` for mutations.
 
 Credentials default to `NEUP_APP_ID` and `NEUP_APP_SECRET`. Override them with
@@ -121,7 +122,7 @@ function getNotifications(input: NotificationFilter = {}): Promise<Notifications
 }
 
 function getWildcard(input: NotificationFilter = {}): Promise<NotificationsResponse> {
-  return getNotifications({ ...input, mode: 'wildcard', accountId: undefined, connectionId: undefined });
+  return getNotifications({ ...input, mode: 'wildcard', connectionId: undefined });
 }
 
 function createNotification(data: NotificationCreateData): Promise<NotificationMutationResponse> {
