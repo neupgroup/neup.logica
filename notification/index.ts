@@ -1,13 +1,16 @@
 /*
 ::neup.documentation::logica-notification-object
-::title Logica Notification Mutation API
+::title Logica Notification API
 
 ::public
 
-Use `logica.notification.data({...}).create()` to create a notification and
-`logica.notification.data({ notificationId }).read()` to read or dismiss one.
-Credentials default to `NEUP_APP_ID` and `NEUP_APP_SECRET`; pass
-`notification({ application, appsecret })` to override them.
+Use `logica.notification.get()` for application notifications,
+`logica.notification.filter({...}).get()` for an account or connection,
+`logica.notification.wildcard().get()` for all notifications from an internal
+application, and `logica.notification.data({...})` for mutations.
+
+Credentials default to `NEUP_APP_ID` and `NEUP_APP_SECRET`. Override them with
+`notification({ application, appsecret })`.
 
 ::public end
 
@@ -19,7 +22,41 @@ import {
   runNeupBridgeApi,
   type NeupBridgeResponse,
 } from '@/logica/account/api';
-import type { NotificationCredentials, NotificationRecord } from '@/logica/notifications/api';
+
+export type NotificationCredentials = {
+  application?: string | null;
+  appsecret?: string | null;
+};
+
+export type NotificationFilter = NotificationCredentials & {
+  accountId?: string | null;
+  connectionId?: string | null;
+  limit?: number | null;
+  offset?: number | null;
+};
+
+export type NotificationRecord = {
+  id: string;
+  accountId: string;
+  applicationId: string | null;
+  action: string | null;
+  title: string | null;
+  message: string | null;
+  type: string;
+  read: boolean;
+  createdAt: string;
+  deletableOn: string | null;
+  persistence: string | null;
+  detail: unknown;
+};
+
+export type NotificationsResponseBody = {
+  success: boolean;
+  data: NotificationRecord[];
+  meta?: Record<string, unknown>;
+  error?: string;
+  error_description?: string;
+};
 
 export type NotificationCreateData = NotificationCredentials & {
   accountId?: string | null;
@@ -47,20 +84,68 @@ type NotificationMutationBody = {
   error_description?: string;
 };
 
-function credentials(input: NotificationCredentials): HeadersInit {
+type NotificationsResponse = NeupBridgeResponse<NotificationsResponseBody>;
+type NotificationMutationResponse = NeupBridgeResponse<NotificationMutationBody>;
+
+function resolveCredentials(input: NotificationCredentials = {}): { application: string; appsecret: string } {
   const environment = getNeupBridgeEnvironment();
   return {
-    'x-application-id': input.application?.trim() || environment.appId,
-    'x-app-secret': input.appsecret?.trim() || environment.appSecret,
+    application: input.application?.trim() || environment.appId,
+    appsecret: input.appsecret?.trim() || environment.appSecret,
   };
 }
 
-function createNotification(data: NotificationCreateData): Promise<NeupBridgeResponse<NotificationMutationBody>> {
+function credentialHeaders(input: NotificationCredentials): HeadersInit {
+  const credentials = resolveCredentials(input);
+  return {
+    'x-application-id': credentials.application,
+    'x-app-secret': credentials.appsecret,
+  };
+}
+
+export function isInternalNotificationApplication(application: string): boolean {
+  return application.trim().startsWith('neup.');
+}
+
+function getNotifications(input: NotificationFilter = {}): Promise<NotificationsResponse> {
+  return runNeupBridgeApi<NotificationsResponseBody>({
+    path: '/bridge/api.v1/notification',
+    method: 'GET',
+    query: {
+      accountId: input.accountId,
+      connectionId: input.connectionId,
+      limit: input.limit,
+      offset: input.offset,
+    },
+    headers: credentialHeaders(input),
+  });
+}
+
+function ignoredWildcardResponse(): NotificationsResponse {
+  return {
+    ok: true,
+    status: 204,
+    body: {
+      success: true,
+      data: [],
+      meta: { ignored: true, reason: 'wildcard_requires_internal_application' },
+    },
+    headers: new Headers(),
+  };
+}
+
+function getWildcard(input: NotificationFilter = {}): Promise<NotificationsResponse> {
+  const application = input.application?.trim() || getNeupBridgeEnvironment().appId;
+  if (!isInternalNotificationApplication(application)) return Promise.resolve(ignoredWildcardResponse());
+  return getNotifications({ ...input, accountId: undefined, connectionId: undefined });
+}
+
+function createNotification(data: NotificationCreateData): Promise<NotificationMutationResponse> {
   const { application, appsecret, description, message, dismissable, disimssable, ...payload } = data;
   return runNeupBridgeApi<NotificationMutationBody>({
     path: '/bridge/api.v1/notification',
     method: 'POST',
-    headers: credentials({ application, appsecret }),
+    headers: credentialHeaders({ application, appsecret }),
     body: {
       ...payload,
       message: message ?? description,
@@ -70,37 +155,41 @@ function createNotification(data: NotificationCreateData): Promise<NeupBridgeRes
   });
 }
 
-function readNotification(data: NotificationReadData): Promise<NeupBridgeResponse<NotificationMutationBody>> {
+function readNotification(data: NotificationReadData): Promise<NotificationMutationResponse> {
   const { application, appsecret, ...payload } = data;
   return runNeupBridgeApi<NotificationMutationBody>({
     path: '/bridge/api.v1/notification',
     method: 'PATCH',
-    headers: credentials({ application, appsecret }),
-    body: {
-      ...payload,
-      action: data.action ?? 'read',
-    },
+    headers: credentialHeaders({ application, appsecret }),
+    body: { ...payload, action: data.action ?? 'read' },
   });
 }
 
-export function notification(credentialsOverride: NotificationCredentials = {}) {
+function createScope(credentialsOverride: NotificationCredentials = {}) {
   return {
+    get(input: NotificationFilter = {}): Promise<NotificationsResponse> {
+      return getNotifications({ ...input, ...credentialsOverride });
+    },
+    filter(input: NotificationFilter = {}) {
+      return { get: () => getNotifications({ ...input, ...credentialsOverride }) } as const;
+    },
+    wildcard(input: NotificationFilter = {}) {
+      return { get: () => getWildcard({ ...input, ...credentialsOverride }) } as const;
+    },
     data(data: NotificationCreateData | NotificationReadData) {
+      const merged = { ...credentialsOverride, ...data };
       return {
-        create(): Promise<NeupBridgeResponse<NotificationMutationBody>> {
-          return createNotification({ ...credentialsOverride, ...data } as NotificationCreateData);
-        },
-        read(): Promise<NeupBridgeResponse<NotificationMutationBody>> {
-          return readNotification({ ...credentialsOverride, ...data } as NotificationReadData);
-        },
+        create: () => createNotification(merged as NotificationCreateData),
+        read: () => readNotification(merged as NotificationReadData),
       } as const;
     },
   } as const;
 }
 
-notification.data = function data(input: NotificationCreateData | NotificationReadData) {
-  return notification().data(input);
-};
+export const notification = Object.assign(
+  (credentialsOverride: NotificationCredentials = {}) => createScope(credentialsOverride),
+  createScope(),
+);
 
-export type NotificationObject = ReturnType<typeof notification>;
+export type NotificationObject = ReturnType<typeof createScope>;
 export default notification;
