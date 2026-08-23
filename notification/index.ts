@@ -7,7 +7,7 @@
 Use `logica.notification.get()` for application notifications,
 `logica.notification.filter({...}).get()` for an account or connection,
 `logica.notification.wildcard().get()` for all application-scoped notifications
-when the configured application is marked internal, and
+when the configured application has party 0 (internal), and
 `logica.notification.data({...})` for mutations.
 
 Credentials default to `NEUP_APP_ID` and `NEUP_APP_SECRET`. Override them with
