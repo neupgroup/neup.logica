@@ -6,8 +6,9 @@
 
 Use `logica.notification.get()` for application notifications,
 `logica.notification.filter({...}).get()` for an account or connection,
-`logica.notification.wildcard().get()` for all notifications from an internal
-application, and `logica.notification.data({...})` for mutations.
+`logica.notification.wildcard().get()` for all application-scoped notifications
+when the configured application is marked internal, and
+`logica.notification.data({...})` for mutations.
 
 Credentials default to `NEUP_APP_ID` and `NEUP_APP_SECRET`. Override them with
 `notification({ application, appsecret })`.
@@ -29,6 +30,7 @@ export type NotificationCredentials = {
 };
 
 export type NotificationFilter = NotificationCredentials & {
+  mode?: 'wildcard' | null;
   accountId?: string | null;
   connectionId?: string | null;
   limit?: number | null;
@@ -98,13 +100,9 @@ function resolveCredentials(input: NotificationCredentials = {}): { application:
 function credentialHeaders(input: NotificationCredentials): HeadersInit {
   const credentials = resolveCredentials(input);
   return {
-    'x-application-id': credentials.application,
-    'x-app-secret': credentials.appsecret,
+    application: credentials.application,
+    appsecret: credentials.appsecret,
   };
-}
-
-export function isInternalNotificationApplication(application: string): boolean {
-  return application.trim().startsWith('neup.');
 }
 
 function getNotifications(input: NotificationFilter = {}): Promise<NotificationsResponse> {
@@ -114,6 +112,7 @@ function getNotifications(input: NotificationFilter = {}): Promise<Notifications
     query: {
       accountId: input.accountId,
       connectionId: input.connectionId,
+      mode: input.mode,
       limit: input.limit,
       offset: input.offset,
     },
@@ -121,23 +120,8 @@ function getNotifications(input: NotificationFilter = {}): Promise<Notifications
   });
 }
 
-function ignoredWildcardResponse(): NotificationsResponse {
-  return {
-    ok: true,
-    status: 204,
-    body: {
-      success: true,
-      data: [],
-      meta: { ignored: true, reason: 'wildcard_requires_internal_application' },
-    },
-    headers: new Headers(),
-  };
-}
-
 function getWildcard(input: NotificationFilter = {}): Promise<NotificationsResponse> {
-  const application = input.application?.trim() || getNeupBridgeEnvironment().appId;
-  if (!isInternalNotificationApplication(application)) return Promise.resolve(ignoredWildcardResponse());
-  return getNotifications({ ...input, accountId: undefined, connectionId: undefined });
+  return getNotifications({ ...input, mode: 'wildcard', accountId: undefined, connectionId: undefined });
 }
 
 function createNotification(data: NotificationCreateData): Promise<NotificationMutationResponse> {
