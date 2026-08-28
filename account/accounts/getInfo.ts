@@ -13,7 +13,7 @@ Use this helper to fetch a normalized account profile snapshot that returns only
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '#/logica/account/api';
 
 type GetAccountInfoInput = {
   appId: string;

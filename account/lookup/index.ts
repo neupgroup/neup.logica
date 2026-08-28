@@ -57,7 +57,7 @@ import {
   getNeupBridgeEnvironment,
   runNeupBridgeApi,
   type NeupBridgeResponse,
-} from '@/logica/account/api';
+} from '#/logica/account/api';
 
 /*
 ::neup.documentation::logica-account-neup-user-info-basic-fields-constant

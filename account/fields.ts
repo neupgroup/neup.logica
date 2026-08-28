@@ -14,7 +14,7 @@ connection object scopes.
 ::end
 */
 
-import type { NeupUserInfoField } from '@/logica/account/lookup';
+import type { NeupUserInfoField } from '#/logica/account/lookup';
 
 /*
 ::neup.documentation::logica-account-fields-type

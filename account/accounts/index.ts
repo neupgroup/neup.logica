@@ -10,8 +10,8 @@ Import from this file when you want accessible-account bridge helpers grouped un
 ::end
 */
 
-import { getAccounts } from '@/logica/account/accounts/getAccounts';
-import type { NeupBridgeResponse } from '@/logica/account/api';
+import { getAccounts } from '#/logica/account/accounts/getAccounts';
+import type { NeupBridgeResponse } from '#/logica/account/api';
 
 type AccountListInput = Parameters<typeof getAccounts>[0];
 

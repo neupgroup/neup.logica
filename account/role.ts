@@ -13,7 +13,7 @@ This file backs `logica.account(accountId).role`.
 ::end
 */
 
-import { getApplicationAccountRoles } from '@/logica/account/application';
+import { getApplicationAccountRoles } from '#/logica/account/application';
 
 /*
 ::neup.documentation::logica-account-create-account-role-function

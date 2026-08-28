@@ -13,7 +13,7 @@ Use `logica.estate.user(userId).*` for user-scoped estate collections.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
 
 type ListKind = 'reaction' | 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 

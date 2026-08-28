@@ -14,9 +14,9 @@ pending create draft or `propertyId` for an approved property.
 ::end
 */
 
-import baseJson from '@/logica/estate/base.json';
-import { url } from '@/core/helpers/link/url';
-import type { EstateApiResponse } from '@/logica/estate/api';
+import baseJson from '#/logica/estate/base.json';
+import { url } from '#/core/helpers/link/url';
+import type { EstateApiResponse } from '#/logica/estate/api';
 
 export type ModifyEstatePropertyInput = {
   requestId?: string | null;

@@ -19,7 +19,7 @@ The helper reads `/bridge/api.v1/accounts/lookup`, which returns the permission 
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '#/logica/account/api';
 
 type AccountAccessEntry = {
   accessOf: string | null;

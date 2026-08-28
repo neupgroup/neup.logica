@@ -14,7 +14,7 @@ Use `logica.drive.account(accountId).file.*` and
 ::end
 */
 
-import { createDriveAccountScope, type DriveAccountScope } from '@/logica/drive/account/scope';
+import { createDriveAccountScope, type DriveAccountScope } from '#/logica/drive/account/scope';
 
 export function account(accountId: string) {
   return createDriveAccountScope(accountId);

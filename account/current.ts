@@ -20,11 +20,11 @@ import {
   getCurrentAccountDisplayName,
   getCurrentAccountId,
   getCurrentApplicationAccount,
-} from '@/logica/account/connection';
+} from '#/logica/account/connection';
 import {
   getCurrentAccount,
   getCurrentAccountPermissions,
-} from '@/logica/account/profile';
+} from '#/logica/account/profile';
 
 type CurrentTokenInput = string;
 

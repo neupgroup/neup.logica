@@ -13,7 +13,7 @@ Use `logica.estate.favorite.*` for favorite API helpers.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
 
 export const favorite = {
   save(propertyId: string): Promise<EstateApiResponse> {

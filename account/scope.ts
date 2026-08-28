@@ -14,13 +14,13 @@ permission, role, connection, and application.
 ::end
 */
 
-import { createAccountAccess } from '@/logica/account/access';
-import { createAccountApplication } from '@/logica/account/account-application';
-import { createAccountConnection } from '@/logica/account/account-connection';
-import { normalizeAccountFields, type AccountFields } from '@/logica/account/fields';
-import { getAccountBasics } from '@/logica/account/lookup';
-import { createAccountProfile } from '@/logica/account/profile';
-import { createAccountRole } from '@/logica/account/role';
+import { createAccountAccess } from '#/logica/account/access';
+import { createAccountApplication } from '#/logica/account/account-application';
+import { createAccountConnection } from '#/logica/account/account-connection';
+import { normalizeAccountFields, type AccountFields } from '#/logica/account/fields';
+import { getAccountBasics } from '#/logica/account/lookup';
+import { createAccountProfile } from '#/logica/account/profile';
+import { createAccountRole } from '#/logica/account/role';
 
 /*
 ::neup.documentation::logica-account-create-account-scope-function

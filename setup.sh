@@ -52,7 +52,7 @@ remove_prisma_account_files() {
     fi
 
     find "$ACCOUNT_DIR" -type f ! -name "index.ts" | while IFS= read -r file_path; do
-        if grep -qiE 'prisma|@/core/database/prisma|core/database/prisma' "$file_path"; then
+        if grep -qiE 'prisma|#/core/database/prisma|core/database/prisma' "$file_path"; then
             rm -f "$file_path"
         fi
     done

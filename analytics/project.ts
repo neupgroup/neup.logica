@@ -14,7 +14,7 @@ events into `POST /bridge/api.v1/activity?project=...`.
 ::end
 */
 
-import { requestAnalyticsApi, type AnalyticsApiResponse } from '@/logica/analytics/api';
+import { requestAnalyticsApi, type AnalyticsApiResponse } from '#/logica/analytics/api';
 
 type JsonValue =
   | string

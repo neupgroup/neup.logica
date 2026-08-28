@@ -16,8 +16,8 @@ or prefixed slug lookup.
 ::end
 */
 
-import { getEnvVariable } from '@/core/helpers/env';
-import { requestSitesApi, type SitesApiResponse } from '@/logica/sites/api';
+import { getEnvVariable } from '#/core/helpers/env';
+import { requestSitesApi, type SitesApiResponse } from '#/logica/sites/api';
 
 export interface SitesMemberDirectoryItem {
   id: string;

@@ -19,7 +19,7 @@ This module resolves the current `auth_account` token from browser or server con
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
 
 /*
 ::neup.documentation::logica-account-linked-github-response-body-type
@@ -47,7 +47,7 @@ async function getServerAuthAccountToken(): Promise<string | null> {
   if (typeof window !== 'undefined') return null;
 
   try {
-    const { getCookie } = await import('@/core/helpers/cookie');
+    const { getCookie } = await import('#/core/helpers/cookie');
     return (await getCookie('auth_account'))?.trim() || null;
   } catch {
     return null;
@@ -143,4 +143,3 @@ export const linked = {
     },
   },
 } as const;
-

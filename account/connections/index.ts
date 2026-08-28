@@ -20,14 +20,14 @@ import {
   getConnectedDependentAccounts,
   getConnectedIndividualAccounts,
   getConnectedSubBrandAccounts,
-} from '@/logica/account/connections/getConnections';
-import { getAccountBasics } from '@/logica/account/lookup';
+} from '#/logica/account/connections/getConnections';
+import { getAccountBasics } from '#/logica/account/lookup';
 import {
   getConnectionTeamMemberAccess,
   getConnectionTeamMembers,
-} from '@/logica/account/access';
-import { getNeupBridgeEnvironment } from '@/logica/account/api';
-import { normalizeAccountFields, type AccountFields } from '@/logica/account/fields';
+} from '#/logica/account/access';
+import { getNeupBridgeEnvironment } from '#/logica/account/api';
+import { normalizeAccountFields, type AccountFields } from '#/logica/account/fields';
 
 type ApplicationConnectionsInput = Parameters<typeof getApplicationConnections>[0];
 

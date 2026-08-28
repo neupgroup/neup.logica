@@ -14,8 +14,8 @@ Use `logica.estate.inquiry.create(data)` for new inquiries and
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
-import type { EstateInquiryCreateData, EstateObjectRecord } from '@/logica/estate/types';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
+import type { EstateInquiryCreateData, EstateObjectRecord } from '#/logica/estate/types';
 
 function createInquiry(data: EstateInquiryCreateData = {}): Promise<EstateApiResponse> {
   const propertyId = data.propertyId ?? data.property ?? data.property_id;

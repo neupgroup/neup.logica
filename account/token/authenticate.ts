@@ -19,7 +19,7 @@ The remote check defaults to `/bridge/api.v1/auth/validate` through the shared b
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
 import {
   decodeNeupIdToken,
   isNeupIdTokenExpired,

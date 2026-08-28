@@ -18,16 +18,16 @@ account profile information.
 import {
   checkAuthSession,
   type CheckNeupAuthenticationResult,
-} from '@/logica/account/auth';
+} from '#/logica/account/auth';
 import {
   decodeNeupIdToken,
   verifyNeupIdToken,
   type NeupIdTokenPayload,
-} from '@/logica/account/token/verify';
+} from '#/logica/account/token/verify';
 import {
   getAccountBasics,
   type LookupResponseBody,
-} from '@/logica/account/lookup';
+} from '#/logica/account/lookup';
 
 export type AccountSelfAuthenticationCheckType = 'local' | 'remote';
 
@@ -77,7 +77,7 @@ async function getServerAuthAccountToken(): Promise<string | null> {
   if (typeof window !== 'undefined') return null;
 
   try {
-    const { getCookie } = await import('@/core/helpers/cookie');
+    const { getCookie } = await import('#/core/helpers/cookie');
     return (await getCookie('auth_account'))?.trim() || null;
   } catch {
     return null;
@@ -129,7 +129,7 @@ async function getLocalAccountBasics(authToken: string | null): Promise<AccountS
   if (!accountId) return [];
 
   try {
-    const { default: prisma } = await import('@/core/database/prisma');
+    const { default: prisma } = await import('#/core/database/prisma');
     const accountDelegate = (prisma as unknown as {
       account?: {
         findUnique: (args: {
@@ -173,7 +173,7 @@ async function ensureLocalAccountRecord(authToken: string | null): Promise<Accou
   const basics = (await getBasics(authToken))[0] ?? null;
 
   try {
-    const { default: prisma } = await import('@/core/database/prisma');
+    const { default: prisma } = await import('#/core/database/prisma');
     const accountDelegate = (prisma as unknown as {
       account?: {
         upsert: (args: {

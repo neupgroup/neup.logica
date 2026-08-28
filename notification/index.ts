@@ -23,7 +23,7 @@ import {
   getNeupBridgeEnvironment,
   runNeupBridgeApi,
   type NeupBridgeResponse,
-} from '@/logica/account/api';
+} from '#/logica/account/api';
 
 export type NotificationCredentials = {
   application?: string | null;

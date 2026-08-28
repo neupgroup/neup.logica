@@ -13,7 +13,7 @@ Use this module for `/bridge/api.v1/branding/logo`.
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
 
 /*
 ::neup.documentation::logica-account-get-application-logo-function

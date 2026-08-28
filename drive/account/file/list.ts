@@ -14,8 +14,8 @@ one account, or pass `path` to scope the listing to one folder.
 ::end
 */
 
-import { requestDriveApi, type DriveApiResponse } from '@/logica/drive/api';
-import type { DriveAccountFileRecord } from '@/logica/drive/account/file/get';
+import { requestDriveApi, type DriveApiResponse } from '#/logica/drive/api';
+import type { DriveAccountFileRecord } from '#/logica/drive/account/file/get';
 
 export type DriveAccountFileListResponseBody = DriveAccountFileRecord[];
 

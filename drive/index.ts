@@ -15,8 +15,8 @@ portable clients.
 ::end
 */
 
-import { account } from '@/logica/drive/account';
-import baseJson from '@/logica/base.json';
+import { account } from '#/logica/drive/account';
+import baseJson from '#/logica/base.json';
 
 function getBasepath() {
   return baseJson.drive;
@@ -29,7 +29,7 @@ export const drive = {
 
 export { account };
 export { getBasepath };
-export { requestDriveApi } from '@/logica/drive/api';
-export type { DriveApiResponse } from '@/logica/drive/api';
+export { requestDriveApi } from '#/logica/drive/api';
+export type { DriveApiResponse } from '#/logica/drive/api';
 
 export default drive;

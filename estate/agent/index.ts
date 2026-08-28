@@ -13,8 +13,8 @@ Use `logica.estate.agent(agentId).*` for agent-scoped collections.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
-import type { EstateObjectRecord } from '@/logica/estate/types';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
+import type { EstateObjectRecord } from '#/logica/estate/types';
 
 type ListKind = 'reaction' | 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 

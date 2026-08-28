@@ -13,7 +13,7 @@ Use `logica.estate.comment(id).remove()`.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
 
 export function comment(id: string) {
   return {

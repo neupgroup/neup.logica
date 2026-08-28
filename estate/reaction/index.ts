@@ -13,7 +13,7 @@ Use `logica.estate.reaction(id).remove()`.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
 
 export function reaction(id: string) {
   return {

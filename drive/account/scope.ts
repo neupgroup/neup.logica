@@ -13,8 +13,8 @@ This file composes account-scoped file and storage status children.
 ::end
 */
 
-import { createDriveAccountFileScope } from '@/logica/drive/account/file';
-import { getDriveAccountStatus } from '@/logica/drive/account/status';
+import { createDriveAccountFileScope } from '#/logica/drive/account/file';
+import { getDriveAccountStatus } from '#/logica/drive/account/status';
 
 export function createDriveAccountScope(accountId: string) {
   return {

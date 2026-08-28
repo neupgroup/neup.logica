@@ -14,21 +14,21 @@ activity events into this app's analytics bridge.
 ::end
 */
 
-import { project } from '@/logica/analytics/project';
+import { project } from '#/logica/analytics/project';
 
 export const analytics = {
   project,
 } as const;
 
 export { project };
-export { requestAnalyticsApi } from '@/logica/analytics/api';
+export { requestAnalyticsApi } from '#/logica/analytics/api';
 export type {
   AnalyticsApiResponse,
-} from '@/logica/analytics/api';
+} from '#/logica/analytics/api';
 export type {
   AnalyticsActivityInput,
   AnalyticsProjectScope,
   PostActivityResponseBody,
-} from '@/logica/analytics/project';
+} from '#/logica/analytics/project';
 
 export default analytics;

@@ -13,9 +13,9 @@ Use this module for `/bridge/api.v1/profile`, `/bridge/api.v1/profile/public`, `
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
-import { normalizeAccountFields, type AccountFields } from '@/logica/account/fields';
-import { getAccountBasics } from '@/logica/account/lookup';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
+import { normalizeAccountFields, type AccountFields } from '#/logica/account/fields';
+import { getAccountBasics } from '#/logica/account/lookup';
 
 /*
 ::neup.documentation::logica-account-get-account-profile-function

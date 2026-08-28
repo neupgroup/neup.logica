@@ -14,9 +14,9 @@ specialized helper.
 ::end
 */
 
-import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@/core/infrastructure/api';
-import { url } from '@/core/helpers/link/url';
-import baseJson from '@/logica/estate/base.json';
+import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '#/core/infrastructure/api';
+import { url } from '#/core/helpers/link/url';
+import baseJson from '#/logica/estate/base.json';
 
 export type EstateApiMethod = ApiMethod;
 

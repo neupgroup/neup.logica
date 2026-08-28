@@ -13,9 +13,9 @@ Use `logica.estate.agency(agencyId).*` for agency-scoped collections.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
-import { listEstateProperties, type EstatePropertyListResponseBody } from '@/logica/estate/property/list';
-import type { EstateObjectRecord } from '@/logica/estate/types';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
+import { listEstateProperties, type EstatePropertyListResponseBody } from '#/logica/estate/property/list';
+import type { EstateObjectRecord } from '#/logica/estate/types';
 
 type ListKind = 'reaction' | 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 

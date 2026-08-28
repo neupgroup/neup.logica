@@ -13,8 +13,8 @@ Use this module to fetch connection-access info, normalized profile fields, and 
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
-import { url } from '@/core/helpers/link/url';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '#/logica/account/api';
+import { url } from '#/core/helpers/link/url';
 
 type NeupAccessibleAccount = {
   id: string;

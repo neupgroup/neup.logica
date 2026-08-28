@@ -21,7 +21,7 @@ connection creation should live in a different flow with its own creation token.
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
 
 /*
 ::neup.documentation::logica-account-create-internal-neup-connection-input-type

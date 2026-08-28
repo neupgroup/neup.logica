@@ -13,8 +13,8 @@ Use this helper to fetch the accessible accounts that the authenticated caller m
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
-import { url } from '@/core/helpers/link/url';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '#/logica/account/api';
+import { url } from '#/core/helpers/link/url';
 
 type NeupAccessibleAccount = {
   id: string;

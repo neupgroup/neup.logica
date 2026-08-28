@@ -14,8 +14,8 @@ Use `logica.estate.visit().create(data)` to create a visit and
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
-import type { EstateObjectRecord } from '@/logica/estate/types';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
+import type { EstateObjectRecord } from '#/logica/estate/types';
 
 export function visit(visitId?: string) {
   return {

@@ -13,8 +13,8 @@ Use `logica.estate.viewing.*` for viewing API helpers.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
-import type { EstateViewingData } from '@/logica/estate/types';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
+import type { EstateViewingData } from '#/logica/estate/types';
 
 export const viewing = {
   schedule(data: EstateViewingData): Promise<EstateApiResponse> {

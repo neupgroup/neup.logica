@@ -13,8 +13,8 @@ Use this module to fetch accounts that can create connections and accounts whose
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@/logica/account/api';
-import { url } from '@/core/helpers/link/url';
+import { createNeupBridgeUrl, type NeupBridgeResponse } from '#/logica/account/api';
+import { url } from '#/core/helpers/link/url';
 
 type NeupConnection = {
   connectionId: string;

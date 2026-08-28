@@ -13,7 +13,7 @@ Use `logica.drive.account(accountId).status()`.
 ::end
 */
 
-import { requestDriveApi, type DriveApiResponse } from '@/logica/drive/api';
+import { requestDriveApi, type DriveApiResponse } from '#/logica/drive/api';
 
 export type DriveAccountStatusResponseBody = {
   success: boolean;

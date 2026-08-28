@@ -13,8 +13,8 @@ Set `NEUP_APP_ID`, `NEUP_APP_SECRET`, and optionally `NEUP_BRIDGE_URL`.
 import 'dotenv/config';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { url } from '@/core/helpers/link/url';
-import baseJson from '@/logica/base.json';
+import { url } from '#/core/helpers/link/url';
+import baseJson from '#/logica/base.json';
 
 const ROOT = process.cwd();
 const BRIDGE_URL = (process.env.NEUP_BRIDGE_URL || 'http://127.0.0.1:2226').replace(/\/+$/, '');

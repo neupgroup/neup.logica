@@ -13,7 +13,7 @@ This file backs `logica.account(accountId).application`.
 ::end
 */
 
-import { getApplicationAccountAccess } from '@/logica/account/application';
+import { getApplicationAccountAccess } from '#/logica/account/application';
 
 /*
 ::neup.documentation::logica-account-create-account-application-function

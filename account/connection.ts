@@ -13,7 +13,7 @@ Use this module when an app needs a normalized connected-account identity snapsh
 ::end
 */
 
-import { getNeupBridgeEnvironment, runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
+import { getNeupBridgeEnvironment, runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
 
 /*
 ::neup.documentation::logica-account-neup-connection-account-info-type

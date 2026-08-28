@@ -50,9 +50,9 @@ field paths and is removed from the returned property object.
 ::end
 */
 
-import baseJson from '@/logica/estate/base.json';
-import { url } from '@/core/helpers/link/url';
-import type { EstateApiResponse } from '@/logica/estate/api';
+import baseJson from '#/logica/estate/base.json';
+import { url } from '#/core/helpers/link/url';
+import type { EstateApiResponse } from '#/logica/estate/api';
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_OFFSET = 0;

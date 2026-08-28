@@ -17,16 +17,16 @@ account operations.
 ::end
 */
 
-import { auth } from '@/logica/account/auth';
-import { current } from '@/logica/account/current';
-import { accessible } from '@/logica/account/access';
-import { accounts } from '@/logica/account/accounts';
-import { application } from '@/logica/account/application';
-import { connection } from '@/logica/account/connections';
-import { linked } from '@/logica/account/linked';
-import { lookup } from '@/logica/account/lookup';
-import { self } from '@/logica/account/self';
-import { createAccountScope, type AccountScope } from '@/logica/account/scope';
+import { auth } from '#/logica/account/auth';
+import { current } from '#/logica/account/current';
+import { accessible } from '#/logica/account/access';
+import { accounts } from '#/logica/account/accounts';
+import { application } from '#/logica/account/application';
+import { connection } from '#/logica/account/connections';
+import { linked } from '#/logica/account/linked';
+import { lookup } from '#/logica/account/lookup';
+import { self } from '#/logica/account/self';
+import { createAccountScope, type AccountScope } from '#/logica/account/scope';
 
 /*
 ::neup.documentation::logica-account-function

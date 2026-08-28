@@ -14,8 +14,8 @@ Most offer operations are exposed through scoped chains such as
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
-import type { EstateObjectRecord, EstateOfferData } from '@/logica/estate/types';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
+import type { EstateObjectRecord, EstateOfferData } from '#/logica/estate/types';
 
 export function offer(offerId?: string) {
   return {

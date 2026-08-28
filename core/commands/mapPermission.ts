@@ -18,7 +18,7 @@ import { createProjectScanner } from '../ast/project-scanner';
 
 const PERMISSION_HELPER_MODULES = new Set([
   '@logica/permission',
-  '@/logica/permission',
+  '#/logica/permission',
   '@/neup.logica/permission',
   './logica/permission',
   '../logica/permission',

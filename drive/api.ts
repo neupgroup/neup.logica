@@ -14,9 +14,9 @@ helper.
 ::end
 */
 
-import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@/core/infrastructure/api';
-import { url } from '@/core/helpers/link/url';
-import baseJson from '@/logica/base.json';
+import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '#/core/infrastructure/api';
+import { url } from '#/core/helpers/link/url';
+import baseJson from '#/logica/base.json';
 
 export type DriveApiMethod = ApiMethod;
 

@@ -17,14 +17,14 @@ On `neupgroup.com`, the helper calls the account auth endpoint from the client w
 ::end
 */
 
-import { url } from '@/core/helpers/link/url';
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@/logica/account/api';
-import baseJson from '@/logica/base.json';
+import { url } from '#/core/helpers/link/url';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
+import baseJson from '#/logica/base.json';
 import {
   authenticateNeupIdToken,
   type AuthenticateNeupIdTokenResult,
-} from '@/logica/account/token/authenticate';
-import { verifyNeupIdToken } from '@/logica/account/token/verify';
+} from '#/logica/account/token/authenticate';
+import { verifyNeupIdToken } from '#/logica/account/token/verify';
 
 type AuthCheckBody = {
   success?: boolean;
@@ -154,7 +154,7 @@ async function getServerAuthAccountToken(): Promise<string | null> {
   if (typeof window !== 'undefined') return null;
 
   try {
-    const { getCookie } = await import('@/core/helpers/cookie');
+    const { getCookie } = await import('#/core/helpers/cookie');
     return (await getCookie('auth_account'))?.trim() || null;
   } catch {
     return null;

@@ -14,7 +14,7 @@ Use `logica.drive.account(accountId).file.get({ fileId })` or
 ::end
 */
 
-import { requestDriveApi, type DriveApiResponse } from '@/logica/drive/api';
+import { requestDriveApi, type DriveApiResponse } from '#/logica/drive/api';
 
 export type DriveAccountFileRecord = {
   id: string;

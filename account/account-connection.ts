@@ -13,12 +13,12 @@ This file backs `logica.account(accountId).connection`.
 ::end
 */
 
-import { getAccountInfo } from '@/logica/account/accounts/getInfo';
-import { getApplicationAccountAccess } from '@/logica/account/application';
+import { getAccountInfo } from '#/logica/account/accounts/getInfo';
+import { getApplicationAccountAccess } from '#/logica/account/application';
 import {
   connectBrandAccount,
   type CreateInternalNeupConnectionInput,
-} from '@/logica/account/connections/create';
+} from '#/logica/account/connections/create';
 
 /*
 ::neup.documentation::logica-account-create-account-connection-function

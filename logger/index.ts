@@ -17,9 +17,9 @@ to wrap work, auto-log thrown errors, and rethrow them.
 ::end
 */
 
-import { getEnvVariable } from '@/core/helpers/env';
-import baseJson from '@/logica/base.json';
-import { requestLoggerApi, type LoggerApiResponse } from '@/logica/logger/api';
+import { getEnvVariable } from '#/core/helpers/env';
+import baseJson from '#/logica/base.json';
+import { requestLoggerApi, type LoggerApiResponse } from '#/logica/logger/api';
 
 export type LoggerPayload =
   | Record<string, unknown>
@@ -296,7 +296,7 @@ export const logger: LoggerFactory = Object.assign(
 );
 
 export { createLoggerScope };
-export { requestLoggerApi } from '@/logica/logger/api';
-export type { LoggerApiResponse } from '@/logica/logger/api';
+export { requestLoggerApi } from '#/logica/logger/api';
+export type { LoggerApiResponse } from '#/logica/logger/api';
 
 export default logger;

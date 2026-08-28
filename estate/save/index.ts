@@ -13,7 +13,7 @@ Use `logica.estate.save(id).remove()`.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
 
 export function save(id: string) {
   return {

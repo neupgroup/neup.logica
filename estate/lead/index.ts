@@ -13,7 +13,7 @@ Use `logica.estate.lead.*` for lead API helpers.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@/logica/estate/api';
+import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
 
 export const lead = {
   createFromInquiry(inquiryId: string): Promise<EstateApiResponse> {
