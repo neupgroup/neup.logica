@@ -103,7 +103,7 @@ async function readBundledPublicKey(): Promise<string | null> {
         import('node:fs/promises'),
         import('node:path'),
       ]);
-      const publicKeyPath = path.join(process.cwd(), 'logica/account/public.key');
+      const publicKeyPath = path.join(process.cwd(), '.neup', 'logica', 'account', 'public.key');
       const publicKey = (await readFile(publicKeyPath, 'utf8')).trim();
       return publicKey || null;
     } catch {
