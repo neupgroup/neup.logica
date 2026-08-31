@@ -2,7 +2,7 @@
 ::neup.documentation::logica-estate-property-list
 ::title Logica Estate Property List Helper
 
-Portable SDK helper for `GET /bridge/api.v1/property/list`.
+Portable SDK helper for `GET /bridge/api.v1/properties`.
 
 ::public
 
@@ -99,12 +99,12 @@ function getErrorMessage(error: unknown): string {
 export async function listEstateProperties(
   input: EstatePropertyListInput,
 ): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
-  const requestUrl = url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/property/list');
+  const requestUrl = url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/properties');
   const limit = normalizeLimit(input.limit);
   const offset = normalizeOffset(input.offset);
   const query = {
-    agency_id: input.agencyId,
-    account_id: input.accountId,
+    agency: input.agencyId,
+    agent: input.accountId,
     fields: serializeFields(input.fields),
     limit,
     offset,

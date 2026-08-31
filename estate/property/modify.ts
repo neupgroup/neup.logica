@@ -2,7 +2,7 @@
 ::neup.documentation::logica-estate-property-modify
 ::title Logica Estate Property Modify Helper
 
-Portable SDK helper for `POST /bridge/api.v1/property/edit`.
+Portable SDK helper for `POST /bridge/api.v1/properties/edit`.
 
 ::public
 
@@ -38,8 +38,8 @@ export type ModifyEstatePropertyResponseBody = {
 export async function modifyEstateProperty(
   input: ModifyEstatePropertyInput,
 ): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
-  const response = await fetch(url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/property/edit').get(), {
-    method: 'POST',
+  const response = await fetch(url().setBasePath(baseJson.baseEndpoint).addCustomPath(`/bridge/api.v1/properties/${encodeURIComponent(input.propertyId || '')}`).get(), {
+    method: 'PATCH',
     headers: {
       'content-type': 'application/json',
     },

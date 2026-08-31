@@ -2,7 +2,7 @@
 ::neup.documentation::logica-estate-property-view
 ::title Logica Estate Property View Helper
 
-Portable SDK helper for `GET /bridge/api.v1/property/view`.
+Portable SDK helper for `GET /bridge/api.v1/properties/[id]`.
 
 ::public
 
@@ -72,7 +72,7 @@ export async function viewEstateProperty(
 ): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
   const requestUrl = url()
     .setBasePath(baseJson.baseEndpoint)
-    .addCustomPath('/bridge/api.v1/property/view')
+    .addCustomPath(`/bridge/api.v1/properties/${encodeURIComponent(input.propertyId)}`)
     .addParams('propertyId', input.propertyId);
   const fields = serializeFields(input.fields);
   requestUrl.addParams('fields', fields);

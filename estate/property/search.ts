@@ -2,7 +2,7 @@
 ::neup.documentation::logica-estate-property-search
 ::title Logica Estate Property Search Helper
 
-Portable SDK helper for `GET /bridge/api.v1/property/search`.
+Portable SDK helper for `GET /bridge/api.v1/properties` with search/filter parameters.
 
 ::public
 
@@ -19,6 +19,7 @@ import type { EstateApiResponse } from '#/logica/estate/api';
 
 export type SearchEstatePropertiesInput = {
   q?: string | null;
+  search?: string | null;
   page?: number | null;
   limit?: number | null;
   minPrice?: number | null;
@@ -37,6 +38,9 @@ export type SearchEstatePropertiesInput = {
   listingAgent?: string | null;
   isOwnerListing?: boolean | null;
   tags?: string[] | string | null;
+  agency?: string | null;
+  agent?: string | null;
+  orderBy?: 'newestFirst' | 'oldestFirst' | null;
 };
 
 export type SearchEstatePropertiesResponseBody = {
@@ -60,9 +64,9 @@ function serializeList(value: string[] | string | null | undefined): string | un
 export async function searchEstateProperties(
   input: SearchEstatePropertiesInput = {},
 ): Promise<EstateApiResponse<SearchEstatePropertiesResponseBody>> {
-  const requestUrl = url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/property/search');
+  const requestUrl = url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/properties');
   const query = {
-    q: input.q,
+    search: input.search ?? input.q,
     page: input.page,
     limit: input.limit,
     minPrice: input.minPrice,
@@ -81,6 +85,9 @@ export async function searchEstateProperties(
     listingAgent: input.listingAgent,
     isOwnerListing: input.isOwnerListing,
     tags: serializeList(input.tags),
+    agency: input.agency,
+    agent: input.agent,
+    orderBy: input.orderBy,
   };
 
   for (const [key, value] of Object.entries(query)) {

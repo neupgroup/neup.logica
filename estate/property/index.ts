@@ -108,7 +108,7 @@ function createOfferScope(propertyId: string) {
 
 function getPropertyByCode(propertyCode: string, fields?: Fields) {
   return requestEstateApi<ViewEstatePropertyResponseBody>({
-    path: '/bridge/api.v1/property/view',
+    path: `/bridge/api.v1/properties/${encodeURIComponent(propertyCode)}`,
     query: {
       propertyCode,
       fields: serializeFields(fields),
@@ -161,7 +161,7 @@ property.create = function create(data: EstatePropertyCreateData): Promise<Estat
   }
 
   return requestEstateApi<CreateEstatePropertyResponseBody>({
-    path: '/bridge/api.v1/property/create',
+    path: '/bridge/api.v1/properties',
     method: 'POST',
     body: data,
   });

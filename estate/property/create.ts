@@ -2,7 +2,7 @@
 ::neup.documentation::logica-estate-property-create
 ::title Logica Estate Property Create Helper
 
-Portable SDK helper for `POST /bridge/api.v1/property/create`.
+Portable SDK helper for `POST /bridge/api.v1/properties/create`.
 
 ::public
 
@@ -35,7 +35,7 @@ export type CreateEstatePropertyResponseBody = {
 export async function createEstateProperty(
   input: CreateEstatePropertyInput,
 ): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
-  const response = await fetch(url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/property/create').get(), {
+  const response = await fetch(url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/properties').get(), {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
