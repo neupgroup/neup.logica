@@ -9,6 +9,13 @@ Use `logica.logger()` to create a scoped logger for the current application.
 Use `logica.logger.data(data).type(type).log()` to push structured logs and
 `logica.logger.data(data).log()` when the type should default to `log`.
 
+`type` is always sent as a string. Logger requests include the project `slug`
+and `ingestKey`. The slug is resolved from `NEUP_LOGGER_ID`, then
+`NEUP_LOGGER_SLUG`, then `base.json.identity.logica.logger.slug`. If none is
+configured, the request is not sent and the failure is written to the console.
+The ingest key is resolved from `NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY`, or can
+be supplied per call with `logica.ingestKey(value).log(data)`.
+
 Use `logica.logger(async () => { ... })` or `logica.logger().catch(...)`
 to wrap work, auto-log thrown errors, and rethrow them.
 
@@ -31,7 +38,9 @@ export type LoggerPayload =
   | undefined;
 
 export type LoggerDraft = {
+  slug?: string;
   type?: string;
+  ingestKey?: string;
   data?: LoggerPayload;
 };
 
@@ -48,6 +57,7 @@ type LoggerCallback<T> = () => Promise<T> | T;
 export type LoggerScope = {
   data(data: LoggerPayload): LoggerScope;
   type(type: string): LoggerScope;
+  ingestKey(ingestKey: string): LoggerScope;
   log(data?: LoggerPayload): Promise<LoggerApiResponse<LoggerBridgeBody>>;
   error(error?: unknown): Promise<LoggerApiResponse<LoggerBridgeBody>>;
   catch<T>(callback: LoggerCallback<T>, context?: LoggerCatchContext): Promise<T>;
@@ -55,7 +65,7 @@ export type LoggerScope = {
     callback: (...args: TArgs) => Promise<TResult> | TResult,
     context?: LoggerCatchContext,
   ): (...args: TArgs) => Promise<TResult>;
-  getProject(): { projectId?: string; projectName: string };
+  getProject(): { projectId?: string; projectName: string; slug: string };
 };
 
 function trimString(value: unknown) {
@@ -102,6 +112,17 @@ function inferProjectName(projectId: string) {
   return 'unknown-project';
 }
 
+function inferProjectSlug() {
+  const loggerIdentity = (baseJson as typeof baseJson & {
+    identity?: { logica?: { logger?: { slug?: unknown } } };
+  }).identity?.logica?.logger?.slug;
+  return trimString(process.env.NEUP_LOGGER_ID)
+    || trimString(getEnvVariable('NEUP_LOGGER_ID', true))
+    || trimString(process.env.NEUP_LOGGER_SLUG)
+    || trimString(getEnvVariable('NEUP_LOGGER_SLUG', true))
+    || trimString(loggerIdentity);
+}
+
 function normalizeData(data: LoggerPayload): Record<string, unknown> {
   if (data === undefined) {
     return {};
@@ -146,6 +167,10 @@ function createLoggerScope(
   const projectId = requireLoggerEnv('NEUP_APP_ID');
   const appSecret = requireLoggerEnv('NEUP_APP_SECRET');
   const projectName = inferProjectName(projectId);
+  const projectSlug = trimString(draft.slug) || inferProjectSlug();
+  const ingestKey = trimString(draft.ingestKey)
+    || trimString(process.env.NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY)
+    || trimString(getEnvVariable('NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY', true));
   const headers = {
     'x-neup-app-id': projectId,
     'x-neup-app-secret': appSecret,
@@ -156,18 +181,33 @@ function createLoggerScope(
     path: '/bridge/api.v1/logger' | '/bridge/api.v1/logger/error',
     nextDraft: LoggerDraft,
   ) {
-    return requestLoggerApi<LoggerBridgeBody>({
-      path,
-      method: 'POST',
-      headers,
-      bearerToken,
-      body: {
-        projectId,
-        projectName,
-        type: trimString(nextDraft.type) || 'log',
-        data: normalizeData(nextDraft.data),
-      },
-    });
+    if (!projectSlug || !ingestKey) {
+      const error = new Error(!projectSlug
+        ? 'Logger project slug is missing. Configure NEUP_LOGGER_ID, NEUP_LOGGER_SLUG, or base.json.identity.logica.logger.slug.'
+        : 'Logger ingest key is missing. Configure NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY or pass it to logica.logger().ingestKey(value).');
+      console.error('[logica.logger] Log was not sent.', error);
+      return { ok: false, status: 0, body: { success: false, error: error.message } } as LoggerApiResponse<LoggerBridgeBody>;
+    }
+
+    try {
+      return await requestLoggerApi<LoggerBridgeBody>({
+        path,
+        method: 'POST',
+        headers,
+        bearerToken,
+        body: {
+          projectId,
+          projectName,
+          slug: projectSlug,
+          ingestKey,
+          type: trimString(nextDraft.type) || 'log',
+          data: normalizeData(nextDraft.data),
+        },
+      });
+    } catch (error) {
+      console.error('[logica.logger] Log could not be sent.', error);
+      throw error;
+    }
   }
 
   return {
@@ -182,6 +222,13 @@ function createLoggerScope(
       return createLoggerScope({
         ...draft,
         type,
+      });
+    },
+
+    ingestKey(value: string) {
+      return createLoggerScope({
+        ...draft,
+        ingestKey: value,
       });
     },
 
@@ -227,6 +274,7 @@ function createLoggerScope(
       return {
         projectId,
         projectName,
+        slug: projectSlug,
       };
     },
   };
@@ -236,9 +284,11 @@ type LoggerFactoryInput = LoggerCallback<unknown>;
 
 type LoggerFactory = {
   (): LoggerScope;
+  (slug: string): LoggerScope;
   <T>(callback: LoggerCallback<T>, context?: LoggerCatchContext): Promise<T>;
   data(data: LoggerPayload): LoggerScope;
   type(type: string): LoggerScope;
+  ingestKey(ingestKey: string): LoggerScope;
   error(error?: unknown): Promise<LoggerApiResponse<LoggerBridgeBody>>;
   wrap<TArgs extends unknown[], TResult>(
     callback: (...args: TArgs) => Promise<TResult> | TResult,
@@ -247,21 +297,26 @@ type LoggerFactory = {
   getBasepath(): string;
 };
 
-function isLoggerCallback<T>(value: LoggerFactoryInput | undefined): value is LoggerCallback<T> {
+function isLoggerCallback<T>(value: LoggerFactoryInput | string | undefined): value is LoggerCallback<T> {
   return typeof value === 'function';
 }
 
 function loggerFactory(): LoggerScope;
+function loggerFactory(slug: string): LoggerScope;
 function loggerFactory<T>(
   callback: LoggerCallback<T>,
   context?: LoggerCatchContext,
 ): Promise<T>;
 function loggerFactory<T>(
-  input?: LoggerCallback<T>,
+  input?: LoggerCallback<T> | string,
   context?: LoggerCatchContext,
 ): LoggerScope | Promise<T> {
   if (isLoggerCallback<T>(input)) {
     return createLoggerScope().catch(input, context);
+  }
+
+  if (typeof input === 'string') {
+    return createLoggerScope({ slug: input });
   }
 
   return createLoggerScope();
@@ -276,6 +331,10 @@ export const logger: LoggerFactory = Object.assign(
 
     type(type: string) {
       return createLoggerScope().type(type);
+    },
+
+    ingestKey(ingestKey: string) {
+      return createLoggerScope().ingestKey(ingestKey);
     },
 
     error(error?: unknown) {
