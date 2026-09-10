@@ -10,8 +10,8 @@ Use `logica.logger.data(data).type(type).log()` to push structured logs and
 `logica.logger.data(data).log()` when the type should default to `log`.
 
 `type` is always sent as a string. Logger requests include the project `slug`
-and `ingestKey`. The slug is resolved from `NEUP_LOGGER_ID`, then
-`NEUP_LOGGER_SLUG`, then `base.json.identity.logica.logger.slug`. If none is
+and `ingestKey`. The slug is resolved from `NEXT_PUBLIC_NEUP_LOGGER_ID`, then
+`base.json.identity.logica.logger.slug`. If none is
 configured, the request is not sent and the failure is written to the console.
 The ingest key is resolved from `NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY`, or can
 be supplied per call with `logica.ingestKey(value).log(data)`.
@@ -72,8 +72,8 @@ function trimString(value: unknown) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function requireLoggerEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET') {
-  const value = getEnvVariable(name) || trimString(process.env[name.toLowerCase()]);
+function requireLoggerEnv(name: 'NEXT_PUBLIC_NEUP_LOGGER_ID' | 'NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY') {
+  const value = getEnvVariable(name, true) || trimString(process.env[name]);
 
   if (!value) {
     throw new Error(`${name} is required.`);
@@ -116,10 +116,8 @@ function inferProjectSlug() {
   const loggerIdentity = (baseJson as typeof baseJson & {
     identity?: { logica?: { logger?: { slug?: unknown } } };
   }).identity?.logica?.logger?.slug;
-  return trimString(process.env.NEUP_LOGGER_ID)
-    || trimString(getEnvVariable('NEUP_LOGGER_ID', true))
-    || trimString(process.env.NEUP_LOGGER_SLUG)
-    || trimString(getEnvVariable('NEUP_LOGGER_SLUG', true))
+  return trimString(process.env.NEXT_PUBLIC_NEUP_LOGGER_ID)
+    || trimString(getEnvVariable('NEXT_PUBLIC_NEUP_LOGGER_ID', true))
     || trimString(loggerIdentity);
 }
 
@@ -164,18 +162,11 @@ function normalizeCaughtError(error: unknown, context?: LoggerCatchContext) {
 function createLoggerScope(
   draft: LoggerDraft = {},
 ): LoggerScope {
-  const projectId = requireLoggerEnv('NEUP_APP_ID');
-  const appSecret = requireLoggerEnv('NEUP_APP_SECRET');
+  const projectId = requireLoggerEnv('NEXT_PUBLIC_NEUP_LOGGER_ID');
   const projectName = inferProjectName(projectId);
   const projectSlug = trimString(draft.slug) || inferProjectSlug();
   const ingestKey = trimString(draft.ingestKey)
-    || trimString(process.env.NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY)
-    || trimString(getEnvVariable('NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY', true));
-  const headers = {
-    'x-neup-app-id': projectId,
-    'x-neup-app-secret': appSecret,
-  };
-  const bearerToken = appSecret;
+    || requireLoggerEnv('NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY');
 
   async function send(
     path: '/bridge/api.v1/logger' | '/bridge/api.v1/logger/error',
@@ -183,7 +174,7 @@ function createLoggerScope(
   ) {
     if (!projectSlug || !ingestKey) {
       const error = new Error(!projectSlug
-        ? 'Logger project slug is missing. Configure NEUP_LOGGER_ID, NEUP_LOGGER_SLUG, or base.json.identity.logica.logger.slug.'
+        ? 'Logger project slug is missing. Configure NEXT_PUBLIC_NEUP_LOGGER_ID or base.json.identity.logica.logger.slug.'
         : 'Logger ingest key is missing. Configure NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY or pass it to logica.logger().ingestKey(value).');
       console.error('[logica.logger] Log was not sent.', error);
       return { ok: false, status: 0, body: { success: false, error: error.message } } as LoggerApiResponse<LoggerBridgeBody>;
@@ -193,8 +184,6 @@ function createLoggerScope(
       return await requestLoggerApi<LoggerBridgeBody>({
         path,
         method: 'POST',
-        headers,
-        bearerToken,
         body: {
           projectId,
           projectName,

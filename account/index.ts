@@ -26,6 +26,7 @@ import { connection } from '#/logica/account/connections';
 import { linked } from '#/logica/account/linked';
 import { lookup } from '#/logica/account/lookup';
 import { self } from '#/logica/account/self';
+import { getMembers, getMember, getTeams, getTeam } from '#/logica/account/team';
 import { createAccountScope, type AccountScope } from '#/logica/account/scope';
 
 /*
@@ -56,6 +57,7 @@ account.accessible = accessible;
 account.connection = connection;
 account.application = application;
 account.self = self;
+account.team = { getMembers, getMember, getTeams, getTeam };
 
 account.list = accounts.list;
 account.type = accounts.type;

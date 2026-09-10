@@ -18,6 +18,7 @@ import {
   getConnectionTeamMembers,
 } from '#/logica/account/access';
 import type { NeupBridgeResponse } from '#/logica/account/api';
+import { runNeupBridgeApi } from '#/logica/account/api';
 
 type TeamAuth = {
   authAccountToken?: string | null;
@@ -95,4 +96,58 @@ export async function getTeamMembers(
   }
 
   throw new Error('`connection` or `app`/`application` is required.');
+}
+
+/** Reads all organization members from GET /bridge/api.v1/members. */
+export async function getMembers(
+  input: TeamAuth = {},
+): Promise<NeupBridgeResponse> {
+  return runNeupBridgeApi({
+    path: '/bridge/api.v1/members',
+    method: 'GET',
+    authAccountToken: input.authAccountToken,
+    bearerToken: input.authTokenHeader,
+  });
+}
+
+/** Reads one organization member from GET /bridge/api.v1/members/[id]. */
+export async function getMember(
+  id: string,
+  input: TeamAuth = {},
+): Promise<NeupBridgeResponse> {
+  const memberId = id.trim();
+  if (!memberId) throw new Error('`id` is required.');
+  return runNeupBridgeApi({
+    path: `/bridge/api.v1/members/${encodeURIComponent(memberId)}`,
+    method: 'GET',
+    authAccountToken: input.authAccountToken,
+    bearerToken: input.authTokenHeader,
+  });
+}
+
+/** Reads all organization teams from GET /bridge/api.v1/members/team. */
+export async function getTeams(
+  input: TeamAuth = {},
+): Promise<NeupBridgeResponse> {
+  return runNeupBridgeApi({
+    path: '/bridge/api.v1/members/team',
+    method: 'GET',
+    authAccountToken: input.authAccountToken,
+    bearerToken: input.authTokenHeader,
+  });
+}
+
+/** Reads one organization team from GET /bridge/api.v1/members/team/[id]. */
+export async function getTeam(
+  id: string,
+  input: TeamAuth = {},
+): Promise<NeupBridgeResponse> {
+  const teamId = id.trim();
+  if (!teamId) throw new Error('`id` is required.');
+  return runNeupBridgeApi({
+    path: `/bridge/api.v1/members/team/${encodeURIComponent(teamId)}`,
+    method: 'GET',
+    authAccountToken: input.authAccountToken,
+    bearerToken: input.authTokenHeader,
+  });
 }
