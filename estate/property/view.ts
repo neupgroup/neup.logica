@@ -42,8 +42,8 @@ field paths and is removed from the returned property object.
 ::end
 */
 
-import baseJson from '@neup/logica/estate/base.json';
-import { url } from '@neup/core/helpers/link/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
+import { url } from '@neup/core/helpers/url';
 import type { EstateApiResponse } from '@neup/logica/estate/api';
 
 export type ViewEstatePropertyInput = {
@@ -70,12 +70,11 @@ function getErrorMessage(error: unknown): string {
 export async function viewEstateProperty(
   input: ViewEstatePropertyInput,
 ): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-  const requestUrl = url()
-    .setBasePath(baseJson.baseEndpoint)
-    .addCustomPath(`/bridge/api.v1/properties/${encodeURIComponent(input.propertyId)}`)
-    .addParams('propertyId', input.propertyId);
+  const requestUrl = url.web.path(getBaseUrl('estate'))
+    .addPath(`/bridge/api.v1/properties/${encodeURIComponent(input.propertyId)}`)
+    .addParam('propertyId', input.propertyId);
   const fields = serializeFields(input.fields);
-  requestUrl.addParams('fields', fields);
+  if (fields) requestUrl.addParam('fields', fields);
 
   try {
     const response = await fetch(requestUrl.get(), {

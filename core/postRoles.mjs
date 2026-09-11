@@ -12,8 +12,8 @@ Set `NEUP_APP_ID`, `NEUP_APP_SECRET`, and optionally `NEUP_BRIDGE_URL`.
 import 'dotenv/config';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { url } from '@neup/core/helpers/link/url';
-import baseJson from '@neup/logica/base.json';
+import { url } from '@neup/core/helpers/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 const ROOT = process.cwd();
 const BRIDGE_URL = (process.env.NEUP_BRIDGE_URL || 'http://127.0.0.1:2226').replace(/\/+$/, '');
@@ -31,7 +31,7 @@ async function readJson(relativePath) {
 }
 
 async function postJson(pathname, body) {
-  const response = await fetch(url().setBasePath(baseJson.neupid).addCustomPath(pathname).get(), {
+  const response = await fetch(url.web.path(getBaseUrl('neupid')).addPath(pathname).get(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

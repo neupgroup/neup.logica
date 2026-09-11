@@ -14,9 +14,9 @@ specialized helper.
 ::end
 */
 
-import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@neup/core/infrastructure/api';
-import { url } from '@neup/core/helpers/link/url';
-import baseJson from '@neup/logica/estate/base.json';
+import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@/.neup/core/infrastructure/api';
+import { url } from '@neup/core/helpers/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 export type EstateApiMethod = ApiMethod;
 
@@ -38,8 +38,8 @@ export async function requestEstateApi<TBody = unknown>(
   options: EstateApiRequestOptions,
 ): Promise<EstateApiResponse<TBody>> {
   return runApi<TBody>({
-    baseUrl: new URL(baseJson.baseEndpoint).origin,
-    path: url().setBasePath(baseJson.baseEndpoint).addCustomPath(options.path).get(),
+    baseUrl: new URL(getBaseUrl('estate')).origin,
+    path: url.web.path(getBaseUrl('estate')).addPath(options.path).get(),
     method: options.method,
     query: options.query,
     body: options.body,

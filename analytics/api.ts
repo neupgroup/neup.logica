@@ -13,9 +13,9 @@ Use `requestAnalyticsApi()` for analytics bridge endpoints exposed by this app.
 ::end
 */
 
-import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@neup/core/infrastructure/api';
-import { url } from '@neup/core/helpers/link/url';
-import baseJson from '@neup/logica/base.json';
+import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@/.neup/core/infrastructure/api';
+import { url } from '@neup/core/helpers/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 export type AnalyticsApiMethod = ApiMethod;
 
@@ -34,7 +34,7 @@ export type AnalyticsApiRequestOptions = {
 };
 
 function requireAnalyticsBaseUrl(): string {
-  const value = baseJson.analytics?.trim();
+  const value = getBaseUrl('analytics');
 
   if (!value) {
     throw new Error('logica/base.json analytics is required.');
@@ -50,7 +50,7 @@ export async function requestAnalyticsApi<TBody = unknown>(
 
   return runApi<TBody>({
     baseUrl: new URL(analyticsBaseUrl).origin,
-    path: url().setBasePath(analyticsBaseUrl).addCustomPath(options.path).get(),
+    path: url.web.path(analyticsBaseUrl).addPath(options.path).get(),
     method: options.method,
     query: options.query,
     body: options.body,

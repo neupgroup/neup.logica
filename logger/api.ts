@@ -18,9 +18,9 @@ import {
   type ApiMethod,
   type ApiQuery,
   type ApiResponse,
-} from '@neup/core/infrastructure/api';
-import { url } from '@neup/core/helpers/link/url';
-import baseJson from '@neup/logica/base.json';
+} from '@/.neup/core/infrastructure/api';
+import { url } from '@neup/core/helpers/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 export type LoggerApiMethod = ApiMethod;
 
@@ -38,7 +38,7 @@ export type LoggerApiRequestOptions = {
 };
 
 function getLoggerBaseUrl() {
-  const value = baseJson.cloud?.trim();
+  const value = getBaseUrl('cloud');
 
   if (!value) {
     throw new Error('logica/base.json cloud is required.');
@@ -54,7 +54,7 @@ function getLoggerOrigin() {
 export function createLoggerUrl(path: string, query?: LoggerApiQuery): string {
   return createApiUrl(
     getLoggerOrigin(),
-    url().setBasePath(getLoggerBaseUrl()).addCustomPath(path).get(),
+    url.web.path(getLoggerBaseUrl()).addPath(path).get(),
     query,
   );
 }
@@ -64,7 +64,7 @@ export async function requestLoggerApi<TBody = unknown>(
 ): Promise<LoggerApiResponse<TBody>> {
   return runApi<TBody>({
     baseUrl: getLoggerOrigin(),
-    path: url().setBasePath(getLoggerBaseUrl()).addCustomPath(options.path).get(),
+    path: url.web.path(getLoggerBaseUrl()).addPath(options.path).get(),
     method: options.method,
     query: options.query,
     body: options.body,

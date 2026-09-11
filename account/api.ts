@@ -21,15 +21,14 @@ Endpoint-agnostic request execution lives in `@neup/core/infrastructure/api`.
 */
 
 import {
-  createApiUrl,
   runApi,
   type ApiMethod,
   type ApiQuery,
   type ApiResponse,
-} from '@neup/core/infrastructure/api';
+} from '@/.neup/core/infrastructure/api';
 import { getEnvVariable } from '@neup/core/helpers/env';
-import { url } from '@neup/core/helpers/link/url';
-import baseJson from '@neup/logica/base.json';
+import { url } from '@neup/core/helpers/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 /*
 ::neup.documentation::logica-account-neup-bridge-environment-type
@@ -135,16 +134,8 @@ function requireEnv(name: 'NEUP_APP_ID' | 'NEUP_APP_SECRET'): string {
   return value;
 }
 
-function requireBaseJsonUrl(name: 'neupid'): string {
-  const value = baseJson[name]?.trim();
-  if (!value) {
-    throw new Error(`logica/base.json ${name} is required.`);
-  }
-  return value;
-}
-
 function getNeupBridgeBaseUrl(): string {
-  return requireBaseJsonUrl('neupid');
+  return getBaseUrl('neupid');
 }
 
 function getNeupBridgeOrigin(): string {
@@ -175,29 +166,6 @@ export function getNeupBridgeEnvironment(): NeupBridgeEnvironment {
 }
 
 /*
-::neup.documentation::logica-account-create-neup-bridge-url-function
-::function createNeupBridgeUrl(path, query)
-
-Creates an absolute account bridge URL.
-
-::public
-
-Uses the configured account bridge base URL and appends the provided path and
-query parameters.
-
-::public end
-
-::end
-*/
-export function createNeupBridgeUrl(path: string, query?: NeupBridgeQuery): string {
-  return createApiUrl(
-    getNeupBridgeOrigin(),
-    url().setBasePath(getNeupBridgeBaseUrl()).addCustomPath(path).get(),
-    query,
-  );
-}
-
-/*
 ::neup.documentation::logica-account-run-neup-bridge-api-function
 ::function runNeupBridgeApi(options)
 
@@ -217,7 +185,7 @@ export async function runNeupBridgeApi<TBody = unknown>(
 ): Promise<NeupBridgeResponse<TBody>> {
   return runApi<TBody>({
     baseUrl: getNeupBridgeOrigin(),
-    path: url().setBasePath(getNeupBridgeBaseUrl()).addCustomPath(options.path).get(),
+    path: url.web.path(getNeupBridgeBaseUrl()).addPath(options.path).get(),
     method: options.method,
     query: options.query,
     body: options.body,

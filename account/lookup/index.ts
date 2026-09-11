@@ -52,8 +52,9 @@ and account service run under compatible domains.
 ::end
 */
 
+import { url } from '@neup/core/helpers/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import {
-  createNeupBridgeUrl,
   getNeupBridgeEnvironment,
   runNeupBridgeApi,
   type NeupBridgeResponse,
@@ -306,7 +307,7 @@ export async function getAccountBasics(
 ): Promise<NeupBridgeResponse<LookupResponseBody>> {
   const fields = normalizeFields(input.fields);
   const env = getNeupBridgeEnvironment();
-  const url = createNeupBridgeUrl('/bridge/api.v1/accounts/lookup');
+  const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts/lookup').get();
   const headers: Record<string, string> = {
     'content-type': 'application/json',
   };
@@ -320,7 +321,7 @@ export async function getAccountBasics(
     }
   }
 
-  const response = await fetch(url, {
+  const response = await fetch(requestUrl, {
     method: 'POST',
     headers,
     body: JSON.stringify({

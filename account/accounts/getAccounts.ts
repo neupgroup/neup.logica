@@ -13,8 +13,9 @@ Use this helper to fetch the accessible accounts that the authenticated caller m
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@neup/logica/account/api';
-import { url } from '@neup/core/helpers/link/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
+import type { NeupBridgeResponse } from '@neup/logica/account/api';
+import { url } from '@neup/core/helpers/url';
 
 type NeupAccessibleAccount = {
   id: string;
@@ -74,8 +75,10 @@ application connection flows.
 export async function getAccounts(
   input: GetNeupAccountsInput = {},
 ): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
-  const requestUrl = url(createNeupBridgeUrl('/bridge/api.v1/accounts'))
-    .addParams('appSecret', input.bearerToken?.trim() && input.appSecret?.trim() ? input.appSecret.trim() : null);
+  const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts');
+  if (input.bearerToken?.trim() && input.appSecret?.trim()) {
+    requestUrl.addParam('appSecret', input.appSecret.trim());
+  }
 
   const headers = new Headers();
 

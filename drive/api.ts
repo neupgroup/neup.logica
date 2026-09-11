@@ -14,9 +14,9 @@ helper.
 ::end
 */
 
-import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@neup/core/infrastructure/api';
-import { url } from '@neup/core/helpers/link/url';
-import baseJson from '@neup/logica/base.json';
+import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@/.neup/core/infrastructure/api';
+import { url } from '@neup/core/helpers/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 export type DriveApiMethod = ApiMethod;
 
@@ -38,8 +38,8 @@ export async function requestDriveApi<TBody = unknown>(
   options: DriveApiRequestOptions,
 ): Promise<DriveApiResponse<TBody>> {
   return runApi<TBody>({
-    baseUrl: new URL(baseJson.drive).origin,
-    path: url().setBasePath(baseJson.drive).addCustomPath(options.path).get(),
+    baseUrl: new URL(getBaseUrl('drive')).origin,
+    path: url.web.path(getBaseUrl('drive')).addPath(options.path).get(),
     method: options.method,
     query: options.query,
     body: options.body,

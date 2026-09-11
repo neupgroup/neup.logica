@@ -13,8 +13,8 @@ Submits a property creation payload as an awaiting-review draft.
 ::end
 */
 
-import baseJson from '@neup/logica/estate/base.json';
-import { url } from '@neup/core/helpers/link/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
+import { url } from '@neup/core/helpers/url';
 import type { EstateApiResponse } from '@neup/logica/estate/api';
 
 export type CreateEstatePropertyInput = {
@@ -35,7 +35,7 @@ export type CreateEstatePropertyResponseBody = {
 export async function createEstateProperty(
   input: CreateEstatePropertyInput,
 ): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
-  const response = await fetch(url().setBasePath(baseJson.baseEndpoint).addCustomPath('/bridge/api.v1/properties').get(), {
+  const response = await fetch(url.web.path(getBaseUrl('estate')).addPath('/bridge/api.v1/properties').get(), {
     method: 'POST',
     headers: {
       'content-type': 'application/json',

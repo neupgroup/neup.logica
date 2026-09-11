@@ -17,7 +17,8 @@ or prefixed slug lookup.
 */
 
 import { getEnvVariable } from '@neup/core/helpers/env';
-import { requestSitesApi, type SitesApiResponse } from '@neup/logica/sites/api';
+import { member, type SitesMemberResponseBody } from '@neup/logica/sites/member';
+import { team, type SitesMemberListResponseBody } from '@neup/logica/sites/member/team';
 
 export interface SitesMemberDirectoryItem {
   id: string;
@@ -32,18 +33,6 @@ export interface SitesMemberDirectoryItem {
   teamTitle: string | null;
   teamSlug: string | null;
   teamDescription: string | null;
-}
-
-export interface SitesMemberListResponseBody {
-  success: boolean;
-  data?: SitesMemberDirectoryItem[];
-  error?: string;
-}
-
-export interface SitesMemberResponseBody {
-  success: boolean;
-  data?: SitesMemberDirectoryItem;
-  error?: string;
 }
 
 function resolveProjectId(projectId?: string): string {
@@ -61,28 +50,17 @@ export function sites(projectId?: string) {
 
   return {
     members: {
-      get(): Promise<SitesApiResponse<SitesMemberListResponseBody>> {
-        return requestSitesApi<SitesMemberListResponseBody>({
-          path: `/bridge/api.v1/project/${encodeURIComponent(resolvedProjectId)}/team`,
-        });
-      },
+      get: () => team(resolvedProjectId).get(),
     },
 
     member(idOrSlug: string) {
-      return {
-        get(): Promise<SitesApiResponse<SitesMemberResponseBody>> {
-          return requestSitesApi<SitesMemberResponseBody>({
-            path: `/bridge/api.v1/project/${encodeURIComponent(resolvedProjectId)}/member/${encodeURIComponent(idOrSlug)}`,
-          });
-        },
-      } as const;
+      return member(resolvedProjectId, idOrSlug);
     },
   } as const;
 }
 
 export type SitesScope = ReturnType<typeof sites>;
 
-export { requestSitesApi };
-export type { SitesApiResponse };
+export type { SitesMemberListResponseBody, SitesMemberResponseBody };
 
 export default sites;

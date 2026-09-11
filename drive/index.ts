@@ -16,10 +16,10 @@ portable clients.
 */
 
 import { account } from '@neup/logica/drive/account';
-import baseJson from '@neup/logica/base.json';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 function getBasepath() {
-  return baseJson.drive;
+  return getBaseUrl('drive');
 }
 
 export const drive = {

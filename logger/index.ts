@@ -25,7 +25,7 @@ to wrap work, auto-log thrown errors, and rethrow them.
 */
 
 import { getEnvVariable } from '@neup/core/helpers/env';
-import baseJson from '@neup/logica/base.json';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import { requestLoggerApi, type LoggerApiResponse } from '@neup/logica/logger/api';
 
 export type LoggerPayload =
@@ -95,7 +95,7 @@ function inferProjectName(projectId: string) {
   }
 
   const envUrl = getEnvVariable('APP_URL', true)
-    || trimString(baseJson.cloud);
+    || getBaseUrl('cloud');
 
   if (envUrl) {
     try {
@@ -113,9 +113,7 @@ function inferProjectName(projectId: string) {
 }
 
 function inferProjectSlug() {
-  const loggerIdentity = (baseJson as typeof baseJson & {
-    identity?: { logica?: { logger?: { slug?: unknown } } };
-  }).identity?.logica?.logger?.slug;
+  const loggerIdentity = undefined;
   return trimString(process.env.NEXT_PUBLIC_NEUP_LOGGER_ID)
     || trimString(getEnvVariable('NEXT_PUBLIC_NEUP_LOGGER_ID', true))
     || trimString(loggerIdentity);
@@ -338,7 +336,7 @@ export const logger: LoggerFactory = Object.assign(
     },
 
     getBasepath() {
-      return baseJson.cloud;
+      return getBaseUrl('cloud');
     },
   },
 );

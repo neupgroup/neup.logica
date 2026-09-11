@@ -13,8 +13,9 @@ Use this module to fetch accounts that can create connections and accounts whose
 ::end
 */
 
-import { createNeupBridgeUrl, type NeupBridgeResponse } from '@neup/logica/account/api';
-import { url } from '@neup/core/helpers/link/url';
+import { getBaseUrl } from '@neup/logica/baseurl';
+import type { NeupBridgeResponse } from '@neup/logica/account/api';
+import { url } from '@neup/core/helpers/url';
 
 type NeupConnection = {
   connectionId: string;
@@ -113,14 +114,21 @@ optional pagination/date filters.
 export async function getApplicationConnections(
   input: GetNeupConnectionsInput,
 ): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
-  const requestUrl = url(createNeupBridgeUrl('/bridge/api.v1/application/users'))
-    .addParams('offset', input.offset)
-    .addParams('limit', input.limit)
-    .addParams('start', input.start)
-    .addParams('end', input.end)
-    .addParams('startFrom', input.startFrom?.trim() || null)
-    .addParams('fromDate', input.fromDate?.trim() || null)
-    .addParams('toDate', input.toDate?.trim() || null);
+  const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/application/users');
+  const query = {
+    offset: input.offset,
+    limit: input.limit,
+    start: input.start,
+    end: input.end,
+    startFrom: input.startFrom?.trim(),
+    fromDate: input.fromDate?.trim(),
+    toDate: input.toDate?.trim(),
+  };
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== null && value !== undefined && value !== '') {
+      requestUrl.addParam(key, String(value));
+    }
+  }
 
   const headers = new Headers(input.headers);
   headers.set('content-type', 'application/json');
@@ -162,8 +170,10 @@ Calls the accounts bridge route with auth-account or bearer credentials.
 export async function getConnectableAccounts(
   input: GetCreatableConnectionsInput = {},
 ): Promise<NeupBridgeResponse<GetCreatableConnectionsResponseBody>> {
-  const requestUrl = url(createNeupBridgeUrl('/bridge/api.v1/accounts'))
-    .addParams('appSecret', input.bearerToken?.trim() && input.appSecret?.trim() ? input.appSecret.trim() : null);
+  const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts');
+  if (input.bearerToken?.trim() && input.appSecret?.trim()) {
+    requestUrl.addParam('appSecret', input.appSecret.trim());
+  }
 
   const headers = new Headers();
 

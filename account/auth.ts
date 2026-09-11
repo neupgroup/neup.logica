@@ -17,9 +17,9 @@ On `neupgroup.com`, the helper calls the account auth endpoint from the client w
 ::end
 */
 
-import { url } from '@neup/core/helpers/link/url';
+import { url } from '@neup/core/helpers/url';
 import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
-import baseJson from '@neup/logica/base.json';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import {
   authenticateNeupIdToken,
   type AuthenticateNeupIdTokenResult,
@@ -93,16 +93,14 @@ function isNeupGroupHostname(hostname: string): boolean {
 }
 
 function createAuthMePath(workingProfile?: string | null): string {
-  const path = url().setBasePath(baseJson.neupid).addCustomPath(AUTH_ME_PATH).get();
-  const query = new URLSearchParams();
+  const requestUrl = url.web.path(getBaseUrl('neupid')).addPath(AUTH_ME_PATH);
   const normalizedWorkingProfile = workingProfile?.trim();
 
   if (normalizedWorkingProfile) {
-    query.set('workingProfile', normalizedWorkingProfile);
+    requestUrl.addParam('workingProfile', normalizedWorkingProfile);
   }
 
-  const queryString = query.toString();
-  return queryString ? `${path}?${queryString}` : path;
+  return requestUrl.get();
 }
 
 async function parseJsonResponse(response: Response): Promise<unknown> {
