@@ -18,13 +18,13 @@ import {
   getDriveAccountFile,
   type DriveAccountFileGetInput,
   type DriveAccountFileGetResponseBody,
-} from '#/logica/drive/account/file/get';
+} from '@neup/logica/drive/account/file/get';
 import {
   listDriveAccountFiles,
   type DriveAccountFileListInput,
   type DriveAccountFileListResponseBody,
-} from '#/logica/drive/account/file/list';
-import type { DriveApiResponse } from '#/logica/drive/api';
+} from '@neup/logica/drive/account/file/list';
+import type { DriveApiResponse } from '@neup/logica/drive/api';
 
 export function createDriveAccountFileScope(accountId: string) {
   return {

@@ -19,15 +19,15 @@ import {
   runNeupBridgeApi,
   type NeupBridgeQuery,
   type NeupBridgeResponse,
-} from '#/logica/account/api';
+} from '@neup/logica/account/api';
 import {
   getApplicationTeamMembers,
   getConnectionTeamMembers,
-} from '#/logica/account/access';
-import { getApplicationConnections } from '#/logica/account/connections/getConnections';
-import { getAccountBasics } from '#/logica/account/lookup';
-import { getApplicationLogo } from '#/logica/account/branding';
-import { normalizeAccountFields, type AccountFields } from '#/logica/account/fields';
+} from '@neup/logica/account/access';
+import { getApplicationConnections } from '@neup/logica/account/connections/getConnections';
+import { getAccountBasics } from '@neup/logica/account/lookup';
+import { getApplicationLogo } from '@neup/logica/account/branding';
+import { normalizeAccountFields, type AccountFields } from '@neup/logica/account/fields';
 
 function getApplicationCredentials(input?: { app?: string; appSecret?: string }) {
   const env = getNeupBridgeEnvironment();

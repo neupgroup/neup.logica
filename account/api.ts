@@ -13,7 +13,7 @@ through the generic core API runner.
 
 ::private
 
-Endpoint-agnostic request execution lives in `#/core/infrastructure/api`.
+Endpoint-agnostic request execution lives in `@neup/core/infrastructure/api`.
 
 ::private end
 
@@ -26,10 +26,10 @@ import {
   type ApiMethod,
   type ApiQuery,
   type ApiResponse,
-} from '#/core/infrastructure/api';
-import { getEnvVariable } from '#/core/helpers/env';
-import { url } from '#/core/helpers/link/url';
-import baseJson from '#/logica/base.json';
+} from '@neup/core/infrastructure/api';
+import { getEnvVariable } from '@neup/core/helpers/env';
+import { url } from '@neup/core/helpers/link/url';
+import baseJson from '@neup/logica/base.json';
 
 /*
 ::neup.documentation::logica-account-neup-bridge-environment-type

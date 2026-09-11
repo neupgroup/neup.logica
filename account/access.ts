@@ -13,15 +13,15 @@ Use this module for `/bridge/api.v1/access/connection` and `/bridge/api.v1/acces
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '#/logica/account/api';
+import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
 import {
   getAccessibleAccounts,
   getAccessibleBrandAccounts,
   getAccessibleDependentAccounts,
   getAccessibleSubBrandAccounts,
   getAccountAccess,
-} from '#/logica/account/connections/getInfo';
-import { hasAccountPermission, type HasPermissionOptions } from '#/logica/account/connections/permissions';
+} from '@neup/logica/account/connections/getInfo';
+import { hasAccountPermission, type HasPermissionOptions } from '@neup/logica/account/connections/permissions';
 
 type AccessAuth = {
   authAccountToken?: string | null;

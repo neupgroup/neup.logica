@@ -14,19 +14,19 @@ Estate object composed from nested estate domain folders.
 ::end
 */
 
-import { agency } from '#/logica/estate/agency';
-import { agent } from '#/logica/estate/agent';
-import { favorite } from '#/logica/estate/favorite';
-import { inquiry } from '#/logica/estate/inquiry';
-import { lead } from '#/logica/estate/lead';
-import { offer } from '#/logica/estate/offer';
-import { property } from '#/logica/estate/property';
-import { reaction } from '#/logica/estate/reaction';
-import { save } from '#/logica/estate/save';
-import { comment } from '#/logica/estate/comment';
-import { user } from '#/logica/estate/user';
-import { visit } from '#/logica/estate/visit';
-import { viewing } from '#/logica/estate/viewing';
+import { agency } from '@neup/logica/estate/agency';
+import { agent } from '@neup/logica/estate/agent';
+import { favorite } from '@neup/logica/estate/favorite';
+import { inquiry } from '@neup/logica/estate/inquiry';
+import { lead } from '@neup/logica/estate/lead';
+import { offer } from '@neup/logica/estate/offer';
+import { property } from '@neup/logica/estate/property';
+import { reaction } from '@neup/logica/estate/reaction';
+import { save } from '@neup/logica/estate/save';
+import { comment } from '@neup/logica/estate/comment';
+import { user } from '@neup/logica/estate/user';
+import { visit } from '@neup/logica/estate/visit';
+import { viewing } from '@neup/logica/estate/viewing';
 
 export const estate = {
   property,
@@ -60,14 +60,14 @@ export {
   viewing,
 };
 
-export { requestEstateApi } from '#/logica/estate/api';
-export type { EstateApiResponse } from '#/logica/estate/api';
+export { requestEstateApi } from '@neup/logica/estate/api';
+export type { EstateApiResponse } from '@neup/logica/estate/api';
 export type {
   EstateInquiryCreateData,
   EstateObjectRecord,
   EstateOfferData,
   EstatePropertyCreateData,
   EstateViewingData,
-} from '#/logica/estate/types';
+} from '@neup/logica/estate/types';
 
 export default estate;

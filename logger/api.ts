@@ -18,9 +18,9 @@ import {
   type ApiMethod,
   type ApiQuery,
   type ApiResponse,
-} from '#/core/infrastructure/api';
-import { url } from '#/core/helpers/link/url';
-import baseJson from '#/logica/base.json';
+} from '@neup/core/infrastructure/api';
+import { url } from '@neup/core/helpers/link/url';
+import baseJson from '@neup/logica/base.json';
 
 export type LoggerApiMethod = ApiMethod;
 

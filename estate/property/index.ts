@@ -16,12 +16,12 @@ Use `logica.estate.property(propertyId).*` for one property's scoped operations.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '#/logica/estate/api';
-import { createEstateProperty, type CreateEstatePropertyResponseBody } from '#/logica/estate/property/create';
-import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '#/logica/estate/property/modify';
-import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '#/logica/estate/property/search';
-import { viewEstateProperty, type ViewEstatePropertyResponseBody } from '#/logica/estate/property/view';
-import type { EstateObjectRecord, EstatePropertyCreateData } from '#/logica/estate/types';
+import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { createEstateProperty, type CreateEstatePropertyResponseBody } from '@neup/logica/estate/property/create';
+import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '@neup/logica/estate/property/modify';
+import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '@neup/logica/estate/property/search';
+import { viewEstateProperty, type ViewEstatePropertyResponseBody } from '@neup/logica/estate/property/view';
+import type { EstateObjectRecord, EstatePropertyCreateData } from '@neup/logica/estate/types';
 
 type Fields = string[] | string | null;
 

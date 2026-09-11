@@ -14,13 +14,13 @@ helpers, and `logica.estate.*` to access estate API helpers.
 ::end
 */
 
-import { estate } from '#/logica/estate';
-import { account } from '#/logica/account';
-import { drive } from '#/logica/drive';
-import { logger } from '#/logica/logger';
-import { analytics } from '#/logica/analytics';
-import { sites } from '#/logica/sites';
-import { notification } from '#/logica/notification';
+import { estate } from '@neup/logica/estate';
+import { account } from '@neup/logica/account';
+import { drive } from '@neup/logica/drive';
+import { logger } from '@neup/logica/logger';
+import { analytics } from '@neup/logica/analytics';
+import { sites } from '@neup/logica/sites';
+import { notification } from '@neup/logica/notification';
 
 export const logica = {
   account,
