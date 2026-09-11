@@ -14,7 +14,7 @@ specialized helper.
 ::end
 */
 
-import { runApi, type ApiMethod, type ApiQuery, type ApiResponse } from '@/.neup/core/infrastructure/api';
+import { api, type ApiMethod, type ApiQuery, type ApiResponse } from '@/.neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
@@ -37,16 +37,11 @@ export type EstateApiRequestOptions = {
 export async function requestEstateApi<TBody = unknown>(
   options: EstateApiRequestOptions,
 ): Promise<EstateApiResponse<TBody>> {
-  return runApi<TBody>({
-    baseUrl: new URL(getBaseUrl('estate')).origin,
-    path: url.web.path(getBaseUrl('estate')).addPath(options.path).get(),
-    method: options.method,
-    query: options.query,
-    body: options.body,
-    headers: options.headers,
-    bearerToken: options.bearerToken,
-    cookies: {
-      auth_account: options.authAccountToken,
-    },
-  });
+  const request = api.atPath(url.web.path(getBaseUrl('estate')).addPath(options.path).get());
+  if (options.method) request.usingMethod(options.method);
+  if (options.body != null) request.addData(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
+  for (const [key, value] of new Headers(options.headers).entries()) request.addHeader(`${key}: ${value}`);
+  if (options.bearerToken) request.addHeader(`authorization: Bearer ${options.bearerToken}`);
+  if (options.authAccountToken) request.addHeader(`cookie: auth_account=${options.authAccountToken}`);
+  return (await request.run().run()).getResponse<TBody>();
 }

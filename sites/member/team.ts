@@ -1,4 +1,4 @@
-import { runApi, type ApiResponse } from '@/.neup/core/infrastructure/api';
+import { api, type ApiResponse } from '@/.neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import type { SitesMemberDirectoryItem } from '@neup/logica/sites';
@@ -21,7 +21,7 @@ export function team(projectId: string) {
         .addPath('team')
         .get();
       // Execute the request through the shared API runner.
-      return runApi<SitesMemberListResponseBody>({ baseUrl: new URL(baseUrl).origin, path });
+      return api.atPath(path).run().run().then((runner) => runner.getResponse<SitesMemberListResponseBody>());
     },
   } as const;
 }

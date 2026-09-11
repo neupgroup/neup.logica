@@ -13,8 +13,7 @@ specialized helper.
 */
 
 import {
-  createApiUrl,
-  runApi,
+  api,
   type ApiMethod,
   type ApiQuery,
   type ApiResponse,
@@ -52,23 +51,18 @@ function getLoggerOrigin() {
 }
 
 export function createLoggerUrl(path: string, query?: LoggerApiQuery): string {
-  return createApiUrl(
-    getLoggerOrigin(),
-    url.web.path(getLoggerBaseUrl()).addPath(path).get(),
-    query,
-  );
+  const result = new URL(url.web.path(getLoggerBaseUrl()).addPath(path).get(), getLoggerOrigin());
+  for (const [key, value] of Object.entries(query ?? {})) if (value != null && value !== '') result.searchParams.set(key, String(value));
+  return result.toString();
 }
 
 export async function requestLoggerApi<TBody = unknown>(
   options: LoggerApiRequestOptions,
 ): Promise<LoggerApiResponse<TBody>> {
-  return runApi<TBody>({
-    baseUrl: getLoggerOrigin(),
-    path: url.web.path(getLoggerBaseUrl()).addPath(options.path).get(),
-    method: options.method,
-    query: options.query,
-    body: options.body,
-    headers: options.headers,
-    bearerToken: options.bearerToken,
-  });
+  const request = api.atPath(url.web.path(getLoggerBaseUrl()).addPath(options.path).get());
+  if (options.method) request.usingMethod(options.method);
+  if (options.body != null) request.addData(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
+  for (const [key, value] of new Headers(options.headers).entries()) request.addHeader(`${key}: ${value}`);
+  if (options.bearerToken) request.addHeader(`authorization: Bearer ${options.bearerToken}`);
+  return (await request.run().run()).getResponse<TBody>();
 }

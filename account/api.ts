@@ -21,7 +21,7 @@ Endpoint-agnostic request execution lives in `@neup/core/infrastructure/api`.
 */
 
 import {
-  runApi,
+  api,
   type ApiMethod,
   type ApiQuery,
   type ApiResponse,
@@ -183,16 +183,11 @@ cookie handling.
 export async function runNeupBridgeApi<TBody = unknown>(
   options: NeupBridgeRequestOptions,
 ): Promise<NeupBridgeResponse<TBody>> {
-  return runApi<TBody>({
-    baseUrl: getNeupBridgeOrigin(),
-    path: url.web.path(getNeupBridgeBaseUrl()).addPath(options.path).get(),
-    method: options.method,
-    query: options.query,
-    body: options.body,
-    headers: options.headers,
-    bearerToken: options.bearerToken,
-    cookies: {
-      auth_account: options.authAccountToken,
-    },
-  });
+  const request = api.atPath(url.web.path(getNeupBridgeBaseUrl()).addPath(options.path).get());
+  if (options.method) request.usingMethod(options.method);
+  if (options.body != null) request.addData(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
+  for (const [key, value] of new Headers(options.headers).entries()) request.addHeader(`${key}: ${value}`);
+  if (options.bearerToken) request.addHeader(`authorization: Bearer ${options.bearerToken}`);
+  if (options.authAccountToken) request.addHeader(`cookie: auth_account=${options.authAccountToken}`);
+  return (await request.run().run()).getResponse<TBody>();
 }

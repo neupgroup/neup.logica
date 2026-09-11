@@ -1,4 +1,4 @@
-import { runApi, type ApiResponse } from '@/.neup/core/infrastructure/api';
+import { api, type ApiResponse } from '@/.neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import type { SitesMemberDirectoryItem } from '@neup/logica/sites';
@@ -24,7 +24,7 @@ export function member(projectId: string, idOrSlug: string) {
       // Lets log the url for debugging purposes.
       console.log(`Requesting member data from: ${path}`);
       // Execute the request through the shared API runner.
-      return runApi<SitesMemberResponseBody>({ baseUrl: new URL(baseUrl).origin, path });
+      return api.atPath(path).run().run().then((runner) => runner.getResponse<SitesMemberResponseBody>());
     },
   } as const;
 }
