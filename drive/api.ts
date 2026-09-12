@@ -43,5 +43,5 @@ export async function requestDriveApi<TBody = unknown>(
   for (const [key, value] of new Headers(options.headers).entries()) request.addHeader(`${key}: ${value}`);
   if (options.bearerToken) request.addHeader(`authorization: Bearer ${options.bearerToken}`);
   if (options.authAccountToken) request.addHeader(`cookie: auth_account=${options.authAccountToken}`);
-  return (await request.run().run()).getResponse<TBody>();
+  return (await request.run()) as ApiResponse<TBody>;
 }

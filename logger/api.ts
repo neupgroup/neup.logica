@@ -64,5 +64,5 @@ export async function requestLoggerApi<TBody = unknown>(
   if (options.body != null) request.addData(typeof options.body === 'string' ? options.body : JSON.stringify(options.body));
   for (const [key, value] of new Headers(options.headers).entries()) request.addHeader(`${key}: ${value}`);
   if (options.bearerToken) request.addHeader(`authorization: Bearer ${options.bearerToken}`);
-  return (await request.run().run()).getResponse<TBody>();
+  return (await request.run()) as ApiResponse<TBody>;
 }

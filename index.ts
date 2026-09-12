@@ -15,23 +15,19 @@ helpers, and `logica.estate.*` to access estate API helpers.
 */
 
 import { estate } from '@neup/logica/estate';
-import { account } from '@neup/logica/account';
 import { drive } from '@neup/logica/drive';
 import { logger } from '@neup/logica/logger';
 import { analytics } from '@neup/logica/analytics';
 import { sites } from '@neup/logica/sites';
-import { notification } from '@neup/logica/notification';
 
 export const logica = {
-  account,
   analytics,
   drive,
   estate,
   logger,
   sites,
-  notification,
 } as const;
 
-export { account, analytics, drive, estate, logger, sites, notification };
+export { analytics, drive, estate, logger, sites };
 
 export default logica;

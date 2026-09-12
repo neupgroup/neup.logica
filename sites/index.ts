@@ -22,17 +22,13 @@ import { team, type SitesMemberListResponseBody } from '@neup/logica/sites/membe
 
 export interface SitesMemberDirectoryItem {
   id: string;
-  displayName: string;
-  position: string;
-  displayImage: string | null;
+  assetId: string | null;
   slug: string;
-  socials: Array<{ platformName: string; url: string }>;
-  description: string | null;
-  moreDetails: unknown[];
-  teamId: string | null;
-  teamTitle: string | null;
-  teamSlug: string | null;
-  teamDescription: string | null;
+  name: string;
+  email: string | null;
+  role: string;
+  status: string;
+  order: number;
 }
 
 function resolveProjectId(projectId?: string): string {
