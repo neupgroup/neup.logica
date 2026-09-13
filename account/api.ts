@@ -189,5 +189,9 @@ export async function runNeupBridgeApi<TBody = unknown>(
   for (const [key, value] of new Headers(options.headers).entries()) request.addHeader(`${key}: ${value}`);
   if (options.bearerToken) request.addHeader(`authorization: Bearer ${options.bearerToken}`);
   if (options.authAccountToken) request.addHeader(`cookie: auth_account=${options.authAccountToken}`);
-  return (await request.run().run()).getResponse<TBody>();
+  // Execute the configured request through the shared fluent API runner.
+  const apiResponse = await request.run();
+
+  // Return the typed response produced by the account bridge endpoint.
+  return apiResponse as ApiResponse<TBody>;
 }
