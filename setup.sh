@@ -4,7 +4,7 @@ LOGICA_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$LOGICA_DIR/../.." && pwd)
 ACCOUNT_DIR="$LOGICA_DIR/account"
 ENV_FILE="$ROOT_DIR/.env"
-BASE_FILE="$ROOT_DIR/base.json"
+BASE_FILE="$ROOT_DIR/base/application.json"
 
 load_env_file() {
     if [ ! -f "$ENV_FILE" ]; then
