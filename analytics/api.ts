@@ -13,7 +13,7 @@ Use `requestAnalyticsApi()` for analytics bridge endpoints exposed by this app.
 ::end
 */
 
-import { api, type ApiMethod, type ApiQuery, type ApiResponse } from '@/.neup/core/infrastructure/api';
+import { api, type ApiMethod, type ApiQuery, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 

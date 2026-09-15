@@ -17,7 +17,7 @@ import {
   type ApiMethod,
   type ApiQuery,
   type ApiResponse,
-} from '@/.neup/core/infrastructure/api';
+} from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 

@@ -1,4 +1,4 @@
-import type { ApiResponse } from '@/.neup/core/infrastructure/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
 import { member } from '@neup/logica/sites/member';
 import type { SitesMemberDirectoryItem } from '@neup/logica/sites';
 
