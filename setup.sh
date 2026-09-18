@@ -2,7 +2,7 @@
 
 LOGICA_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$LOGICA_DIR/../.." && pwd)
-BASE_FILE="$ROOT_DIR/base/application.json"
+BASE_FILE="$ROOT_DIR/@base/application.json"
 
 update_logica_index() {
     index_file="$LOGICA_DIR/index.ts"
