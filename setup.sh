@@ -39,27 +39,20 @@ prune_logica_modules() {
     required_modules=$(node -e '
         const fs = require("fs");
         const config = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-        const modules = config.logica && config.logica.requiredModules;
+        const modules = config.modules;
         if (!Array.isArray(modules) || modules.some((module) =>
-            typeof module !== "string" || !/^[a-z][a-z0-9-]*$/.test(module)
+            !module || typeof module.name !== "string" || typeof module.isRequired !== "boolean"
         )) process.exit(2);
-        process.stdout.write(modules.join("\n"));
+        process.stdout.write(modules.filter((module) => module.isRequired).map((module) =>
+            module.name.replace(/^neup\./, "").replace(/^notifications$/, "notification")
+        ).join("\n"));
     ' "$BASE_FILE") || {
-        printf 'Invalid logica.requiredModules in %s.\n' "$BASE_FILE" >&2
+        printf 'Invalid modules in %s.\n' "$BASE_FILE" >&2
         return 1
     }
 
-    account_required=$(node -e '
-        const fs = require("fs");
-        const config = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-        process.stdout.write(config.account && config.account.isRequired === true ? "true" : "false");
-    ' "$BASE_FILE")
-
     for module_directory in "$LOGICA_DIR/account" "$LOGICA_DIR/analytics" "$LOGICA_DIR/drive" "$LOGICA_DIR/estate" "$LOGICA_DIR/notification" "$LOGICA_DIR/sites"; do
         module=${module_directory##*/}
-        if [ "$module" = "account" ] && [ "$account_required" = "true" ]; then
-            continue
-        fi
         if printf '%s\n' "$required_modules" | grep -Fqx "$module"; then
             continue
         fi
