@@ -2,7 +2,8 @@
 
 LOGICA_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$LOGICA_DIR/../.." && pwd)
-BASE_FILE="$ROOT_DIR/@base/application.json"
+BASE_DIR="$ROOT_DIR/@base"
+MODULES_FILE="$BASE_DIR/modules.json"
 
 update_logica_index() {
     index_file="$LOGICA_DIR/index.ts"
@@ -31,23 +32,22 @@ update_logica_index() {
 }
 
 prune_logica_modules() {
-    if [ ! -f "$BASE_FILE" ]; then
-        printf 'Cannot prune neup.logica: %s was not found.\n' "$BASE_FILE" >&2
+    if [ ! -f "$MODULES_FILE" ]; then
+        printf 'Cannot prune neup.logica: %s was not found.\n' "$MODULES_FILE" >&2
         return 1
     fi
 
     required_modules=$(node -e '
         const fs = require("fs");
-        const config = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-        const modules = config.modules;
+        const modules = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
         if (!Array.isArray(modules) || modules.some((module) =>
             !module || typeof module.name !== "string" || typeof module.isRequired !== "boolean"
         )) process.exit(2);
         process.stdout.write(modules.filter((module) => module.isRequired).map((module) =>
             module.name.replace(/^neup\./, "").replace(/^notifications$/, "notification")
         ).join("\n"));
-    ' "$BASE_FILE") || {
-        printf 'Invalid modules in %s.\n' "$BASE_FILE" >&2
+    ' "$MODULES_FILE") || {
+        printf 'Invalid modules in %s.\n' "$MODULES_FILE" >&2
         return 1
     }
 
