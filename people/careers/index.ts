@@ -3,11 +3,11 @@
  *
  * ```ts
  * const response = await logica.people(projectId).careers.get();
- * // Success: { success: true, data: [{ id: 'career_123', title: 'Designer', status: 'Open' }] }
+ * // Success: { success: true, data: [{ slug: 'designer--career_123', title: 'Designer', status: 'Open' }] }
  * // Error:   { success: false, error: 'Project not found.' }
  *
  * const response = await logica.people(projectId).career('designer--career_123').get();
- * // Success: { success: true, data: { id: 'career_123', title: 'Designer', status: 'Open' } }
+ * // Success: { success: true, data: { slug: 'designer--career_123', title: 'Designer', status: 'Open' } }
  * // Error:   { success: false, error: 'Job posting not found.' }
  * ```
  *
