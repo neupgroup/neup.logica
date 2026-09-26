@@ -22,9 +22,9 @@ import { members, member, type PeopleMemberResponseBody } from '@neup/logica/peo
 import { teams, team, type PeopleTeamResponseBody } from '@neup/logica/people/teams';
 
 function resolveProjectId(projectId?: string) {
-  const resolved = projectId?.trim() || getEnvVariable('NEUPSITE_PROJECT_ID', true);
+  const resolved = projectId?.trim() || getEnvVariable('NEUP_SITES_PROJECT_ID', true);
   if (!resolved) {
-    throw new Error('NEUPSITE_PROJECT_ID is required to use logica.people().');
+    throw new Error('NEUP_SITES_PROJECT_ID is required to use logica.people().');
   }
   return resolved;
 }
