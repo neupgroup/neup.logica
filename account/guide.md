@@ -14,7 +14,7 @@ Use this guide when another app needs to:
 - assign one account access to another account, connection, or application
 - manage roles and permissions through the authz catalog
 
-This guide reflects the current Prisma schema in `prisma/schema.prisma`.
+This guide reflects the current shared account schema.
 
 ::public end
 

@@ -37,17 +37,6 @@ export type AccountSelfBasics = {
   neupid: string | null;
 };
 
-export type AccountSelfRecord = {
-  id: string;
-  displayName: string;
-  displayImage: string;
-  neupId: string | null;
-  type: string;
-  createdOn: string;
-  status: string;
-  moreDetails: unknown;
-};
-
 type AccountSelfLocalAuthenticationResult =
   | { authenticated: true; payload: NeupIdTokenPayload }
   | { authenticated: false; reason: string; payload?: Partial<NeupIdTokenPayload> };
@@ -88,10 +77,6 @@ async function resolveAuthAccountToken(authToken?: string | null): Promise<strin
   return authToken?.trim() || getBrowserAuthAccountToken() || await getServerAuthAccountToken();
 }
 
-function hasDatabaseEnvironment(): boolean {
-  return Boolean(process.env.DATABASE_URL?.trim() && process.env.DATABASE_PROVIDER?.trim());
-}
-
 function hasRemoteAccountEnvironment(): boolean {
   const appId = process.env.NEUP_APP_ID?.trim() || process.env.neup_app_id?.trim();
   const appSecret = process.env.NEUP_APP_SECRET?.trim() || process.env.neup_app_secret?.trim();
@@ -115,147 +100,6 @@ function normalizeBasics(input: {
     displayImage,
     neupid,
   };
-}
-
-function getAccountIdFromToken(authToken: string | null): string | null {
-  const payload = decodeNeupIdToken(authToken);
-  return typeof payload?.aid === 'string' ? payload.aid.trim() || null : null;
-}
-
-async function getLocalAccountBasics(authToken: string | null): Promise<AccountSelfBasics[]> {
-  if (!hasDatabaseEnvironment()) return [];
-
-  const accountId = getAccountIdFromToken(authToken);
-  if (!accountId) return [];
-
-  try {
-    const { default: prisma } = await import('@neup/core/database/prisma');
-    const accountDelegate = (prisma as unknown as {
-      account?: {
-        findUnique: (args: {
-          where: { id: string };
-          select: {
-            displayName: true;
-            displayImage: true;
-            neupid: true;
-          };
-        }) => Promise<AccountSelfBasics | null>;
-      };
-    }).account;
-
-    if (!accountDelegate) return [];
-
-    const account = await accountDelegate.findUnique({
-      where: { id: accountId },
-      select: {
-        displayName: true,
-        displayImage: true,
-        neupid: true,
-      },
-    });
-    const basics = normalizeBasics(account ?? {});
-
-    return basics ? [basics] : [];
-  } catch {
-    return [];
-  }
-}
-
-async function ensureLocalAccountRecord(authToken: string | null): Promise<AccountSelfRecord | null> {
-  if (!hasDatabaseEnvironment()) return null;
-
-  const accountId = getAccountIdFromToken(authToken);
-  if (!accountId) return null;
-
-  const authentication = await checkLocalAuthentication(authToken);
-  if (!authentication.authenticated) return null;
-
-  const basics = (await getBasics(authToken))[0] ?? null;
-
-  try {
-    const { default: prisma } = await import('@neup/core/database/prisma');
-    const accountDelegate = (prisma as unknown as {
-      account?: {
-        upsert: (args: {
-          where: { id: string };
-          create: {
-            id: string;
-            displayName: string;
-            displayImage: string;
-            neupId: string | null;
-            type: string;
-            status: string;
-          };
-          update: {
-            displayName: string;
-            displayImage: string;
-            neupId: string | null;
-          };
-          select: {
-            id: true;
-            displayName: true;
-            displayImage: true;
-            neupId: true;
-            type: true;
-            createdOn: true;
-            status: true;
-            moreDetails: true;
-          };
-        }) => Promise<{
-          id: string;
-          displayName: string;
-          displayImage: string;
-          neupId: string | null;
-          type: string;
-          createdOn: Date;
-          status: string;
-          moreDetails: unknown;
-        }>;
-      };
-    }).account;
-
-    if (!accountDelegate) return null;
-
-    const record = await accountDelegate.upsert({
-      where: { id: accountId },
-      create: {
-        id: accountId,
-        displayName: basics?.displayName ?? '',
-        displayImage: basics?.displayImage ?? '',
-        neupId: basics?.neupid ?? null,
-        type: 'individual',
-        status: 'active',
-      },
-      update: {
-        displayName: basics?.displayName ?? '',
-        displayImage: basics?.displayImage ?? '',
-        neupId: basics?.neupid ?? null,
-      },
-      select: {
-        id: true,
-        displayName: true,
-        displayImage: true,
-        neupId: true,
-        type: true,
-        createdOn: true,
-        status: true,
-        moreDetails: true,
-      },
-    });
-
-    return {
-      id: record.id,
-      displayName: record.displayName,
-      displayImage: record.displayImage,
-      neupId: record.neupId,
-      type: record.type,
-      createdOn: record.createdOn.toISOString(),
-      status: record.status,
-      moreDetails: record.moreDetails,
-    };
-  } catch {
-    return null;
-  }
 }
 
 function getRemoteBasicsFromBody(body: LookupResponseBody): AccountSelfBasics[] {
@@ -357,11 +201,9 @@ Returns basic information for the current account.
 
 ::public
 
-The function first attempts to read the local `accounts` table when
-`DATABASE_URL` and `DATABASE_PROVIDER` are configured. If local lookup is not
-available or does not find the current account, it falls back to the account
-bridge when `NEUP_APP_ID` and `NEUP_APP_SECRET` are configured. Missing remote
-credentials return an empty array.
+The function reads current account information from the account bridge when
+`NEUP_APP_ID` and `NEUP_APP_SECRET` are configured. Missing remote credentials
+return an empty array.
 
 ::public end
 
@@ -376,18 +218,7 @@ available.
 */
 export async function getBasics(authToken?: string | null): Promise<AccountSelfBasics[]> {
   const authAccountToken = await resolveAuthAccountToken(authToken);
-  const localBasics = await getLocalAccountBasics(authAccountToken);
-
-  if (localBasics.length > 0) {
-    return localBasics;
-  }
-
   return getRemoteAccountBasics(authAccountToken);
-}
-
-export async function ensureRecord(authToken?: string | null): Promise<AccountSelfRecord | null> {
-  const resolvedAuthToken = await resolveAuthAccountToken(authToken);
-  return ensureLocalAccountRecord(resolvedAuthToken);
 }
 
 /*
@@ -408,5 +239,4 @@ session.
 export const self = {
   isAuthenticated,
   getBasics,
-  ensureRecord,
 } as const;
