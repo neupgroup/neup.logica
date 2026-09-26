@@ -18,14 +18,16 @@ import { logger } from '@neup/logica/logger';
 import { analytics } from '@neup/logica/analytics';
 import { sites } from '@neup/logica/sites';
 import { account } from '@neup/logica/account';
+import { estate } from '@neup/logica/estate';
 
 export const logica = {
   analytics,
   account,
+  estate,
   logger,
   sites,
 } as const;
 
-export { account, analytics, logger, sites };
+export { account, analytics, estate, logger, sites };
 
 export default logica;

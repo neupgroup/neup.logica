@@ -66,3 +66,9 @@ prune_logica_modules() {
 }
 
 prune_logica_modules || exit 1
+
+# Run submodule setup only after module pruning. Each submodule owns its own
+# optional dependencies and must be safe to run without Prisma.
+if [ -x "$LOGICA_DIR/account/setup.sh" ]; then
+    "$LOGICA_DIR/account/setup.sh"
+fi
