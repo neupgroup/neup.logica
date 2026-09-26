@@ -20,6 +20,7 @@ import { getEnvVariable } from '@neup/core/helpers/env';
 import { member, type SitesMemberResponseBody } from '@neup/logica/sites/member';
 import { team, type SitesMemberListResponseBody } from '@neup/logica/sites/member/team';
 import { careers, career, type SitesCareerResponseBody, type SitesCareersResponseBody } from '@neup/logica/sites/careers';
+import { people } from '@neup/logica/people';
 
 export interface SitesMemberDirectoryItem {
   id: string;
@@ -46,6 +47,7 @@ export function sites(projectId?: string) {
   const resolvedProjectId = resolveProjectId(projectId);
 
   return {
+    people: people(resolvedProjectId),
     members: {
       get: () => team(resolvedProjectId).get(),
     },
