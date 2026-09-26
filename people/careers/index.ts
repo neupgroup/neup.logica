@@ -6,7 +6,7 @@
  * // Success: { success: true, data: [{ id: 'career_123', title: 'Designer', status: 'Open' }] }
  * // Error:   { success: false, error: 'Project not found.' }
  *
- * const response = await logica.people(projectId).career('career_123').get();
+ * const response = await logica.people(projectId).career('designer--career_123').get();
  * // Success: { success: true, data: { id: 'career_123', title: 'Designer', status: 'Open' } }
  * // Error:   { success: false, error: 'Job posting not found.' }
  * ```
@@ -18,7 +18,7 @@ import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
 export interface SitesCareer {
-  id: string;
+  slug: string;
   projectId: string;
   title: string;
   location: string | null;
