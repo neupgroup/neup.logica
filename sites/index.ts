@@ -19,6 +19,7 @@ or prefixed slug lookup.
 import { getEnvVariable } from '@neup/core/helpers/env';
 import { member, type SitesMemberResponseBody } from '@neup/logica/sites/member';
 import { team, type SitesMemberListResponseBody } from '@neup/logica/sites/member/team';
+import { careers, career, type SitesCareerResponseBody, type SitesCareersResponseBody } from '@neup/logica/sites/careers';
 
 export interface SitesMemberDirectoryItem {
   id: string;
@@ -49,8 +50,16 @@ export function sites(projectId?: string) {
       get: () => team(resolvedProjectId).get(),
     },
 
+    careers: {
+      get: () => careers(resolvedProjectId),
+    },
+
     member(idOrSlug: string) {
       return member(resolvedProjectId, idOrSlug);
+    },
+
+    career(id: string) {
+      return career(resolvedProjectId, id);
     },
   } as const;
 }
@@ -58,5 +67,6 @@ export function sites(projectId?: string) {
 export type SitesScope = ReturnType<typeof sites>;
 
 export type { SitesMemberListResponseBody, SitesMemberResponseBody };
+export type { SitesCareerResponseBody, SitesCareersResponseBody };
 
 export default sites;
