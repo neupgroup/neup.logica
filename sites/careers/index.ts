@@ -1,3 +1,21 @@
+/**
+ * Logica Sites careers API.
+ *
+ * Examples:
+ *
+ * ```ts
+ * const response = await logica.sites(projectId).careers.get();
+ * // response.body:
+ * // { success: true, data: [{ id: 'career_123', title: 'Designer', status: 'Open' }] }
+ *
+ * const response = await logica.sites(projectId).career('career_123').get();
+ * // response.body:
+ * // { success: true, data: { id: 'career_123', title: 'Designer', status: 'Open' } }
+ * ```
+ *
+ * The project ID is sent as the `x-project` header. Public requests return
+ * only careers with an `Open` status.
+ */
 import { api, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
@@ -17,8 +35,8 @@ export interface SitesCareer {
   updatedAt: string | null;
 }
 
-export interface SitesCareersResponseBody { success: boolean; careers?: SitesCareer[]; error?: string }
-export interface SitesCareerResponseBody { success: boolean; career?: SitesCareer; error?: string }
+export interface SitesCareersResponseBody { success: boolean; data?: SitesCareer[]; error?: string }
+export interface SitesCareerResponseBody { success: boolean; data?: SitesCareer; error?: string }
 
 function endpoint(projectId: string, id?: string) {
   const baseUrl = getBaseUrl('sites');
