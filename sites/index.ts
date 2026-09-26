@@ -28,10 +28,10 @@ export interface SitesMemberDirectoryItem {
 }
 
 function resolveProjectId(projectId?: string): string {
-  const resolvedProjectId = projectId?.trim() || getEnvVariable('NEUPSITE_PROJECT_ID', true);
+  const resolvedProjectId = projectId?.trim() || getEnvVariable('NEUP_SITES_PROJECT_ID', true);
 
   if (!resolvedProjectId) {
-    throw new Error('NEUPSITE_PROJECT_ID is required to use logica.sites().');
+    throw new Error('NEUP_SITES_PROJECT_ID is required to use logica.sites().');
   }
 
   return resolvedProjectId;
