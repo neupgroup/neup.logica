@@ -3,11 +3,11 @@
  *
  * ```ts
  * const response = await logica.people(projectId).members.get();
- * // Success: { success: true, members: [{ id: 'member_123', name: 'Alex', role: 'Designer' }] }
+ * // Success: { success: true, data: [{ id: 'member_123', name: 'Alex', role: 'Designer' }] }
  * // Error:   { success: false, error: 'Unable to load members right now.' }
  *
  * const response = await logica.people(projectId).member('member_123').get();
- * // Success: { success: true, member: { id: 'member_123', name: 'Alex', role: 'Designer' } }
+ * // Success: { success: true, data: { id: 'member_123', name: 'Alex', role: 'Designer' } }
  * // Error:   { success: false, error: 'Member not found.' }
  * ```
  *
