@@ -18,14 +18,13 @@ import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
 export interface PeopleMember {
-  id: string;
-  assetId: string | null;
   slug: string;
   name: string;
-  email: string | null;
   role: string;
   status: string;
-  order: number;
+  displayImage: string | null;
+  /** Extensible public profile data with no enforced shape. */
+  public: unknown[];
 }
 
 export interface PeopleMemberResponseBody {
