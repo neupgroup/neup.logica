@@ -4,11 +4,24 @@
  * ```ts
  * const response = await logica.articles(projectId).get();
  * const article = await logica.articles(projectId).article('slug--uuid').get();
+ *
+ * The collection request is equivalent to:
+ *   curl https://example.com/bridge/api.v1/articles -H 'x-project: PROJECT_ID'
+ *
+ * Collection response:
+ *   { "success": true, "data": [{ "slug": "my-article--UUID", "writtenAt": "2026-09-30T08:30:00.000Z", "writtenBy": "Author Name", "title": "My Article", "coverImageUrl": null, "metaDescription": "Article summary.", "language": "en", "tags": ["guide"] }] }
+ *
+ * Detail request:
+ *   curl https://example.com/bridge/api.v1/articles/my-article--UUID -H 'x-project: PROJECT_ID'
+ *
+ * Detail response:
+ *   { "success": true, "data": { "slug": "my-article--UUID", "writtenAt": "2026-09-30T08:30:00.000Z", "writtenBy": "Author Name", "title": "My Article", "coverImageUrl": null, "metaDescription": "Article summary.", "language": "en", "tags": ["guide"] } }
  * ```
  */
 import { api, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
+import { article } from './single';
 
 export interface SitesArticle {
   slug: string;
@@ -39,13 +52,7 @@ export function articles(projectId: string) {
     async get(): Promise<ApiResponse<SitesArticlesResponseBody>> {
       return request(projectId).run() as Promise<ApiResponse<SitesArticlesResponseBody>>;
     },
-    article(reference: string) {
-      return {
-        async get(): Promise<ApiResponse<SitesArticleResponseBody>> {
-          return request(projectId, reference).run() as Promise<ApiResponse<SitesArticleResponseBody>>;
-        },
-      } as const;
-    },
+    article: (reference: string) => article(projectId, reference),
   } as const;
 }
 

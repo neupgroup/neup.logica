@@ -16,6 +16,7 @@
 import { api, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
+import { member as singleMember } from './single';
 
 export interface PeopleMember {
   slug: string;
@@ -53,17 +54,5 @@ export async function members(projectId: string) {
     .run() as Promise<ApiResponse<PeopleMemberResponseBody>>;
 }
 
-export function member(projectId: string, id: string) {
-  return {
-    async get(): Promise<ApiResponse<PeopleMemberResponseBody>> {
-      const endpointDetails = await endpoint(projectId, id);
-
-      return api
-        .atPath(endpointDetails.apiPath)
-        .addHeader(`x-project: ${endpointDetails.projectId}`)
-        .failOnError(false)
-        .run() as Promise<ApiResponse<PeopleMemberResponseBody>>;
-    },
-  } as const;
-}
+export const member = singleMember;
 export default members;

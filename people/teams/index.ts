@@ -15,6 +15,7 @@
 import { api, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
+import { team as singleTeam } from './single';
 
 export interface PeopleTeam {
   id: string;
@@ -47,17 +48,5 @@ export async function teams(projectId: string) {
   } as unknown as ApiResponse<PeopleTeamResponseBody>;
 }
 
-export function team(projectId: string, id: string) {
-  return {
-    async get(): Promise<ApiResponse<PeopleTeamResponseBody>> {
-      const endpointDetails = await endpoint(projectId, id);
-
-      return api
-        .atPath(endpointDetails.apiPath)
-        .addHeader(`x-project: ${endpointDetails.projectId}`)
-        .failOnError(false)
-        .run() as Promise<ApiResponse<PeopleTeamResponseBody>>;
-    },
-  } as const;
-}
+export const team = singleTeam;
 export default teams;
