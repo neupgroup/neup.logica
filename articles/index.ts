@@ -9,13 +9,17 @@
  *   curl https://example.com/bridge/api.v1/articles -H 'x-project: PROJECT_ID'
  *
  * Collection response:
- *   { "success": true, "data": [{ "slug": "my-article--UUID", "writtenAt": "2026-09-30T08:30:00.000Z", "writtenBy": "Author Name", "title": "My Article", "coverImageUrl": null, "metaDescription": "Article summary.", "language": "en", "tags": ["guide"] }] }
+ *   status: 200
+ *   headers: { "content-type": "application/json" }
+ *   body: { "success": true, "data": [{ "slug": "my-article--UUID", "writtenAt": "2026-09-30T08:30:00.000Z", "writtenBy": "Author Name", "title": "My Article", "coverImageUrl": null, "metaDescription": "Article summary.", "language": "en", "tags": ["guide"] }] }
  *
  * Detail request:
  *   curl https://example.com/bridge/api.v1/articles/my-article--UUID -H 'x-project: PROJECT_ID'
  *
  * Detail response:
- *   { "success": true, "data": { "slug": "my-article--UUID", "writtenAt": "2026-09-30T08:30:00.000Z", "writtenBy": "Author Name", "title": "My Article", "coverImageUrl": null, "metaDescription": "Article summary.", "language": "en", "tags": ["guide"] } }
+ *   status: 200
+ *   headers: { "content-type": "application/json" }
+ *   body: { "success": true, "data": { "slug": "my-article--UUID", "writtenAt": "2026-09-30T08:30:00.000Z", "writtenBy": "Author Name", "title": "My Article", "content": "<p>Article HTML content.</p>", "coverImageUrl": null, "metaDescription": "Article summary.", "language": "en", "tags": ["guide"] } }
  * ```
  */
 import { api, type ApiResponse } from '@neup/core/infrastructure/api';
@@ -32,10 +36,15 @@ export interface SitesArticle {
   metaDescription: string | null;
   language: string | null;
   tags: string[];
+  content?: string;
+}
+
+export interface SitesArticleDetail extends Omit<SitesArticle, 'content'> {
+  content: string;
 }
 
 export interface SitesArticlesResponseBody { success: boolean; data?: SitesArticle[]; error?: string; }
-export interface SitesArticleResponseBody { success: boolean; data?: SitesArticle; error?: string; }
+export interface SitesArticleResponseBody { success: boolean; data?: SitesArticleDetail; error?: string; }
 
 function request(projectId: string, reference?: string) {
   const path = reference

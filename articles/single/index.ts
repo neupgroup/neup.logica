@@ -1,3 +1,24 @@
+/**
+ * Fetch one article by its slug reference.
+ *
+ * Response example:
+ *   status: 200
+ *   headers: { "content-type": "application/json" }
+ *   body: {
+ *     "success": true,
+ *     "data": {
+ *       "slug": "my-article--UUID",
+ *       "writtenAt": "2026-09-30T08:30:00.000Z",
+ *       "writtenBy": "Author Name",
+ *       "title": "My Article",
+ *       "content": "<p>Article HTML content.</p>",
+ *       "coverImageUrl": null,
+ *       "metaDescription": "Article summary.",
+ *       "language": "en",
+ *       "tags": ["guide"]
+ *     }
+ *   }
+ */
 import { api, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
