@@ -21,8 +21,17 @@ import { createEstateProperty, type CreateEstatePropertyResponseBody } from '@ne
 import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '@neup/logica/estate/property/modify';
 import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '@neup/logica/estate/property/search';
 import { viewEstateProperty, type ViewEstatePropertyResponseBody } from '@neup/logica/estate/property/view';
-import { reactedProperties } from '@neup/logica/estate/property/reacted';
-import { savedProperties } from '@neup/logica/estate/property/saved';
+import {
+  reactedProperties,
+  type EstatePropertyReactionValue,
+  type EstateReactedPropertiesListOptions,
+  type EstateReactedPropertyRemoval,
+} from '@neup/logica/estate/property/reacted';
+import {
+  savedProperties,
+  type EstateSavedPropertiesListOptions,
+  type EstateSavedPropertyRemoval,
+} from '@neup/logica/estate/property/saved';
 import type { EstateObjectRecord, EstatePropertyCreateData } from '@neup/logica/estate/types';
 
 type Fields = string[] | string | null;
