@@ -78,6 +78,62 @@ Example response body for `shared.list()` and `my.list()`:
 }
 ```
 
+Lead activity is available with `lead.activity.get(leadId)` and
+`lead.activity.post(leadId, input)`. These call
+`GET|POST /bridge/api.v1/leads/[id]/activity`.
+
+Example POST request:
+```ts
+const activityResponse = await logica.estate.lead.activity.get('cm_sharedlead456');
+const response = await logica.estate.lead.activity.post('cm_sharedlead456', {
+  activityType: 'follow_up',
+  activityOn: '2026-10-27T08:15:00.000Z',
+  followUpMethod: 'phone call',
+  remarks: 'Called to discuss the buyer\'s requirements.',
+});
+```
+
+Example GET response body:
+```json
+{
+  "data": [
+    {
+      "id": "cm_activity789",
+      "leadId": "cm_sharedlead456",
+      "data": {
+        "activityType": "follow_up",
+        "followUpMethod": "phone call",
+        "propertyId": null,
+        "propertyTitle": null,
+        "remarks": "Called to discuss the buyer's requirements."
+      },
+      "activityOn": "2026-10-27T08:15:00.000Z",
+      "activityBy": "Asha Sharma"
+    }
+  ]
+}
+```
+
+Example POST response body:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "cm_activity789",
+    "leadId": "cm_sharedlead456",
+    "data": {
+      "activityType": "follow_up",
+      "followUpMethod": "phone call",
+      "propertyId": null,
+      "propertyTitle": null,
+      "remarks": "Called to discuss the buyer's requirements."
+    },
+    "activityOn": "2026-10-27T08:15:00.000Z",
+    "activityBy": "Asha Sharma"
+  }
+}
+```
+
 ::public end
 
 ::end
@@ -89,6 +145,14 @@ import type { EstateObjectRecord } from '@neup/logica/estate/types';
 export type EstateLeadListOptions = {
   limit?: number;
   offset?: number;
+};
+
+export type EstateLeadActivityInput = {
+  activityType: 'follow_up' | 'visit' | 'meeting' | 'remarks';
+  activityOn?: string;
+  followUpMethod?: 'phone call' | 'whatsapp' | 'email';
+  propertyId?: string;
+  remarks: string;
 };
 
 function list(path: '/bridge/api.v1/leads/base' | '/bridge/api.v1/leads/shared', options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
@@ -121,10 +185,27 @@ const my = {
   },
 } as const;
 
+const activity = {
+  get(leadId: string): Promise<EstateApiResponse> {
+    return requestEstateApi({
+      path: `/bridge/api.v1/leads/${encodeURIComponent(leadId)}/activity`,
+    });
+  },
+
+  post(leadId: string, input: EstateLeadActivityInput): Promise<EstateApiResponse> {
+    return requestEstateApi({
+      path: `/bridge/api.v1/leads/${encodeURIComponent(leadId)}/activity`,
+      method: 'POST',
+      body: input,
+    });
+  },
+} as const;
+
 export const lead = {
   base,
   shared,
   my,
+  activity,
 
   listBase(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
     return base.list(options);
