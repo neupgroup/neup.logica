@@ -45,6 +45,38 @@ Example response body for `base.list()`:
 }
 ```
 
+Use `base.activity.get(baseLeadId)` to retrieve the combined timeline across
+all shared leads attached to one base lead. Each activity includes a `lead`
+object identifying its source shared lead. This is a read-only aggregate;
+create activities through `lead.activity.post(sharedLeadId, input)`.
+
+Example request:
+```ts
+const activitiesResponse = await logica.estate.lead.base.activity.get('cm_baselead123');
+```
+
+Example response body:
+```json
+{
+  "data": [
+    {
+      "id": "cm_activity789",
+      "leadId": "cm_sharedlead456",
+      "data": {
+        "activityType": "follow_up",
+        "followUpMethod": "phone call",
+        "propertyId": null,
+        "propertyTitle": null,
+        "remarks": "Called to discuss the buyer's requirements."
+      },
+      "activityOn": "2026-10-27T08:15:00.000Z",
+      "activityBy": "Asha Sharma",
+      "lead": { "id": "cm_sharedlead456", "type": "BUYER", "owner": "account_123" }
+    }
+  ]
+}
+```
+
 Example response body for `shared.list()` and `my.list()`:
 ```json
 {
@@ -169,6 +201,14 @@ function list(path: '/bridge/api.v1/leads/base' | '/bridge/api.v1/leads/shared',
 const base = {
   list(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
     return list('/bridge/api.v1/leads/base', options);
+  },
+
+  activity: {
+    get(baseLeadId: string): Promise<EstateApiResponse> {
+      return requestEstateApi({
+        path: `/bridge/api.v1/leads/base/${encodeURIComponent(baseLeadId)}/activity`,
+      });
+    },
   },
 } as const;
 
