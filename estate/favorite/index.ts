@@ -18,7 +18,7 @@ import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/ap
 export const favorite = {
   save(propertyId: string): Promise<EstateApiResponse> {
     return requestEstateApi({
-      path: '/bridge/api.v1/favorite/save',
+      path: '/bridge/api.v1/properties/saved',
       method: 'POST',
       body: { propertyId },
     });
@@ -26,15 +26,16 @@ export const favorite = {
 
   remove(propertyId: string): Promise<EstateApiResponse> {
     return requestEstateApi({
-      path: '/bridge/api.v1/favorite/remove',
-      method: 'POST',
-      body: { propertyId },
+      path: '/bridge/api.v1/properties/saved',
+      method: 'DELETE',
+      query: { propertyId },
     });
   },
 
-  list(): Promise<EstateApiResponse> {
+  list(account = 'me'): Promise<EstateApiResponse> {
     return requestEstateApi({
-      path: '/bridge/api.v1/favorite/list',
+      path: '/bridge/api.v1/properties/saved',
+      query: { account },
     });
   },
 } as const;

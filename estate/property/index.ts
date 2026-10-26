@@ -21,6 +21,8 @@ import { createEstateProperty, type CreateEstatePropertyResponseBody } from '@ne
 import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '@neup/logica/estate/property/modify';
 import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '@neup/logica/estate/property/search';
 import { viewEstateProperty, type ViewEstatePropertyResponseBody } from '@neup/logica/estate/property/view';
+import { reactedProperties } from '@neup/logica/estate/property/reacted';
+import { savedProperties } from '@neup/logica/estate/property/saved';
 import type { EstateObjectRecord, EstatePropertyCreateData } from '@neup/logica/estate/types';
 
 type Fields = string[] | string | null;
@@ -201,6 +203,11 @@ property.archive = function archive(propertyId: string) {
   return property(propertyId).archive();
 };
 
+export namespace property {
+  export const reacted = reactedProperties;
+  export const saved = savedProperties;
+}
+
 export {
   createEstateProperty,
   modifyEstateProperty,
@@ -215,6 +222,11 @@ export type {
   SearchEstatePropertiesInput,
   SearchEstatePropertiesResponseBody,
   ViewEstatePropertyResponseBody,
+  EstatePropertyReactionValue,
+  EstateReactedPropertiesListOptions,
+  EstateReactedPropertyRemoval,
+  EstateSavedPropertiesListOptions,
+  EstateSavedPropertyRemoval,
 };
 
 export type EstatePropertyScope = ReturnType<typeof property>;

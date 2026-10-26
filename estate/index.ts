@@ -66,6 +66,18 @@ export {
 export { requestEstateApi } from '@neup/logica/estate/api';
 export type { EstateApiResponse } from '@neup/logica/estate/api';
 export type {
+  EstateReactionCreateData,
+  EstateReactionValue,
+} from '@neup/logica/estate/reaction';
+export type { EstateSaveCreateData } from '@neup/logica/estate/save';
+export type {
+  EstatePropertyReactionValue,
+  EstateReactedPropertiesListOptions,
+  EstateReactedPropertyRemoval,
+  EstateSavedPropertiesListOptions,
+  EstateSavedPropertyRemoval,
+} from '@neup/logica/estate/property';
+export type {
   EstateInquiryCreateData,
   EstateObjectRecord,
   EstateOfferData,
