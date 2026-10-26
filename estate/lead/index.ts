@@ -80,7 +80,8 @@ Example response body for `shared.list()` and `my.list()`:
 
 Lead activity is available with `lead.activity.get(leadId)` and
 `lead.activity.post(leadId, input)`. These call
-`GET|POST /bridge/api.v1/leads/[id]/activity`.
+`GET|POST /bridge/api.v1/leads/[id]/activity`. If `activityOn` is omitted,
+the API records the current server time; a supplied valid date is used as-is.
 
 Example POST request:
 ```ts
