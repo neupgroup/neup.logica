@@ -33,6 +33,18 @@ export type EstateInquiryCreateData = EstateObjectRecord & {
   account_id?: string;
 };
 
+export type EstateRequirementData = EstateObjectRecord & {
+  minBudget?: number | null;
+  maxBudget?: number | null;
+  location?: string | null;
+  propertyType?: string[];
+  purpose?: string | null;
+  urgency?: string | null;
+  requiredTime?: string | null;
+  paymentMethod?: string[];
+  loan?: boolean;
+};
+
 export type EstateViewingData = EstateObjectRecord & {
   propertyId?: string;
   agentId?: string;
