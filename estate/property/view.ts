@@ -9,21 +9,18 @@ Portable SDK helper for `GET /bridge/api.v1/properties/[id]`.
 Fetches one approved property's public API payload by `propertyId`.
 
 Pass `include` as a comma-separated string or string array to select property
-fields and nested agent/agency fields. For example:
-`property.get('agents(id,name,image),agency(name,image)')` sends
-`GET /bridge/api.v1/properties/[id]?include=agents(id,name,image),agency(name,image)`.
-The `agents(...)` selector requests both the listing agent and supporting agents;
-the response keys are `listingAgent` and `supportingAgents`. Use
-`agent` or `listingAgent` to request only the listing agent; both selectors
-return the value under the `listingAgent` key. Use `supportingAgents` to
-request only supporting agent IDs. Add `(name,image)` to either individual
-selector to request those fields alongside the always included `id`. Agent and
-agency objects always include `id`; a bare relationship selects only its
-default `id`, while `agents(*)` selects all documented agent fields for both
-arrays. If `include` is omitted, both agent arrays default to `id` only. The
-same rules apply to agency. For agent selections, `displayName` aliases `name`
-and `displayImage` aliases `image`; responses use `name` and `image`. A response example is:
-`{"success":true,"property":{"id":"property-id","listingAgent":[{"id":"account-id","name":"Agent Name","image":"https://example.com/agent.jpg"}],"supportingAgents":[{"id":"supporting-account-id","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"}],"agency":{"id":"agency-id","name":"Agency Name","image":"https://example.com/logo.jpg"}}}`.
+fields and representatives. For example:
+`property.get('representatives.*')` sends
+`GET /bridge/api.v1/properties/[id]?include=representatives.*` and returns all
+representatives in one array: the listing owner, agents, agency, and property
+owners. Select one group with `representatives.listingOwner`,
+`representatives.agents`, `representatives.agent`, `representatives.agency`, or
+`representatives.owners`. The `agents` selection includes supporting agents
+and includes the listing owner when that account is an agent. The singular
+`agent` selection returns only the listing owner when that account is an agent.
+Entries include `id`, `type`, and available `name` and `image` values; agent
+entries also have a `role`. For example:
+`{"success":true,"property":{"id":"property-id","representatives":[{"id":"account-id","type":"agent","role":"listingOwner","name":"Agent Name","image":"https://example.com/agent.jpg"},{"id":"supporting-account-id","type":"agent","role":"supportingAgent","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"},{"id":"agency-id","type":"agency","name":"Agency Name","image":"https://example.com/logo.jpg"},{"id":"owner-id","type":"owner","name":"Property Owner","isPrimaryOwner":true}]}}`.
 
 The legacy `fields` input remains accepted as an alias for `include`.
 
@@ -34,11 +31,9 @@ Accepted scalar `include` values:
 - Classification: `purpose`, `category`, `type`, `status`, `visibility`
 - Media: `images`, `images.id`, `images.url`, `images.type`,
   `images.isCover`, `images.order`
-- Listing accounts: `agents`, `agents(id,name,image)`, `agents(*)`,
-  `agent`, `agent(id,name,image)`, `agent(*)`,
-  `listingAgent`, `listingAgent(id,name,image)`,
-  `supportingAgents`, `supportingAgents(id,name,image)`, `supportingAgents(*)`,
-  `agency`, `agency(id,name,image)`, `agency(*)`
+- Representatives: `representatives.*`, `representatives.listingOwner`,
+  `representatives.agents`, `representatives.agent`,
+  `representatives.agency`, `representatives.owners`
 - Location: `location`, `location.id`, `location.text`, `location.geo`,
   `location.structured`
 - Pricing: `pricing`, `pricing.type`, `pricing.askingAmount`,
@@ -74,8 +69,22 @@ export type ViewEstatePropertyInput = {
 
 export type ViewEstatePropertyResponseBody = {
   success: boolean;
-  property?: unknown;
+  property?: EstatePropertyView;
   error?: string;
+};
+
+export type EstatePropertyRepresentative = {
+  id: string;
+  type: 'listingOwner' | 'agent' | 'agency' | 'owner';
+  role?: 'listingOwner' | 'supportingAgent';
+  name?: string | null;
+  image?: string | null;
+  isPrimaryOwner?: boolean;
+};
+
+export type EstatePropertyView = Record<string, unknown> & {
+  id?: string;
+  representatives: EstatePropertyRepresentative[];
 };
 
 function serializeFields(fields: ViewEstatePropertyInput['fields']): string | undefined {

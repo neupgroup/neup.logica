@@ -21,7 +21,12 @@ import { createEstateProperty, type CreateEstatePropertyResponseBody } from '@ne
 import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '@neup/logica/estate/property/modify';
 import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '@neup/logica/estate/property/search';
 import { listEstateProperties, type EstatePropertyListInput, type EstatePropertyListResponseBody } from '@neup/logica/estate/property/list';
-import { viewEstateProperty, type ViewEstatePropertyResponseBody } from '@neup/logica/estate/property/view';
+import {
+  viewEstateProperty,
+  type EstatePropertyRepresentative,
+  type EstatePropertyView,
+  type ViewEstatePropertyResponseBody,
+} from '@neup/logica/estate/property/view';
 import {
   reactedProperties,
   type EstatePropertyReactionValue,
@@ -240,6 +245,8 @@ export type {
   SearchEstatePropertiesResponseBody,
   EstatePropertyListInput,
   EstatePropertyListResponseBody,
+  EstatePropertyRepresentative,
+  EstatePropertyView,
   ViewEstatePropertyResponseBody,
   EstatePropertyReactionValue,
   EstateReactedPropertiesListOptions,
