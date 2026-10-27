@@ -6,14 +6,24 @@ Portable SDK helper for `GET /bridge/api.v1/properties`.
 
 ::public
 
-Fetches active API property payloads for exactly one agency or account.
+Fetches API property payloads for exactly one agency or account. Without
+`status`, the endpoint returns properties in every status. Supply a comma-
+separated value (or string array) to filter, for example:
+`property.list({ accountId: 'account-id', status: ['drafts', 'pending'] })`
+sends `GET /bridge/api.v1/properties?agent=account-id&status=drafts,pending`.
+The response retains each property's own `status`, for example
+`{"success":true,"properties":[{"id":"property-id","status":"PENDING"}],"totalCount":1,"limit":10,"offset":0}`.
 
 Pagination defaults to `limit: 10` and `offset: 0` when omitted. The endpoint
 returns at most 15 properties per request, so larger `limit` values are capped
 to 15.
 
-Pass `fields` to limit each returned property to selected values. The value may
-be a comma-separated string or a string array.
+Supported statuses are `drafts`, `pending`, `rejected`, `active`, `sold`,
+`rented`, `archived`, `awaiting_creation`, and `awaiting_deletion`; `draft` and
+`approved` are accepted aliases.
+
+Pass `fields` to select returned property values. The value may be a
+comma-separated string or a string array.
 
 Accepted `fields` values:
 
@@ -61,6 +71,7 @@ const MAX_LIMIT = 15;
 export type EstatePropertyListInput = {
   agencyId?: string | null;
   accountId?: string | null;
+  status?: string[] | string | null;
   fields?: string[] | string | null;
   limit?: number | null;
   offset?: number | null;
@@ -105,6 +116,7 @@ export async function listEstateProperties(
   const query = {
     agency: input.agencyId,
     agent: input.accountId,
+    status: serializeFields(input.status),
     fields: serializeFields(input.fields),
     limit,
     offset,

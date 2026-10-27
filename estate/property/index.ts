@@ -20,6 +20,7 @@ import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/ap
 import { createEstateProperty, type CreateEstatePropertyResponseBody } from '@neup/logica/estate/property/create';
 import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '@neup/logica/estate/property/modify';
 import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '@neup/logica/estate/property/search';
+import { listEstateProperties, type EstatePropertyListInput, type EstatePropertyListResponseBody } from '@neup/logica/estate/property/list';
 import { viewEstateProperty, type ViewEstatePropertyResponseBody } from '@neup/logica/estate/property/view';
 import {
   reactedProperties,
@@ -184,6 +185,12 @@ property.search = function search(
   return searchEstateProperties(filters);
 };
 
+property.list = function list(
+  input: EstatePropertyListInput,
+): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
+  return listEstateProperties(input);
+};
+
 property.getById = function getById(propertyId: string, include?: Fields) {
   return property(propertyId).get(include);
 };
@@ -221,6 +228,7 @@ export {
   createEstateProperty,
   modifyEstateProperty,
   searchEstateProperties,
+  listEstateProperties,
   viewEstateProperty,
 };
 
@@ -230,6 +238,8 @@ export type {
   ModifyEstatePropertyResponseBody,
   SearchEstatePropertiesInput,
   SearchEstatePropertiesResponseBody,
+  EstatePropertyListInput,
+  EstatePropertyListResponseBody,
   ViewEstatePropertyResponseBody,
   EstatePropertyReactionValue,
   EstateReactedPropertiesListOptions,
