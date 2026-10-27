@@ -10,15 +10,20 @@ Fetches one approved property's public API payload by `propertyId`.
 
 Pass `include` as a comma-separated string or string array to select property
 fields and nested agent/agency fields. For example:
-`property.get('agent(id,name,image),agency(name,image)')` sends
-`GET /bridge/api.v1/properties/[id]?include=agent(id,name,image),agency(name,image)`.
-Use `supportingAgents(name,image)` to request the same fields for supporting
-agents. Agent, supporting agent, and agency objects always include `id`; a bare
-relationship selects only its default `id`, while `agent(*)` or
-`supportingAgents(*)` selects all documented agent fields. The same rules apply
-to agency. For agent selections, `displayName` aliases `name` and
-`displayImage` aliases `image`; responses use `name` and `image`. A response example is:
-`{"success":true,"property":{"id":"property-id","agent":[{"id":"account-id","name":"Agent Name","image":"https://example.com/agent.jpg"}],"supportingAgents":[{"id":"supporting-account-id","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"}],"agency":{"id":"agency-id","name":"Agency Name","image":"https://example.com/logo.jpg"}}}`.
+`property.get('agents(id,name,image),agency(name,image)')` sends
+`GET /bridge/api.v1/properties/[id]?include=agents(id,name,image),agency(name,image)`.
+The `agents(...)` selector requests both the listing agent and supporting agents;
+the response keys are `listingAgent` and `supportingAgents`. Use
+`agent` or `listingAgent` to request only the listing agent; both selectors
+return the value under the `listingAgent` key. Use `supportingAgents` to
+request only supporting agent IDs. Add `(name,image)` to either individual
+selector to request those fields alongside the always included `id`. Agent and
+agency objects always include `id`; a bare relationship selects only its
+default `id`, while `agents(*)` selects all documented agent fields for both
+arrays. If `include` is omitted, both agent arrays default to `id` only. The
+same rules apply to agency. For agent selections, `displayName` aliases `name`
+and `displayImage` aliases `image`; responses use `name` and `image`. A response example is:
+`{"success":true,"property":{"id":"property-id","listingAgent":[{"id":"account-id","name":"Agent Name","image":"https://example.com/agent.jpg"}],"supportingAgents":[{"id":"supporting-account-id","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"}],"agency":{"id":"agency-id","name":"Agency Name","image":"https://example.com/logo.jpg"}}}`.
 
 The legacy `fields` input remains accepted as an alias for `include`.
 
@@ -29,7 +34,9 @@ Accepted scalar `include` values:
 - Classification: `purpose`, `category`, `type`, `status`, `visibility`
 - Media: `images`, `images.id`, `images.url`, `images.type`,
   `images.isCover`, `images.order`
-- Listing accounts: `agent`, `agent(id,name,image)`, `agent(*)`,
+- Listing accounts: `agents`, `agents(id,name,image)`, `agents(*)`,
+  `agent`, `agent(id,name,image)`, `agent(*)`,
+  `listingAgent`, `listingAgent(id,name,image)`,
   `supportingAgents`, `supportingAgents(id,name,image)`, `supportingAgents(*)`,
   `agency`, `agency(id,name,image)`, `agency(*)`
 - Location: `location`, `location.id`, `location.text`, `location.geo`,
