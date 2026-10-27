@@ -12,11 +12,13 @@ Pass `include` as a comma-separated string or string array to select property
 fields and nested agent/agency fields. For example:
 `property.get('agent(id,name,image),agency(name,image)')` sends
 `GET /bridge/api.v1/properties/[id]?include=agent(id,name,image),agency(name,image)`.
-Both agent and agency always include `id`; `agent` selects only its default
-`id`, while `agent(*)` selects all documented agent fields. The same rules apply
+Use `supportingAgents(name,image)` to request the same fields for supporting
+agents. Agent, supporting agent, and agency objects always include `id`; a bare
+relationship selects only its default `id`, while `agent(*)` or
+`supportingAgents(*)` selects all documented agent fields. The same rules apply
 to agency. For agent selections, `displayName` aliases `name` and
 `displayImage` aliases `image`; responses use `name` and `image`. A response example is:
-`{"success":true,"property":{"id":"property-id","agent":[{"id":"account-id","name":"Agent Name","image":"https://example.com/agent.jpg"}],"agency":{"id":"agency-id","name":"Agency Name","image":"https://example.com/logo.jpg"}}}`.
+`{"success":true,"property":{"id":"property-id","agent":[{"id":"account-id","name":"Agent Name","image":"https://example.com/agent.jpg"}],"supportingAgents":[{"id":"supporting-account-id","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"}],"agency":{"id":"agency-id","name":"Agency Name","image":"https://example.com/logo.jpg"}}}`.
 
 The legacy `fields` input remains accepted as an alias for `include`.
 
@@ -27,8 +29,9 @@ Accepted scalar `include` values:
 - Classification: `purpose`, `category`, `type`, `status`, `visibility`
 - Media: `images`, `images.id`, `images.url`, `images.type`,
   `images.isCover`, `images.order`
-- Listing accounts: `agent`, `agent(id,name,image)`, `agent(*)`, `agency`,
-  `agency(id,name,image)`, `agency(*)`, `supportingAgents`
+- Listing accounts: `agent`, `agent(id,name,image)`, `agent(*)`,
+  `supportingAgents`, `supportingAgents(id,name,image)`, `supportingAgents(*)`,
+  `agency`, `agency(id,name,image)`, `agency(*)`
 - Location: `location`, `location.id`, `location.text`, `location.geo`,
   `location.structured`
 - Pricing: `pricing`, `pricing.type`, `pricing.askingAmount`,
