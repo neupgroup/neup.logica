@@ -117,20 +117,20 @@ function createOfferScope(propertyId: string) {
   return offer;
 }
 
-function getPropertyByCode(propertyCode: string, fields?: Fields) {
+function getPropertyByCode(propertyCode: string, include?: Fields) {
   return requestEstateApi<ViewEstatePropertyResponseBody>({
     path: `/bridge/api.v1/properties/${encodeURIComponent(propertyCode)}`,
     query: {
       propertyCode,
-      fields: serializeFields(fields),
+      include: serializeFields(include),
     },
   });
 }
 
 export function property(propertyId: string) {
   return {
-    get(fields?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-      return viewEstateProperty({ propertyId, fields });
+    get(include?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
+      return viewEstateProperty({ propertyId, include });
     },
 
     update(data: EstateObjectRecord): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
@@ -184,18 +184,18 @@ property.search = function search(
   return searchEstateProperties(filters);
 };
 
-property.getById = function getById(propertyId: string, fields?: Fields) {
-  return property(propertyId).get(fields);
+property.getById = function getById(propertyId: string, include?: Fields) {
+  return property(propertyId).get(include);
 };
 
-property.getByCode = function getByCode(propertyCode: string, fields?: Fields) {
-  return getPropertyByCode(propertyCode, fields);
+property.getByCode = function getByCode(propertyCode: string, include?: Fields) {
+  return getPropertyByCode(propertyCode, include);
 };
 
 property.code = function code(propertyCode: string) {
   return {
-    get(fields?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-      return getPropertyByCode(propertyCode, fields);
+    get(include?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
+      return getPropertyByCode(propertyCode, include);
     },
   } as const;
 };

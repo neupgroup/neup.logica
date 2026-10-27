@@ -8,18 +8,27 @@ Portable SDK helper for `GET /bridge/api.v1/properties/[id]`.
 
 Fetches one approved property's public API payload by `propertyId`.
 
-Pass `fields` to limit the returned `property` object to selected values. The
-value may be a comma-separated string or a string array.
+Pass `include` as a comma-separated string or string array to select property
+fields and nested agent/agency fields. For example:
+`property.get('agent(id,name,image),agency(name,image)')` sends
+`GET /bridge/api.v1/properties/[id]?include=agent(id,name,image),agency(name,image)`.
+Both agent and agency always include `id`; `agent` selects only its default
+`id`, while `agent(*)` selects all documented agent fields. The same rules apply
+to agency. For agent selections, `displayName` aliases `name` and
+`displayImage` aliases `image`; responses use `name` and `image`. A response example is:
+`{"success":true,"property":{"id":"property-id","agent":[{"id":"account-id","name":"Agent Name","image":"https://example.com/agent.jpg"}],"agency":{"id":"agency-id","name":"Agency Name","image":"https://example.com/logo.jpg"}}}`.
 
-Accepted `fields` values:
+The legacy `fields` input remains accepted as an alias for `include`.
+
+Accepted scalar `include` values:
 
 - Identity: `id`, `customId`, `slug`
 - Copy and discovery: `title`, `description`, `keywords`, `tags`
 - Classification: `purpose`, `category`, `type`, `status`, `visibility`
 - Media: `images`, `images.id`, `images.url`, `images.type`,
   `images.isCover`, `images.order`
-- Listing accounts: `listedBy`, `listedBy.type`, `listedBy.id`,
-  `listedBy.displayName`, `listedBy.displayImage`, `supportingAgents`
+- Listing accounts: `agent`, `agent(id,name,image)`, `agent(*)`, `agency`,
+  `agency(id,name,image)`, `agency(*)`, `supportingAgents`
 - Location: `location`, `location.id`, `location.text`, `location.geo`,
   `location.structured`
 - Pricing: `pricing`, `pricing.type`, `pricing.askingAmount`,
@@ -48,6 +57,8 @@ import type { EstateApiResponse } from '@neup/logica/estate/api';
 
 export type ViewEstatePropertyInput = {
   propertyId: string;
+  include?: string[] | string | null;
+  /** @deprecated Use include. */
   fields?: string[] | string | null;
 };
 
@@ -73,8 +84,8 @@ export async function viewEstateProperty(
   const requestUrl = url.web.path(getBaseUrl('estate'))
     .addPath(`/bridge/api.v1/properties/${encodeURIComponent(input.propertyId)}`)
     .addParam('propertyId', input.propertyId);
-  const fields = serializeFields(input.fields);
-  if (fields) requestUrl.addParam('fields', fields);
+  const include = serializeFields(input.include ?? input.fields);
+  if (include) requestUrl.addParam('include', include);
 
   try {
     const response = await fetch(requestUrl.get(), {
