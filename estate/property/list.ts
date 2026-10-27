@@ -7,10 +7,12 @@ Portable SDK helper for `GET /bridge/api.v1/properties`.
 ::public
 
 Fetches API property payloads for exactly one agency or account. Without
-`status`, the endpoint returns properties in every status. Supply a comma-
-separated value (or string array) to filter, for example:
+`status`, the endpoint returns only active properties. Supply a comma-separated
+value (or string array) to request other statuses, for example:
 `property.list({ accountId: 'account-id', status: ['drafts', 'pending'] })`
 sends `GET /bridge/api.v1/properties?agent=account-id&status=drafts,pending`.
+`property.list({ accountId: 'account-id', status: 'rejected' })` requests only
+rejected properties.
 The response retains each property's own `status`, for example
 `{"success":true,"properties":[{"id":"property-id","status":"PENDING"}],"totalCount":1,"limit":10,"offset":0}`.
 
