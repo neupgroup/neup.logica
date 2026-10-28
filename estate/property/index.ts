@@ -22,6 +22,14 @@ import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '@ne
 import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '@neup/logica/estate/property/search';
 import { listEstateProperties, type EstatePropertyListInput, type EstatePropertyListResponseBody } from '@neup/logica/estate/property/list';
 import {
+  getPropertiesBeingWorked,
+  getPropertiesByAccount,
+  getPropertiesListed,
+  getPropertiesOwned,
+  getPropertiesSaved,
+  type EstateAccountPropertyListResponseBody,
+} from '@neup/logica/estate/property/account';
+import {
   viewEstateProperty,
   type EstatePropertyRepresentative,
   type EstatePropertyView,
@@ -196,6 +204,12 @@ property.list = function list(
   return listEstateProperties(input);
 };
 
+property.getPropertiesByAccount = getPropertiesByAccount;
+property.getPropertiesListed = getPropertiesListed;
+property.getPropertiesSaved = getPropertiesSaved;
+property.getPropertiesOwned = getPropertiesOwned;
+property.getPropertiesBeingWorked = getPropertiesBeingWorked;
+
 property.getById = function getById(propertyId: string, include?: Fields) {
   return property(propertyId).get(include);
 };
@@ -234,6 +248,11 @@ export {
   modifyEstateProperty,
   searchEstateProperties,
   listEstateProperties,
+  getPropertiesByAccount,
+  getPropertiesListed,
+  getPropertiesSaved,
+  getPropertiesOwned,
+  getPropertiesBeingWorked,
   viewEstateProperty,
 };
 
@@ -245,6 +264,7 @@ export type {
   SearchEstatePropertiesResponseBody,
   EstatePropertyListInput,
   EstatePropertyListResponseBody,
+  EstateAccountPropertyListResponseBody,
   EstatePropertyRepresentative,
   EstatePropertyView,
   ViewEstatePropertyResponseBody,

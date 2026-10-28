@@ -64,6 +64,13 @@ export {
 };
 
 export { requestEstateApi } from '@neup/logica/estate/api';
+export {
+  getPropertiesByAccount,
+  getPropertiesListed,
+  getPropertiesSaved,
+  getPropertiesOwned,
+  getPropertiesBeingWorked,
+} from '@neup/logica/estate/property';
 export type { EstateApiResponse } from '@neup/logica/estate/api';
 export type {
   EstateReactionCreateData,
@@ -76,6 +83,7 @@ export type {
   EstateReactedPropertyRemoval,
   EstateSavedPropertiesListOptions,
   EstateSavedPropertyRemoval,
+  EstateAccountPropertyListResponseBody,
 } from '@neup/logica/estate/property';
 export type {
   EstateInquiryCreateData,
