@@ -7,7 +7,7 @@ Estate object composed from nested estate domain folders.
 ::public
 
 `logica.estate` is assembled from objects exported by child folders such as
-`property`, `agent`, `agency`, and `inquiry`.
+`property`, `profile`, `agent`, `agency`, and `inquiry`.
 
 ::public end
 
@@ -22,6 +22,7 @@ import { lead } from '@neup/logica/estate/lead';
 import { requirement } from '@neup/logica/estate/requirement';
 import { offer } from '@neup/logica/estate/offer';
 import { property } from '@neup/logica/estate/property';
+import { profile } from '@neup/logica/estate/profile';
 import { reaction } from '@neup/logica/estate/reaction';
 import { save } from '@neup/logica/estate/save';
 import { comment } from '@neup/logica/estate/comment';
@@ -31,6 +32,7 @@ import { viewing } from '@neup/logica/estate/viewing';
 
 export const estate = {
   property,
+  profile,
   agent,
   agency,
   inquiry,
@@ -55,6 +57,7 @@ export {
   lead,
   offer,
   property,
+  profile,
   requirement,
   reaction,
   save,
@@ -71,6 +74,10 @@ export {
   getPropertiesOwned,
   getPropertiesBeingWorked,
 } from '@neup/logica/estate/property';
+export {
+  getProfileById,
+  listProfiles,
+} from '@neup/logica/estate/profile';
 export type { EstateApiResponse } from '@neup/logica/estate/api';
 export type {
   EstateReactionCreateData,
@@ -85,6 +92,16 @@ export type {
   EstateSavedPropertyRemoval,
   EstateAccountPropertyListResponseBody,
 } from '@neup/logica/estate/property';
+export type {
+  EstateAccountAgency,
+  EstateAccountProfile,
+  EstateAccountProfileResponseBody,
+  EstateProfileListInput,
+  EstateProfileListResponseBody,
+  EstateProfileScope,
+  EstateProfileSummary,
+  EstateProfileType,
+} from '@neup/logica/estate/profile';
 export type {
   EstateInquiryCreateData,
   EstateObjectRecord,

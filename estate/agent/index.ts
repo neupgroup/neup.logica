@@ -114,13 +114,6 @@ function createAgentUserScope(agentId: string) {
 export function agent(agentId: string) {
   const query = { agentId };
   return {
-    get(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/agent/view',
-        query,
-      });
-    },
-
     property: createAgentPropertyScope(agentId),
     user: createAgentUserScope(agentId),
     reaction: createListScope('reaction', query),
@@ -131,10 +124,6 @@ export function agent(agentId: string) {
     offer: createListScope('offer', query),
   } as const;
 }
-
-agent.getById = function getById(agentId: string): Promise<EstateApiResponse> {
-  return agent(agentId).get();
-};
 
 agent.listProperties = function listProperties(agentId: string): Promise<EstateApiResponse> {
   return agent(agentId).property.list();
