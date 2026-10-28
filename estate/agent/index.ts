@@ -16,7 +16,7 @@ Use `logica.estate.agent(agentId).*` for agent-scoped collections.
 import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
 
-type ListKind = 'reaction' | 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
+type ListKind = 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 
 function list(kind: ListKind, query: Record<string, string>) {
   return requestEstateApi({
@@ -102,7 +102,6 @@ function createAgentUserScope(agentId: string) {
   return function user(userId: string) {
     const query = { agentId, userId };
     return {
-      reaction: createListScope('reaction', query),
       save: createListScope('save', query),
       comment: createListScope('comment', query),
       inquiry: createListScope('inquiry', query),
@@ -116,7 +115,6 @@ export function agent(agentId: string) {
   return {
     property: createAgentPropertyScope(agentId),
     user: createAgentUserScope(agentId),
-    reaction: createListScope('reaction', query),
     save: createListScope('save', query),
     comment: createListScope('comment', query),
     inquiry: createCreateListScope('inquiry', query),

@@ -17,7 +17,7 @@ import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/ap
 import { listEstateProperties, type EstatePropertyListResponseBody } from '@neup/logica/estate/property/list';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
 
-type ListKind = 'reaction' | 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
+type ListKind = 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 
 function list(kind: ListKind, query: Record<string, string>) {
   return requestEstateApi({
@@ -84,7 +84,6 @@ function createAgencyUserScope(agencyId: string) {
   return function user(userId: string) {
     const query = { agencyId, userId };
     return {
-      reaction: createListScope('reaction', query),
       save: createListScope('save', query),
       comment: createListScope('comment', query),
       inquiry: createListScope('inquiry', query),
@@ -98,7 +97,6 @@ export function agency(agencyId: string) {
   return {
     property: createAgencyPropertyScope(agencyId),
     user: createAgencyUserScope(agencyId),
-    reaction: createListScope('reaction', query),
     save: createListScope('save', query),
     comment: createListScope('comment', query),
     inquiry: createCreateListScope('inquiry', query),

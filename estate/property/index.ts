@@ -36,12 +36,6 @@ import {
   type ViewEstatePropertyResponseBody,
 } from '@neup/logica/estate/property/view';
 import {
-  reactedProperties,
-  type EstatePropertyReactionValue,
-  type EstateReactedPropertiesListOptions,
-  type EstateReactedPropertyRemoval,
-} from '@neup/logica/estate/property/reacted';
-import {
   savedProperties,
   type EstateSavedPropertiesListOptions,
   type EstateSavedPropertyRemoval,
@@ -56,14 +50,14 @@ function serializeFields(fields: Fields | undefined): string | undefined {
   return fields.trim() || undefined;
 }
 
-function requestScopedList(kind: 'reaction' | 'save' | 'comment' | 'inquiry', propertyId: string) {
+function requestScopedList(kind: 'save' | 'comment' | 'inquiry', propertyId: string) {
   return requestEstateApi({
     path: `/bridge/api.v1/${kind}/list`,
     query: { propertyId },
   });
 }
 
-function createCollectionScope(kind: 'reaction' | 'save' | 'comment', propertyId: string) {
+function createCollectionScope(kind: 'save' | 'comment', propertyId: string) {
   return {
     add(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
       return requestEstateApi({
@@ -167,7 +161,6 @@ export function property(propertyId: string) {
       });
     },
 
-    reaction: createCollectionScope('reaction', propertyId),
     save: createCollectionScope('save', propertyId),
     comment: createCollectionScope('comment', propertyId),
     inquiry: createInquiryScope(propertyId),
@@ -239,7 +232,6 @@ property.archive = function archive(propertyId: string) {
 };
 
 export namespace property {
-  export const reacted = reactedProperties;
   export const saved = savedProperties;
 }
 
@@ -268,9 +260,6 @@ export type {
   EstatePropertyRepresentative,
   EstatePropertyView,
   ViewEstatePropertyResponseBody,
-  EstatePropertyReactionValue,
-  EstateReactedPropertiesListOptions,
-  EstateReactedPropertyRemoval,
   EstateSavedPropertiesListOptions,
   EstateSavedPropertyRemoval,
 };

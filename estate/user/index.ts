@@ -15,7 +15,7 @@ Use `logica.estate.user(userId).*` for user-scoped estate collections.
 
 import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
 
-type ListKind = 'reaction' | 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
+type ListKind = 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 
 function list(kind: ListKind, query: Record<string, string>) {
   return requestEstateApi({
@@ -74,7 +74,6 @@ function createUserPropertyScope(userId: string) {
 export function user(userId: string) {
   const query = { userId };
   return {
-    reaction: createListScope('reaction', query),
     save: createListScope('save', query),
     comment: createListScope('comment', query),
     inquiry: createListScope('inquiry', query),

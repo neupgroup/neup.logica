@@ -23,7 +23,6 @@ import { requirement } from '@neup/logica/estate/requirement';
 import { offer } from '@neup/logica/estate/offer';
 import { property } from '@neup/logica/estate/property';
 import { profile } from '@neup/logica/estate/profile';
-import { reaction } from '@neup/logica/estate/reaction';
 import { save } from '@neup/logica/estate/save';
 import { comment } from '@neup/logica/estate/comment';
 import { user } from '@neup/logica/estate/user';
@@ -41,7 +40,6 @@ export const estate = {
   favorite,
   viewing,
   offer,
-  reaction,
   save,
   comment,
   user,
@@ -59,7 +57,6 @@ export {
   property,
   profile,
   requirement,
-  reaction,
   save,
   user,
   visit,
@@ -79,15 +76,8 @@ export {
   listProfiles,
 } from '@neup/logica/estate/profile';
 export type { EstateApiResponse } from '@neup/logica/estate/api';
-export type {
-  EstateReactionCreateData,
-  EstateReactionValue,
-} from '@neup/logica/estate/reaction';
 export type { EstateSaveCreateData } from '@neup/logica/estate/save';
 export type {
-  EstatePropertyReactionValue,
-  EstateReactedPropertiesListOptions,
-  EstateReactedPropertyRemoval,
   EstateSavedPropertiesListOptions,
   EstateSavedPropertyRemoval,
   EstateAccountPropertyListResponseBody,
