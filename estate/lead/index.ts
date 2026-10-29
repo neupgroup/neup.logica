@@ -23,7 +23,7 @@ const myResponse = await logica.estate.lead.my.list({ limit: 10, offset: 0 });
 
 These send `GET /bridge/api.v1/leads/base?limit=10&offset=0` or
 `GET /bridge/api.v1/leads/shared?limit=10&offset=0`. Each SDK method resolves
-to an `EstateApiResponse`: `{ ok, status, body, headers }`.
+to an `ApiResponse`: `{ ok, status, body, headers }`.
 
 Example response body for `base.list()`:
 ```json
@@ -172,8 +172,21 @@ Example POST response body:
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse, type ApiMethod } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+import endpointConfig from '@neup/logica/estate/endpoints.json';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
+
+const LeadsSharedConfig = (endpointConfig as Record<string, { path: string; method: ApiMethod }>)['leads:shared'];
+const LeadsSharedEndpoint = LeadsSharedConfig.path;
+const LeadsSharedMethod = LeadsSharedConfig.method;
+const LeadsBaseEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/leads/base';
+/** Builds the API endpoint for baseleadactivity. */
+const getBaseLeadActivityEndpoint = (baseLeadId: string) => `https://neupgroup.com/estate/bridge/api.v1/leads/base/${encodeURIComponent(baseLeadId)}/activity`;
+/** Builds the API endpoint for leadactivity. */
+const getLeadActivityEndpoint = (leadId: string) => `https://neupgroup.com/estate/bridge/api.v1/leads/${encodeURIComponent(leadId)}/activity`;
+const LeadFromInquiryEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/lead/from-inquiry';
+const LeadStatusEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/lead/status';
 
 export type EstateLeadListOptions = {
   limit?: number;
@@ -188,9 +201,21 @@ export type EstateLeadActivityInput = {
   remarks: string;
 };
 
-function list(path: '/bridge/api.v1/leads/base' | '/bridge/api.v1/leads/shared', options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path,
+function list(path: '/bridge/api.v1/leads/base' | '/bridge/api.v1/leads/shared', options: EstateLeadListOptions = {}): Promise<ApiResponse> {
+  if (path.endsWith('/leads/shared')) {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: LeadsSharedEndpoint,
+      method: LeadsSharedMethod,
+      query: {
+        limit: options.limit,
+        offset: options.offset,
+      },
+    });
+  }
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: LeadsBaseEndpoint,
     query: {
       limit: options.limit,
       offset: options.offset,
@@ -199,27 +224,28 @@ function list(path: '/bridge/api.v1/leads/base' | '/bridge/api.v1/leads/shared',
 }
 
 const base = {
-  list(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
+  list(options: EstateLeadListOptions = {}): Promise<ApiResponse> {
     return list('/bridge/api.v1/leads/base', options);
   },
 
   activity: {
-    get(baseLeadId: string): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: `/bridge/api.v1/leads/base/${encodeURIComponent(baseLeadId)}/activity`,
+    get(baseLeadId: string): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: getBaseLeadActivityEndpoint(baseLeadId),
       });
     },
   },
 } as const;
 
 const shared = {
-  list(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
+  list(options: EstateLeadListOptions = {}): Promise<ApiResponse> {
     return list('/bridge/api.v1/leads/shared', options);
   },
 } as const;
 
 const my = {
-  list(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
+  list(options: EstateLeadListOptions = {}): Promise<ApiResponse> {
     // The endpoint derives the current account from authentication and applies
     // the same assignment visibility rules as the Shared Leads page.
     return list('/bridge/api.v1/leads/shared', options);
@@ -227,15 +253,17 @@ const my = {
 } as const;
 
 const activity = {
-  get(leadId: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: `/bridge/api.v1/leads/${encodeURIComponent(leadId)}/activity`,
+  get(leadId: string): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: getLeadActivityEndpoint(leadId),
     });
   },
 
-  post(leadId: string, input: EstateLeadActivityInput): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: `/bridge/api.v1/leads/${encodeURIComponent(leadId)}/activity`,
+  post(leadId: string, input: EstateLeadActivityInput): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: getLeadActivityEndpoint(leadId),
       method: 'POST',
       body: input,
     });
@@ -248,29 +276,31 @@ export const lead = {
   my,
   activity,
 
-  listBase(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
+  listBase(options: EstateLeadListOptions = {}): Promise<ApiResponse> {
     return base.list(options);
   },
 
-  listShared(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
+  listShared(options: EstateLeadListOptions = {}): Promise<ApiResponse> {
     return shared.list(options);
   },
 
-  listMy(options: EstateLeadListOptions = {}): Promise<EstateApiResponse> {
+  listMy(options: EstateLeadListOptions = {}): Promise<ApiResponse> {
     return my.list(options);
   },
 
-  createFromInquiry(inquiryId: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/lead/from-inquiry',
+  createFromInquiry(inquiryId: string): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: LeadFromInquiryEndpoint,
       method: 'POST',
       body: { inquiryId },
     });
   },
 
-  updateStatus(leadId: string, status: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/lead/status',
+  updateStatus(leadId: string, status: string): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: LeadStatusEndpoint,
       method: 'POST',
       body: { leadId, status },
     });

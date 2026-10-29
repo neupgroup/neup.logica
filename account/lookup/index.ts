@@ -52,13 +52,14 @@ and account service run under compatible domains.
 ::end
 */
 
-import { url } from '@neup/core/helpers/url';
+import { getNeupBridgeEnvironment } from '@neup/logica/account/environment';
 import { getBaseUrl } from '@neup/logica/baseurl';
-import {
-  getNeupBridgeEnvironment,
-  runNeupBridgeApi,
-  type NeupBridgeResponse,
-} from '@neup/logica/account/api';
+import { url } from '@neup/core/helpers/url';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+
+
+const Basepath = 'bridge/api.v1';
+const ProfileEndpoint = `${Basepath}/profile`;
 
 /*
 ::neup.documentation::logica-account-neup-user-info-basic-fields-constant
@@ -304,7 +305,7 @@ token.
 */
 export async function getAccountBasics(
   input: LookupInput,
-): Promise<NeupBridgeResponse<LookupResponseBody>> {
+): Promise<ApiResponse<LookupResponseBody>> {
   const fields = normalizeFields(input.fields);
   const env = getNeupBridgeEnvironment();
   const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts/lookup').get();
@@ -386,8 +387,9 @@ export const lookup = {
   byNeupId(neupId: string) {
     return {
       get(input: ProfileLookupInput = {}) {
-        return runNeupBridgeApi({
-          path: '/bridge/api.v1/profile',
+        return runApi({
+          baseUrl: getBaseUrl('neupid'),
+          path: ProfileEndpoint,
           method: 'GET',
           query: {
             tempToken: input.tempToken,

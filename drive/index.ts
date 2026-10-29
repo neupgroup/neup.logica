@@ -18,6 +18,8 @@ portable clients.
 import { account } from '@neup/logica/drive/account';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+
+const Basepath = 'bridge/api.v1';
 function getBasepath() {
   return getBaseUrl('drive');
 }
@@ -29,7 +31,5 @@ export const drive = {
 
 export { account };
 export { getBasepath };
-export { requestDriveApi } from '@neup/logica/drive/api';
-export type { DriveApiResponse } from '@neup/logica/drive/api';
 
 export default drive;

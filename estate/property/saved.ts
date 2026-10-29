@@ -14,7 +14,11 @@ property records. Use `logica.estate.property(id).get()` with each returned
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const PropertiesSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties/saved';
 
 export type EstateSavedPropertiesListOptions = {
   account?: string;
@@ -27,9 +31,10 @@ export type EstateSavedPropertyRemoval =
   | { propertyId: string; id?: never };
 
 export const savedProperties = {
-  list(options: EstateSavedPropertiesListOptions = {}): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/properties/saved',
+  list(options: EstateSavedPropertiesListOptions = {}): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: PropertiesSavedEndpoint,
       query: {
         account: options.account ?? 'me',
         limit: options.limit,
@@ -38,17 +43,19 @@ export const savedProperties = {
     });
   },
 
-  save(propertyId: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/properties/saved',
+  save(propertyId: string): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: PropertiesSavedEndpoint,
       method: 'POST',
       body: { propertyId },
     });
   },
 
-  remove(input: EstateSavedPropertyRemoval): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/properties/saved',
+  remove(input: EstateSavedPropertyRemoval): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: PropertiesSavedEndpoint,
       method: 'DELETE',
       query: input,
     });

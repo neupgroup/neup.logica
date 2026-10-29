@@ -13,7 +13,13 @@ Use this module when an app needs a normalized connected-account identity snapsh
 ::end
 */
 
-import { getNeupBridgeEnvironment, runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
+import { getNeupBridgeEnvironment } from '@neup/logica/account/environment';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const ConnectionSigngetEndpoint = `${Basepath}/connection/sign&get`;
 
 /*
 ::neup.documentation::logica-account-neup-connection-account-info-type
@@ -103,17 +109,18 @@ Uses the auth-account token and application credentials to call the bridge
 */
 export async function connectCurrentAccount(
   authAccountToken: string,
-): Promise<NeupBridgeResponse<SignAndGetResponse>> {
+): Promise<ApiResponse<SignAndGetResponse>> {
   const token = authAccountToken.trim();
   if (!token) {
     throw new Error('authAccountToken is required.');
   }
 
   const env = getNeupBridgeEnvironment();
-  return runNeupBridgeApi<SignAndGetResponse>({
-    path: '/bridge/api.v1/connection/sign&get',
+  return runApi<SignAndGetResponse>({
+    baseUrl: getBaseUrl('neupid'),
+    path: ConnectionSigngetEndpoint,
     method: 'POST',
-    authAccountToken: token,
+    cookies: { auth_account: token },
     body: {
       appId: env.appId,
       appSecret: env.appSecret,

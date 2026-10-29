@@ -26,7 +26,11 @@ to wrap work, auto-log thrown errors, and rethrow them.
 
 import { getEnvVariable } from '@neup/core/helpers/env';
 import { getBaseUrl } from '@neup/logica/baseurl';
-import { requestLoggerApi, type LoggerApiResponse } from '@neup/logica/logger/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+
+const Basepath: string = "https://neupgroup.com/cloud/bridge/api.v1/logger";
+const ErrorEndpoint: string = "https://neupgroup.com/cloud/bridge/api.v1/logger/error";
+
 
 export type LoggerPayload =
   | Record<string, unknown>
@@ -58,8 +62,8 @@ export type LoggerScope = {
   data(data: LoggerPayload): LoggerScope;
   type(type: string): LoggerScope;
   ingestKey(ingestKey: string): LoggerScope;
-  log(data?: LoggerPayload): Promise<LoggerApiResponse<LoggerBridgeBody>>;
-  error(error?: unknown): Promise<LoggerApiResponse<LoggerBridgeBody>>;
+  log(data?: LoggerPayload): Promise<ApiResponse<LoggerBridgeBody>>;
+  error(error?: unknown): Promise<ApiResponse<LoggerBridgeBody>>;
   catch<T>(callback: LoggerCallback<T>, context?: LoggerCatchContext): Promise<T>;
   wrap<TArgs extends unknown[], TResult>(
     callback: (...args: TArgs) => Promise<TResult> | TResult,
@@ -167,7 +171,7 @@ function createLoggerScope(
     || requireLoggerEnv('NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY');
 
   async function send(
-    path: '/bridge/api.v1/logger' | '/bridge/api.v1/logger/error',
+    endpoint: string,
     nextDraft: LoggerDraft,
   ) {
     if (!projectSlug || !ingestKey) {
@@ -175,12 +179,13 @@ function createLoggerScope(
         ? 'Logger project slug is missing. Configure NEXT_PUBLIC_NEUP_LOGGER_ID or base.json.identity.logica.logger.slug.'
         : 'Logger ingest key is missing. Configure NEXT_PUBLIC_NEUP_LOGGER_INGEST_KEY or pass it to logica.logger().ingestKey(value).');
       console.error('[logica.logger] Log was not sent.', error);
-      return { ok: false, status: 0, body: { success: false, error: error.message } } as LoggerApiResponse<LoggerBridgeBody>;
+      return { ok: false, status: 0, body: { success: false, error: error.message }, headers: new Headers() } as ApiResponse<LoggerBridgeBody>;
     }
 
     try {
-      return await requestLoggerApi<LoggerBridgeBody>({
-        path,
+      return await runApi<LoggerBridgeBody>({
+        baseUrl: getBaseUrl('cloud'),
+        path: endpoint,
         method: 'POST',
         body: {
           projectId,
@@ -220,7 +225,7 @@ function createLoggerScope(
     },
 
     log(data?: LoggerPayload) {
-      return send('/bridge/api.v1/logger', {
+      return send(Basepath, {
         ...draft,
         type: trimString(draft.type) || 'log',
         data: data ?? draft.data,
@@ -228,7 +233,7 @@ function createLoggerScope(
     },
 
     error(error?: unknown) {
-      return send('/bridge/api.v1/logger/error', {
+      return send(ErrorEndpoint, {
         ...draft,
         type: 'error',
         data: normalizeCaughtError(error ?? draft.data),
@@ -239,7 +244,7 @@ function createLoggerScope(
       try {
         return await callback();
       } catch (error) {
-        await send('/bridge/api.v1/logger/error', {
+        await send(ErrorEndpoint, {
           type: 'error',
           data: normalizeCaughtError(error, context),
         });
@@ -276,7 +281,7 @@ type LoggerFactory = {
   data(data: LoggerPayload): LoggerScope;
   type(type: string): LoggerScope;
   ingestKey(ingestKey: string): LoggerScope;
-  error(error?: unknown): Promise<LoggerApiResponse<LoggerBridgeBody>>;
+  error(error?: unknown): Promise<ApiResponse<LoggerBridgeBody>>;
   wrap<TArgs extends unknown[], TResult>(
     callback: (...args: TArgs) => Promise<TResult> | TResult,
     context?: LoggerCatchContext,
@@ -342,7 +347,4 @@ export const logger: LoggerFactory = Object.assign(
 );
 
 export { createLoggerScope };
-export { requestLoggerApi } from '@neup/logica/logger/api';
-export type { LoggerApiResponse } from '@neup/logica/logger/api';
-
 export default logger;

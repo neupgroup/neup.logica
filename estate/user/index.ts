@@ -13,20 +13,26 @@ Use `logica.estate.user(userId).*` for user-scoped estate collections.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+/** Builds the API endpoint for userlist. */
+const getUserListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;
 
 type ListKind = 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 
 function list(kind: ListKind, query: Record<string, string>) {
-  return requestEstateApi({
-    path: `/bridge/api.v1/${kind}/list`,
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: getUserListEndpoint(kind),
     query,
   });
 }
 
 function createListScope(kind: ListKind, query: Record<string, string>) {
   return {
-    list(): Promise<EstateApiResponse> {
+    list(): Promise<ApiResponse> {
       return list(kind, query);
     },
   } as const;
@@ -36,7 +42,7 @@ function createStatusListScope(kind: 'visit', query: Record<string, string>) {
   return {
     status(status: string) {
       return {
-        list(): Promise<EstateApiResponse> {
+        list(): Promise<ApiResponse> {
           return list(kind, { ...query, status });
         },
       } as const;

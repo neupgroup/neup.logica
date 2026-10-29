@@ -14,13 +14,24 @@ Use `logica.estate.inquiry.create(data)` for new inquiries and
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import type { EstateInquiryCreateData, EstateObjectRecord } from '@neup/logica/estate/types';
 
-function createInquiry(data: EstateInquiryCreateData = {}): Promise<EstateApiResponse> {
+
+const InquiryEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry';
+const InquiryViewEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/view';
+const InquiryDropEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/drop';
+const InquiryUpdateEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/update';
+const LeadFromInquiryEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/lead/from-inquiry';
+const InquiryListEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/list';
+const InquiryAssignAgentEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/assign-agent';
+
+function createInquiry(data: EstateInquiryCreateData = {}): Promise<ApiResponse> {
   const propertyId = data.propertyId ?? data.property ?? data.property_id;
-  return requestEstateApi({
-    path: '/bridge/api.v1/inquiry',
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: InquiryEndpoint,
     method: 'POST',
     query: { property: propertyId },
     body: data,
@@ -29,32 +40,36 @@ function createInquiry(data: EstateInquiryCreateData = {}): Promise<EstateApiRes
 
 export function inquiry(inquiryId: string) {
   return {
-    get(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/inquiry/view',
+    get(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: InquiryViewEndpoint,
         query: { inquiryId },
       });
     },
 
-    drop(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/inquiry/drop',
+    drop(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: InquiryDropEndpoint,
         method: 'POST',
         body: { inquiryId },
       });
     },
 
-    update(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/inquiry/update',
+    update(data: EstateObjectRecord = {}): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: InquiryUpdateEndpoint,
         method: 'POST',
         body: { inquiryId, ...data },
       });
     },
 
-    convert(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/lead/from-inquiry',
+    convert(data: EstateObjectRecord = {}): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: LeadFromInquiryEndpoint,
         method: 'POST',
         body: { inquiryId, ...data },
       });
@@ -64,16 +79,18 @@ export function inquiry(inquiryId: string) {
 
 inquiry.create = createInquiry;
 
-inquiry.listForProperty = function listForProperty(propertyId: string): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path: '/bridge/api.v1/inquiry/list',
+inquiry.listForProperty = function listForProperty(propertyId: string): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: InquiryListEndpoint,
     query: { propertyId },
   });
 };
 
-inquiry.assignToAgent = function assignToAgent(inquiryId: string, agentId: string): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path: '/bridge/api.v1/inquiry/assign-agent',
+inquiry.assignToAgent = function assignToAgent(inquiryId: string, agentId: string): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: InquiryAssignAgentEndpoint,
     method: 'POST',
     body: { inquiryId, agentId },
   });

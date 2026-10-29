@@ -13,28 +13,35 @@ Use `logica.estate.favorite.*` for favorite API helpers.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const PropertiesSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties/saved';
 
 export const favorite = {
-  save(propertyId: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/properties/saved',
+  save(propertyId: string): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: PropertiesSavedEndpoint,
       method: 'POST',
       body: { propertyId },
     });
   },
 
-  remove(propertyId: string): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/properties/saved',
+  remove(propertyId: string): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: PropertiesSavedEndpoint,
       method: 'DELETE',
       query: { propertyId },
     });
   },
 
-  list(account = 'me'): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/properties/saved',
+  list(account = 'me'): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: PropertiesSavedEndpoint,
       query: { account },
     });
   },

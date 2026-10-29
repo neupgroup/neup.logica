@@ -16,7 +16,8 @@ Use `logica.estate.property(propertyId).*` for one property's scoped operations.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import { createEstateProperty, type CreateEstatePropertyResponseBody } from '@neup/logica/estate/property/create';
 import { modifyEstateProperty, type ModifyEstatePropertyResponseBody } from '@neup/logica/estate/property/modify';
 import { searchEstateProperties, type SearchEstatePropertiesInput, type SearchEstatePropertiesResponseBody } from '@neup/logica/estate/property/search';
@@ -42,6 +43,22 @@ import {
 } from '@neup/logica/estate/property/saved';
 import type { EstateObjectRecord, EstatePropertyCreateData } from '@neup/logica/estate/types';
 
+
+/** Builds the API endpoint for propertycollectionlist. */
+const getPropertyCollectionListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;
+/** Builds the API endpoint for propertycollectionadd. */
+const getPropertyCollectionAddEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/add`;
+/** Builds the API endpoint for propertycollectionremove. */
+const getPropertyCollectionRemoveEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/remove`;
+/** Builds the API endpoint for property. */
+const getPropertyEndpoint = (propertyCode: string) => `https://neupgroup.com/estate/bridge/api.v1/properties/${encodeURIComponent(propertyCode)}`;
+const InquiryEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry';
+const OfferCreateEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/create';
+const OfferListEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/list';
+const PropertyPublishEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/property/publish';
+const PropertyArchiveEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/property/archive';
+const PropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties';
+
 type Fields = string[] | string | null;
 
 function serializeFields(fields: Fields | undefined): string | undefined {
@@ -51,40 +68,44 @@ function serializeFields(fields: Fields | undefined): string | undefined {
 }
 
 function requestScopedList(kind: 'save' | 'comment' | 'inquiry', propertyId: string) {
-  return requestEstateApi({
-    path: `/bridge/api.v1/${kind}/list`,
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: getPropertyCollectionListEndpoint(kind),
     query: { propertyId },
   });
 }
 
 function createCollectionScope(kind: 'save' | 'comment', propertyId: string) {
   return {
-    add(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: `/bridge/api.v1/${kind}/add`,
+    add(data: EstateObjectRecord = {}): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: getPropertyCollectionAddEndpoint(kind),
         method: 'POST',
         body: { propertyId, ...data },
       });
     },
 
-    remove(id?: string): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: `/bridge/api.v1/${kind}/remove`,
+    remove(id?: string): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: getPropertyCollectionRemoveEndpoint(kind),
         method: 'POST',
         body: { propertyId, id },
       });
     },
 
-    list(): Promise<EstateApiResponse> {
+    list(): Promise<ApiResponse> {
       return requestScopedList(kind, propertyId);
     },
   } as const;
 }
 
 function createInquiryScope(propertyId: string) {
-  function create(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/inquiry',
+  function create(data: EstateObjectRecord = {}): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: InquiryEndpoint,
       method: 'POST',
       query: { property: propertyId },
       body: { propertyId, ...data },
@@ -94,7 +115,7 @@ function createInquiryScope(propertyId: string) {
   return {
     add: create,
     create,
-    list(): Promise<EstateApiResponse> {
+    list(): Promise<ApiResponse> {
       return requestScopedList('inquiry', propertyId);
     },
   } as const;
@@ -103,9 +124,10 @@ function createInquiryScope(propertyId: string) {
 function createOfferScope(propertyId: string) {
   const offer = function offer(offerJson: EstateObjectRecord = {}) {
     return {
-      create(): Promise<EstateApiResponse> {
-        return requestEstateApi({
-          path: '/bridge/api.v1/offer/create',
+      create(): Promise<ApiResponse> {
+        return runApi({
+          baseUrl: getBaseUrl('estate'),
+          path: OfferCreateEndpoint,
           method: 'POST',
           body: { propertyId, ...offerJson },
         });
@@ -113,9 +135,10 @@ function createOfferScope(propertyId: string) {
     } as const;
   };
 
-  offer.get = function get(): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/offer/list',
+  offer.get = function get(): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: OfferListEndpoint,
       query: { propertyId },
     });
   };
@@ -126,8 +149,9 @@ function createOfferScope(propertyId: string) {
 }
 
 function getPropertyByCode(propertyCode: string, include?: Fields) {
-  return requestEstateApi<ViewEstatePropertyResponseBody>({
-    path: `/bridge/api.v1/properties/${encodeURIComponent(propertyCode)}`,
+  return runApi<ViewEstatePropertyResponseBody>({
+    baseUrl: getBaseUrl('estate'),
+    path: getPropertyEndpoint(propertyCode),
     query: {
       propertyCode,
       include: serializeFields(include),
@@ -137,25 +161,27 @@ function getPropertyByCode(propertyCode: string, include?: Fields) {
 
 export function property(propertyId: string) {
   return {
-    get(include?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
+    get(include?: Fields): Promise<ApiResponse<ViewEstatePropertyResponseBody>> {
       return viewEstateProperty({ propertyId, include });
     },
 
-    update(data: EstateObjectRecord): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
+    update(data: EstateObjectRecord): Promise<ApiResponse<ModifyEstatePropertyResponseBody>> {
       return modifyEstateProperty({ propertyId, property: data });
     },
 
-    publish(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/property/publish',
+    publish(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: PropertyPublishEndpoint,
         method: 'POST',
         body: { propertyId },
       });
     },
 
-    archive(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/property/archive',
+    archive(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: PropertyArchiveEndpoint,
         method: 'POST',
         body: { propertyId },
       });
@@ -168,7 +194,7 @@ export function property(propertyId: string) {
   } as const;
 }
 
-property.create = function create(data: EstatePropertyCreateData): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
+property.create = function create(data: EstatePropertyCreateData): Promise<ApiResponse<CreateEstatePropertyResponseBody>> {
   if (data.property && typeof data.accountId === 'string') {
     return createEstateProperty({
       accountId: data.accountId,
@@ -178,8 +204,9 @@ property.create = function create(data: EstatePropertyCreateData): Promise<Estat
     });
   }
 
-  return requestEstateApi<CreateEstatePropertyResponseBody>({
-    path: '/bridge/api.v1/properties',
+  return runApi<CreateEstatePropertyResponseBody>({
+    baseUrl: getBaseUrl('estate'),
+    path: PropertiesEndpoint,
     method: 'POST',
     body: data,
   });
@@ -187,13 +214,13 @@ property.create = function create(data: EstatePropertyCreateData): Promise<Estat
 
 property.search = function search(
   filters: SearchEstatePropertiesInput = {},
-): Promise<EstateApiResponse<SearchEstatePropertiesResponseBody>> {
+): Promise<ApiResponse<SearchEstatePropertiesResponseBody>> {
   return searchEstateProperties(filters);
 };
 
 property.list = function list(
   input: EstatePropertyListInput,
-): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
+): Promise<ApiResponse<EstatePropertyListResponseBody>> {
   return listEstateProperties(input);
 };
 
@@ -213,7 +240,7 @@ property.getByCode = function getByCode(propertyCode: string, include?: Fields) 
 
 property.code = function code(propertyCode: string) {
   return {
-    get(include?: Fields): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
+    get(include?: Fields): Promise<ApiResponse<ViewEstatePropertyResponseBody>> {
       return getPropertyByCode(propertyCode, include);
     },
   } as const;

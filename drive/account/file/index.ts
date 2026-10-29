@@ -24,7 +24,7 @@ import {
   type DriveAccountFileListInput,
   type DriveAccountFileListResponseBody,
 } from '@neup/logica/drive/account/file/list';
-import type { DriveApiResponse } from '@neup/logica/drive/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
 
 export function createDriveAccountFileScope(accountId: string) {
   return {
@@ -39,4 +39,4 @@ export function createDriveAccountFileScope(accountId: string) {
 }
 
 export type DriveAccountFileScope = ReturnType<typeof createDriveAccountFileScope>;
-export type { DriveAccountFileGetInput, DriveAccountFileGetResponseBody, DriveAccountFileListInput, DriveAccountFileListResponseBody, DriveApiResponse };
+export type { DriveAccountFileGetInput, DriveAccountFileGetResponseBody, DriveAccountFileListInput, DriveAccountFileListResponseBody, ApiResponse };

@@ -14,12 +14,9 @@ permission, role, and branding bridge operations.
 ::end
 */
 
-import {
-  getNeupBridgeEnvironment,
-  runNeupBridgeApi,
-  type NeupBridgeQuery,
-  type NeupBridgeResponse,
-} from '@neup/logica/account/api';
+import { getNeupBridgeEnvironment } from '@neup/logica/account/environment';
+import { runApi, type ApiQuery, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import {
   getApplicationTeamMembers,
   getConnectionTeamMembers,
@@ -28,6 +25,14 @@ import { getApplicationConnections } from '@neup/logica/account/connections/getC
 import { getAccountBasics } from '@neup/logica/account/lookup';
 import { getApplicationLogo } from '@neup/logica/account/branding';
 import { normalizeAccountFields, type AccountFields } from '@neup/logica/account/fields';
+
+
+const Basepath = 'bridge/api.v1';
+const ApplicationAccessEndpoint = `${Basepath}/application/access`;
+const ApplicationRolesEndpoint = `${Basepath}/application/roles`;
+const ApplicationUsersEndpoint = `${Basepath}/application/users`;
+const AppPermissionsEndpoint = `${Basepath}/app/permissions`;
+const AppRolesEndpoint = `${Basepath}/app/roles`;
 
 function getApplicationCredentials(input?: { app?: string; appSecret?: string }) {
   const env = getNeupBridgeEnvironment();
@@ -38,9 +43,9 @@ function getApplicationCredentials(input?: { app?: string; appSecret?: string })
 }
 
 function withApplicationQuery(
-  query: NeupBridgeQuery = {},
+  query: ApiQuery = {},
   input?: { app?: string; appSecret?: string },
-): NeupBridgeQuery {
+): ApiQuery {
   const credentials = getApplicationCredentials(input);
   return {
     ...query,
@@ -73,9 +78,10 @@ export async function getApplicationAccountAccessList(input: {
   limit?: string | number;
   fromDate?: string;
   toDate?: string;
-} = {}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/application/access',
+} = {}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: ApplicationAccessEndpoint,
     method: 'GET',
     query: withApplicationQuery(input, input),
   });
@@ -107,9 +113,10 @@ export async function getApplicationAccountAccess(input: {
   limit?: string | number;
   fromDate?: string;
   toDate?: string;
-}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/application/access',
+}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: ApplicationAccessEndpoint,
     method: 'POST',
     query: withApplicationQuery(
       {
@@ -154,9 +161,10 @@ export async function getApplicationAccountRoles(input: {
   limit?: string | number;
   fromDate?: string;
   toDate?: string;
-} = {}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/application/roles',
+} = {}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: ApplicationRolesEndpoint,
     method: 'GET',
     query: withApplicationQuery(input, input),
   });
@@ -188,10 +196,11 @@ export async function getApplicationAccounts(input: {
   fromDate?: string;
   toDate?: string;
   headers?: HeadersInit;
-} = {}): Promise<NeupBridgeResponse> {
+} = {}): Promise<ApiResponse> {
   const credentials = getApplicationCredentials(input);
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/application/users',
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: ApplicationUsersEndpoint,
     method: 'POST',
     query: {
       offset: input.offset,
@@ -232,9 +241,10 @@ Calls the app permission catalog bridge route using environment credentials.
 
 ::end
 */
-export async function getRegisteredApplicationPermissions(): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/app/permissions',
+export async function getRegisteredApplicationPermissions(): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AppPermissionsEndpoint,
     method: 'GET',
     query: getSyncCredentials(),
   });
@@ -256,9 +266,10 @@ Posts permission catalog data for the configured application to the bridge.
 */
 export async function syncApplicationPermissions(
   permissions: unknown,
-): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/app/permissions',
+): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AppPermissionsEndpoint,
     method: 'POST',
     body: {
       ...getSyncCredentials(),
@@ -281,9 +292,10 @@ Calls the app role catalog bridge route using environment credentials.
 
 ::end
 */
-export async function getRegisteredApplicationRoles(): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/app/roles',
+export async function getRegisteredApplicationRoles(): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AppRolesEndpoint,
     method: 'GET',
     query: getSyncCredentials(),
   });
@@ -303,9 +315,10 @@ Posts role catalog data for the configured application to the bridge.
 
 ::end
 */
-export async function syncApplicationRoles(roles: unknown): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/app/roles',
+export async function syncApplicationRoles(roles: unknown): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AppRolesEndpoint,
     method: 'POST',
     body: {
       ...getSyncCredentials(),

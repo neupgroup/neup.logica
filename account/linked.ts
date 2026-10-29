@@ -19,7 +19,12 @@ This module resolves the current `auth_account` token from browser or server con
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const AccountsLinkedGithubEndpoint = `${Basepath}/accounts/linked/github`;
 
 /*
 ::neup.documentation::logica-account-linked-github-response-body-type
@@ -97,7 +102,7 @@ Explicit auth token override. When omitted, the helper resolves the current `aut
 */
 export async function getLinkedGithubToken(
   authAccountToken?: string | null,
-): Promise<NeupBridgeResponse<LinkedGithubResponseBody>> {
+): Promise<ApiResponse<LinkedGithubResponseBody>> {
   const token = await resolveAuthAccountToken(authAccountToken);
 
   if (!token) {
@@ -113,8 +118,9 @@ export async function getLinkedGithubToken(
     };
   }
 
-  return runNeupBridgeApi<LinkedGithubResponseBody>({
-    path: '/bridge/api.v1/accounts/linked/github',
+  return runApi<LinkedGithubResponseBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccountsLinkedGithubEndpoint,
     method: 'POST',
     body: {
       token,

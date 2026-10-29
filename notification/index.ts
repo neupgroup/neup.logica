@@ -19,11 +19,13 @@ Credentials default to `NEUP_APP_ID` and `NEUP_APP_SECRET`. Override them with
 ::end
 */
 
-import {
-  getNeupBridgeEnvironment,
-  runNeupBridgeApi,
-  type NeupBridgeResponse,
-} from '@neup/logica/account/api';
+import { getNeupBridgeEnvironment } from '@neup/logica/account/environment';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const NotificationEndpoint = `${Basepath}/notification`;
 
 export type NotificationCredentials = {
   application?: string | null;
@@ -87,8 +89,8 @@ type NotificationMutationBody = {
   error_description?: string;
 };
 
-type NotificationsResponse = NeupBridgeResponse<NotificationsResponseBody>;
-type NotificationMutationResponse = NeupBridgeResponse<NotificationMutationBody>;
+type NotificationsResponse = ApiResponse<NotificationsResponseBody>;
+type NotificationMutationResponse = ApiResponse<NotificationMutationBody>;
 
 function resolveCredentials(input: NotificationCredentials = {}): { application: string; appsecret: string } {
   const environment = getNeupBridgeEnvironment();
@@ -107,8 +109,9 @@ function credentialHeaders(input: NotificationCredentials): HeadersInit {
 }
 
 function getNotifications(input: NotificationFilter = {}): Promise<NotificationsResponse> {
-  return runNeupBridgeApi<NotificationsResponseBody>({
-    path: '/bridge/api.v1/notification',
+  return runApi<NotificationsResponseBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: NotificationEndpoint,
     method: 'GET',
     query: {
       accountId: input.accountId,
@@ -127,8 +130,9 @@ function getWildcard(input: NotificationFilter = {}): Promise<NotificationsRespo
 
 function createNotification(data: NotificationCreateData): Promise<NotificationMutationResponse> {
   const { application, appsecret, description, message, dismissable, disimssable, ...payload } = data;
-  return runNeupBridgeApi<NotificationMutationBody>({
-    path: '/bridge/api.v1/notification',
+  return runApi<NotificationMutationBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: NotificationEndpoint,
     method: 'POST',
     headers: credentialHeaders({ application, appsecret }),
     body: {
@@ -142,8 +146,9 @@ function createNotification(data: NotificationCreateData): Promise<NotificationM
 
 function readNotification(data: NotificationReadData): Promise<NotificationMutationResponse> {
   const { application, appsecret, ...payload } = data;
-  return runNeupBridgeApi<NotificationMutationBody>({
-    path: '/bridge/api.v1/notification',
+  return runApi<NotificationMutationBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: NotificationEndpoint,
     method: 'PATCH',
     headers: credentialHeaders({ application, appsecret }),
     body: { ...payload, action: data.action ?? 'read' },

@@ -14,8 +14,12 @@ match the authenticated account unless the caller has account-view permission.
 ::public end
 ::end
 */
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
+
+/** Builds the API endpoint for accountpropertycollection. */
+const getAccountPropertyCollectionEndpoint = (accountId: string, collection: Collection) => `https://neupgroup.com/estate/bridge/api.v1/properties/account/${encodeURIComponent(accountId)}/${collection}`;
 export type EstateAccountPropertyListResponseBody = {
   success: boolean;
   properties: unknown[];
@@ -37,10 +41,11 @@ function getProperties(
   collection: Collection,
   offset = 0,
   limit = 20,
-): Promise<EstateApiResponse<EstateAccountPropertyListResponseBody>> {
+): Promise<ApiResponse<EstateAccountPropertyListResponseBody>> {
   const page = normalizePage(offset, limit);
-  return requestEstateApi({
-    path: `/bridge/api.v1/properties/account/${encodeURIComponent(accountId)}/${collection}`,
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: getAccountPropertyCollectionEndpoint(accountId, collection),
     query: page,
   });
 }

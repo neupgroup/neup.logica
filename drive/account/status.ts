@@ -13,7 +13,12 @@ Use `logica.drive.account(accountId).status()`.
 ::end
 */
 
-import { requestDriveApi, type DriveApiResponse } from '@neup/logica/drive/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const DriveStatusEndpoint = `${Basepath}/drive/status`;
 
 export type DriveAccountStatusResponseBody = {
   success: boolean;
@@ -34,13 +39,14 @@ export type GetDriveAccountStatusInput = {
 
 export function getDriveAccountStatus(
   input: GetDriveAccountStatusInput,
-): Promise<DriveApiResponse<DriveAccountStatusResponseBody>> {
-  return requestDriveApi<DriveAccountStatusResponseBody>({
-    path: '/bridge/api.v1/drive/status',
+): Promise<ApiResponse<DriveAccountStatusResponseBody>> {
+  return runApi<DriveAccountStatusResponseBody>({
+    baseUrl: getBaseUrl('drive'),
+    path: DriveStatusEndpoint,
     query: {
       account_id: input.accountId,
     },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     bearerToken: input.bearerToken,
   });
 }

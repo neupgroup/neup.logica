@@ -14,29 +14,40 @@ Most offer operations are exposed through scoped chains such as
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import type { EstateObjectRecord, EstateOfferData } from '@neup/logica/estate/types';
+
+
+const OfferViewEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/view';
+const OfferAcceptEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/accept';
+const OfferRejectEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/reject';
+const OfferCreateEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/create';
+const OfferListEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/list';
 
 export function offer(offerId?: string) {
   return {
-    get(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/offer/view',
+    get(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: OfferViewEndpoint,
         query: { offerId },
       });
     },
 
-    accept(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/offer/accept',
+    accept(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: OfferAcceptEndpoint,
         method: 'POST',
         body: { offerId },
       });
     },
 
-    reject(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/offer/reject',
+    reject(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: OfferRejectEndpoint,
         method: 'POST',
         body: { offerId },
       });
@@ -44,25 +55,27 @@ export function offer(offerId?: string) {
   } as const;
 }
 
-offer.create = function create(data: EstateOfferData): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path: '/bridge/api.v1/offer/create',
+offer.create = function create(data: EstateOfferData): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: OfferCreateEndpoint,
     method: 'POST',
     body: data,
   });
 };
 
-offer.accept = function accept(offerId: string): Promise<EstateApiResponse> {
+offer.accept = function accept(offerId: string): Promise<ApiResponse> {
   return offer(offerId).accept();
 };
 
-offer.reject = function reject(offerId: string): Promise<EstateApiResponse> {
+offer.reject = function reject(offerId: string): Promise<ApiResponse> {
   return offer(offerId).reject();
 };
 
-offer.list = function list(query: EstateObjectRecord = {}): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path: '/bridge/api.v1/offer/list',
+offer.list = function list(query: EstateObjectRecord = {}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: OfferListEndpoint,
     query: query as Record<string, string>,
   });
 };

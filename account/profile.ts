@@ -13,9 +13,17 @@ Use this module for `/bridge/api.v1/profile`, `/bridge/api.v1/profile/public`, `
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import { normalizeAccountFields, type AccountFields } from '@neup/logica/account/fields';
 import { getAccountBasics } from '@neup/logica/account/lookup';
+
+
+const Basepath = 'bridge/api.v1';
+const ProfileEndpoint = `${Basepath}/profile`;
+const ProfilePublicEndpoint = `${Basepath}/profile/public`;
+const ProfileSignedEndpoint = `${Basepath}/profile/signed`;
+const PermissionsEndpoint = `${Basepath}/permissions`;
 
 /*
 ::neup.documentation::logica-account-get-account-profile-function
@@ -40,9 +48,10 @@ export async function getAccountProfile(input: {
   aid?: string;
   sid?: string;
   skey?: string;
-} = {}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/profile',
+} = {}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: ProfileEndpoint,
     method: 'GET',
     query: {
       tempToken: input.tempToken,
@@ -76,12 +85,13 @@ route.
 export async function getPublicAccountProfile(input: {
   accountId: string;
   authAccountToken: string;
-}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/profile/public',
+}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: ProfilePublicEndpoint,
     method: 'GET',
     query: { accountId: input.accountId },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
   });
 }
 
@@ -101,11 +111,12 @@ Uses the auth-account token to call the signed profile bridge route.
 */
 export async function getCurrentAccount(
   authAccountToken: string,
-): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/profile/signed',
+): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: ProfileSignedEndpoint,
     method: 'GET',
-    authAccountToken,
+    cookies: { auth_account: authAccountToken },
   });
 }
 
@@ -125,11 +136,12 @@ Returns the bridge response from `/bridge/api.v1/permissions`.
 */
 export async function getCurrentAccountPermissions(
   authAccountToken: string,
-): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/permissions',
+): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: PermissionsEndpoint,
     method: 'GET',
-    authAccountToken,
+    cookies: { auth_account: authAccountToken },
   });
 }
 

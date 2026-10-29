@@ -13,12 +13,16 @@ Use this module when you need team members for either an application (`/bridge/a
 ::end
 */
 
-import {
-  getApplicationTeamMembers,
-  getConnectionTeamMembers,
-} from '@neup/logica/account/access';
-import type { NeupBridgeResponse } from '@neup/logica/account/api';
-import { runNeupBridgeApi } from '@neup/logica/account/api';
+
+import { runApi } from '@neup/core/infrastructure/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+import { getApplicationTeamMembers, getConnectionTeamMembers } from '@neup/logica/account/access';
+
+
+const Basepath = 'bridge/api.v1';
+const MembersEndpoint = `${Basepath}/members`;
+const MembersTeamEndpoint = `${Basepath}/members/team`;
 
 type TeamAuth = {
   authAccountToken?: string | null;
@@ -69,7 +73,7 @@ export type GetTeamMembersInput = TeamAuth & {
  */
 export async function getTeamMembers(
   input: GetTeamMembersInput,
-): Promise<NeupBridgeResponse> {
+): Promise<ApiResponse> {
   const connection = input.connection?.trim();
   const app = input.app?.trim() || input.application?.trim();
 
@@ -101,11 +105,12 @@ export async function getTeamMembers(
 /** Reads all organization members from GET /bridge/api.v1/members. */
 export async function getMembers(
   input: TeamAuth = {},
-): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/members',
+): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: MembersEndpoint,
     method: 'GET',
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }
@@ -114,13 +119,14 @@ export async function getMembers(
 export async function getMember(
   id: string,
   input: TeamAuth = {},
-): Promise<NeupBridgeResponse> {
+): Promise<ApiResponse> {
   const memberId = id.trim();
   if (!memberId) throw new Error('`id` is required.');
-  return runNeupBridgeApi({
-    path: `/bridge/api.v1/members/${encodeURIComponent(memberId)}`,
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: `${Basepath}/members/${encodeURIComponent(memberId)}`,
     method: 'GET',
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }
@@ -128,11 +134,12 @@ export async function getMember(
 /** Reads all organization teams from GET /bridge/api.v1/members/team. */
 export async function getTeams(
   input: TeamAuth = {},
-): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/members/team',
+): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: MembersTeamEndpoint,
     method: 'GET',
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }
@@ -141,13 +148,14 @@ export async function getTeams(
 export async function getTeam(
   id: string,
   input: TeamAuth = {},
-): Promise<NeupBridgeResponse> {
+): Promise<ApiResponse> {
   const teamId = id.trim();
   if (!teamId) throw new Error('`id` is required.');
-  return runNeupBridgeApi({
-    path: `/bridge/api.v1/members/team/${encodeURIComponent(teamId)}`,
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: `${Basepath}/members/team/${encodeURIComponent(teamId)}`,
     method: 'GET',
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }

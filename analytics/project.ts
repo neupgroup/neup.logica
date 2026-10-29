@@ -14,7 +14,12 @@ events into `POST /bridge/api.v1/activity?project=...`.
 ::end
 */
 
-import { requestAnalyticsApi, type AnalyticsApiResponse } from '@neup/logica/analytics/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const ActivityEndpoint = `${Basepath}/activity`;
 
 type JsonValue =
   | string
@@ -81,9 +86,10 @@ export function project(projectId: string) {
     */
     postActivity(
       activity: AnalyticsActivityInput | AnalyticsActivityInput[],
-    ): Promise<AnalyticsApiResponse<PostActivityResponseBody>> {
-      return requestAnalyticsApi<PostActivityResponseBody>({
-        path: '/bridge/api.v1/activity',
+    ): Promise<ApiResponse<PostActivityResponseBody>> {
+      return runApi<PostActivityResponseBody>({
+        baseUrl: getBaseUrl('analytics'),
+        path: ActivityEndpoint,
         method: 'POST',
         query: {
           project: normalizedProjectId,
@@ -122,9 +128,10 @@ export function project(projectId: string) {
     */
     sendActivity(
       activity: AnalyticsActivityInput | AnalyticsActivityInput[],
-    ): Promise<AnalyticsApiResponse<PostActivityResponseBody>> {
-      return requestAnalyticsApi<PostActivityResponseBody>({
-        path: '/bride/webhook.v1/activity',
+    ): Promise<ApiResponse<PostActivityResponseBody>> {
+      return runApi<PostActivityResponseBody>({
+        baseUrl: getBaseUrl('analytics'),
+        path: 'bride/webhook.v1/activity',
         method: 'POST',
         query: {
           project: normalizedProjectId,

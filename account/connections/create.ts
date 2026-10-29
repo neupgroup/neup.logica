@@ -21,7 +21,12 @@ connection creation should live in a different flow with its own creation token.
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const AccountsEndpoint = `${Basepath}/accounts`;
 
 /*
 ::neup.documentation::logica-account-create-internal-neup-connection-input-type
@@ -78,16 +83,17 @@ function requireNonEmptyValue(value: string | null | undefined, fieldName: strin
 
 async function createInternalConnection(
   input: CreateInternalNeupConnectionInput,
-): Promise<NeupBridgeResponse<CreateNeupConnectionResponseBody>> {
+): Promise<ApiResponse<CreateNeupConnectionResponseBody>> {
   const accountId = requireNonEmptyValue(input.accountId, 'accountId');
   const authAccountToken = requireNonEmptyValue(input.authAccountToken, 'authAccountToken');
   const appId = requireNonEmptyValue(input.appId, 'appId');
   const appSecret = requireNonEmptyValue(input.appSecret, 'appSecret');
 
-  return runNeupBridgeApi<CreateNeupConnectionResponseBody>({
-    path: '/bridge/api.v1/accounts',
+  return runApi<CreateNeupConnectionResponseBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccountsEndpoint,
     method: 'POST',
-    authAccountToken,
+    cookies: { auth_account: authAccountToken },
     headers: input.headers,
     body: {
       appId,
@@ -113,7 +119,7 @@ Delegates to the trusted internal connection creation flow.
 */
 export async function connectBrandAccount(
   input: CreateInternalNeupConnectionInput,
-): Promise<NeupBridgeResponse<CreateNeupConnectionResponseBody>> {
+): Promise<ApiResponse<CreateNeupConnectionResponseBody>> {
   return createInternalConnection(input);
 }
 
@@ -133,6 +139,6 @@ Delegates to the trusted internal connection creation flow.
 */
 export async function connectIndividualAccount(
   input: CreateInternalNeupConnectionInput,
-): Promise<NeupBridgeResponse<CreateNeupConnectionResponseBody>> {
+): Promise<ApiResponse<CreateNeupConnectionResponseBody>> {
   return createInternalConnection(input);
 }

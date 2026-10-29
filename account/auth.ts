@@ -17,8 +17,8 @@ On `neupgroup.com`, the helper calls the account auth endpoint from the client w
 ::end
 */
 
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import {
   authenticateNeupIdToken,
@@ -72,15 +72,15 @@ reason and optional bridge response.
 export type CheckNeupAuthenticationResult<TBody = AuthCheckBody> =
   | {
       authenticated: true;
-      response: NeupBridgeResponse<TBody>;
+      response: ApiResponse<TBody>;
     }
   | {
       authenticated: false;
       reason: string;
-      response?: NeupBridgeResponse<TBody>;
+      response?: ApiResponse<TBody>;
     };
 
-const AUTH_ME_PATH = '/bridge/api.v1/auth/me';
+const AUTH_ME_PATH = 'bridge/api.v1/auth/me';
 
 function getRuntimeHostname(inputHostname?: string | null): string {
   if (inputHostname?.trim()) return inputHostname.trim().toLowerCase();
@@ -107,13 +107,13 @@ async function parseJsonResponse(response: Response): Promise<unknown> {
   return response.json().catch(() => null);
 }
 
-function isAuthenticatedResponse(response: NeupBridgeResponse<AuthCheckBody>): boolean {
+function isAuthenticatedResponse(response: ApiResponse<AuthCheckBody>): boolean {
   return response.ok && response.body?.success === true;
 }
 
 async function runClientAuthCheck<TBody = AuthCheckBody>(
   input: CheckNeupAuthenticationInput,
-): Promise<NeupBridgeResponse<TBody>> {
+): Promise<ApiResponse<TBody>> {
   const response = await fetch(createAuthMePath(input.workingProfile), {
     method: 'GET',
     credentials: 'include',
@@ -132,19 +132,20 @@ async function runClientAuthCheck<TBody = AuthCheckBody>(
 async function runForwardedAuthCheck<TBody = AuthCheckBody>(
   input: CheckNeupAuthenticationInput,
   authAccountToken: string,
-): Promise<NeupBridgeResponse<TBody>> {
+): Promise<ApiResponse<TBody>> {
   const headers = new Headers(input.headers);
 
   headers.set('x-auth-account', authAccountToken);
 
-  return runNeupBridgeApi<TBody>({
+  return runApi<TBody>({
+    baseUrl: getBaseUrl('neupid'),
     path: AUTH_ME_PATH,
     method: 'GET',
     query: {
       workingProfile: input.workingProfile,
     },
     headers,
-    authAccountToken,
+    cookies: { auth_account: authAccountToken },
   });
 }
 
@@ -190,7 +191,7 @@ export async function checkAuthSession<TBody = AuthCheckBody>(
 ): Promise<CheckNeupAuthenticationResult<TBody>> {
   const hostname = getRuntimeHostname(input.hostname);
   const shouldUseClientEndpoint = typeof window !== 'undefined' && isNeupGroupHostname(hostname);
-  let response: NeupBridgeResponse<TBody>;
+  let response: ApiResponse<TBody>;
 
   if (shouldUseClientEndpoint) {
     response = await runClientAuthCheck<TBody>(input);
@@ -204,7 +205,7 @@ export async function checkAuthSession<TBody = AuthCheckBody>(
     response = await runForwardedAuthCheck<TBody>(input, authAccountToken);
   }
 
-  if (isAuthenticatedResponse(response as NeupBridgeResponse<AuthCheckBody>)) {
+  if (isAuthenticatedResponse(response as ApiResponse<AuthCheckBody>)) {
     return { authenticated: true, response };
   }
 

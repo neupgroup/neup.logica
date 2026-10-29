@@ -13,7 +13,13 @@ or `logica.estate.profile(accountId).get()` to load a full account profile.
 ::public end
 ::end
 */
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+/** Builds the API endpoint for accountprofile. */
+const getAccountProfileEndpoint = (accountId: string) => `https://neupgroup.com/estate/bridge/api.v1/accounts/${encodeURIComponent(accountId)}`;
+const AccountsEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/accounts';
 
 export type EstateProfileType = 'independentAgent' | 'agency' | 'companyAgent';
 
@@ -70,14 +76,16 @@ export type EstateProfileListInput = {
 };
 
 export function getProfileById(accountId: string) {
-  return requestEstateApi<EstateAccountProfileResponseBody>({
-    path: `/bridge/api.v1/accounts/${encodeURIComponent(accountId)}`,
+  return runApi<EstateAccountProfileResponseBody>({
+    baseUrl: getBaseUrl('estate'),
+    path: getAccountProfileEndpoint(accountId),
   });
 }
 
 export function listProfiles(input: EstateProfileListInput) {
-  return requestEstateApi<EstateProfileListResponseBody>({
-    path: '/bridge/api.v1/accounts',
+  return runApi<EstateProfileListResponseBody>({
+    baseUrl: getBaseUrl('estate'),
+    path: AccountsEndpoint,
     query: {
       type: input.type,
       offset: input.offset ?? 0,
@@ -88,7 +96,7 @@ export function listProfiles(input: EstateProfileListInput) {
 
 export function profile(accountId: string) {
   return {
-    get(): Promise<EstateApiResponse<EstateAccountProfileResponseBody>> {
+    get(): Promise<ApiResponse<EstateAccountProfileResponseBody>> {
       return getProfileById(accountId);
     },
   } as const;

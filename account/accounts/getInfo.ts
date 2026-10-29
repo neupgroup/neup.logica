@@ -13,9 +13,14 @@ Use this helper to fetch a normalized account profile snapshot that returns only
 ::end
 */
 
-import { url } from '@neup/core/helpers/url';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
-import type { NeupBridgeResponse } from '@neup/logica/account/api';
+
+
+
+
+const Basepath = 'bridge/api.v1';
+const AccountsLookupEndpoint = `${Basepath}/accounts/lookup`;
 
 type GetAccountInfoInput = {
   appId: string;
@@ -62,23 +67,22 @@ display name and display image values.
 */
 export async function getAccountInfo(
   input: GetAccountInfoInput,
-): Promise<NeupBridgeResponse<GetAccountInfoResponseBody>> {
-  const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts/lookup').get();
-
-  const response = await fetch(requestUrl, {
+): Promise<ApiResponse<GetAccountInfoResponseBody>> {
+  const response = await runApi<AccountLookupResponseBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccountsLookupEndpoint,
     method: 'POST',
     headers: {
       'content-type': 'application/json',
     },
-    body: JSON.stringify({
+    body: {
       appId: input.appId,
       appSecret: input.appSecret,
       accountId: input.accountId,
-    }),
-    cache: 'no-store',
+    },
   });
 
-  const body = (await response.json().catch(() => null)) as AccountLookupResponseBody | null;
+  const body = response.body as AccountLookupResponseBody | null;
 
   return {
     ok: response.ok,

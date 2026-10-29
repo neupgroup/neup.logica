@@ -10,12 +10,14 @@ Import from this file when you want accessible-account bridge helpers grouped un
 ::end
 */
 
+import type { ApiResponse } from '@neup/core/infrastructure/api';
 import { getAccounts } from '@neup/logica/account/accounts/getAccounts';
-import type { NeupBridgeResponse } from '@neup/logica/account/api';
+
+
 
 type AccountListInput = Parameters<typeof getAccounts>[0];
 
-function filterAccountListByType<TResponse extends NeupBridgeResponse<{ accounts?: { accountType: string }[] }>>(
+function filterAccountListByType<TResponse extends ApiResponse<{ accounts?: { accountType: string }[] }>>(
   response: TResponse,
   accountType: string,
 ): TResponse {

@@ -13,20 +13,10 @@ Import from this file when you want connection-oriented account and lookup helpe
 ::end
 */
 
-import {
-  getApplicationConnections,
-  getConnectableAccounts,
-  getConnectedBrandAccounts,
-  getConnectedDependentAccounts,
-  getConnectedIndividualAccounts,
-  getConnectedSubBrandAccounts,
-} from '@neup/logica/account/connections/getConnections';
+import { getNeupBridgeEnvironment } from '@neup/logica/account/environment';
+import { getApplicationConnections, getConnectableAccounts, getConnectedBrandAccounts, getConnectedIndividualAccounts, getConnectedDependentAccounts, getConnectedSubBrandAccounts } from '@neup/logica/account/connections/getConnections';
+import { getConnectionTeamMemberAccess, getConnectionTeamMembers } from '@neup/logica/account/access';
 import { getAccountBasics } from '@neup/logica/account/lookup';
-import {
-  getConnectionTeamMemberAccess,
-  getConnectionTeamMembers,
-} from '@neup/logica/account/access';
-import { getNeupBridgeEnvironment } from '@neup/logica/account/api';
 import { normalizeAccountFields, type AccountFields } from '@neup/logica/account/fields';
 
 type ApplicationConnectionsInput = Parameters<typeof getApplicationConnections>[0];

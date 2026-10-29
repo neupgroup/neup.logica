@@ -1,0 +1,6 @@
+{
+  "leads:shared": {
+    "path": "https://neupgroup.com/estate/bridge/api.v1/leads/shared",
+    "method": "GET"
+  }
+}

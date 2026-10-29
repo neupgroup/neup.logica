@@ -19,9 +19,11 @@ The helper reads `/bridge/api.v1/accounts/lookup`, which returns the permission 
 ::end
 */
 
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
-import type { NeupBridgeResponse } from '@neup/logica/account/api';
+
+
 
 type AccountAccessEntry = {
   accessOf: string | null;
@@ -124,7 +126,7 @@ export async function hasAccountPermission(
   forAccount: string,
   byAccount: string,
   options: HasPermissionOptions = {},
-): Promise<NeupBridgeResponse<HasPermissionResponseBody>> {
+): Promise<ApiResponse<HasPermissionResponseBody>> {
   const permission = permissionName.trim();
   const appId = forApplicationID.trim();
   const targetAccount = forAccount.trim();

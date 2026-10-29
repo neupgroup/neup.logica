@@ -14,8 +14,13 @@ one account, or pass `path` to scope the listing to one folder.
 ::end
 */
 
-import { requestDriveApi, type DriveApiResponse } from '@neup/logica/drive/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import type { DriveAccountFileRecord } from '@neup/logica/drive/account/file/get';
+
+
+const Basepath = 'bridge/api.v1';
+const DriveFilesEndpoint = `${Basepath}/drive/files`;
 
 export type DriveAccountFileListResponseBody = DriveAccountFileRecord[];
 
@@ -29,15 +34,16 @@ export type DriveAccountFileListInput = {
 
 export function listDriveAccountFiles(
   input: DriveAccountFileListInput,
-): Promise<DriveApiResponse<DriveAccountFileListResponseBody>> {
-  return requestDriveApi<DriveAccountFileListResponseBody>({
-    path: '/bridge/api.v1/drive/files',
+): Promise<ApiResponse<DriveAccountFileListResponseBody>> {
+  return runApi<DriveAccountFileListResponseBody>({
+    baseUrl: getBaseUrl('drive'),
+    path: DriveFilesEndpoint,
     query: {
       account_id: input.accountId,
       path: input.path,
       limit: input.limit,
     },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     bearerToken: input.bearerToken,
   });
 }

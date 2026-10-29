@@ -13,22 +13,31 @@ Use `logica.estate.agency(agencyId).*` for agency-scoped collections.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import { listEstateProperties, type EstatePropertyListResponseBody } from '@neup/logica/estate/property/list';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
+
+
+/** Builds the API endpoint for agencycollectionlist. */
+const getAgencyCollectionListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;
+/** Builds the API endpoint for agencycollection. */
+const getAgencyCollectionEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}`;
+const AgencyAgentsEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/agency/agents';
 
 type ListKind = 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 
 function list(kind: ListKind, query: Record<string, string>) {
-  return requestEstateApi({
-    path: `/bridge/api.v1/${kind}/list`,
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: getAgencyCollectionListEndpoint(kind),
     query,
   });
 }
 
 function createListScope(kind: ListKind, query: Record<string, string>) {
   return {
-    list(): Promise<EstateApiResponse> {
+    list(): Promise<ApiResponse> {
       return list(kind, query);
     },
   } as const;
@@ -36,15 +45,16 @@ function createListScope(kind: ListKind, query: Record<string, string>) {
 
 function createCreateListScope(kind: 'inquiry', query: Record<string, string>) {
   return {
-    create(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: `/bridge/api.v1/${kind}`,
+    create(data: EstateObjectRecord = {}): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: getAgencyCollectionEndpoint(kind),
         method: 'POST',
         body: { ...query, ...data },
       });
     },
 
-    list(): Promise<EstateApiResponse> {
+    list(): Promise<ApiResponse> {
       return list(kind, query);
     },
   } as const;
@@ -54,7 +64,7 @@ function createVisitScope(query: Record<string, string>) {
   return {
     status(status: string) {
       return {
-        list(): Promise<EstateApiResponse> {
+        list(): Promise<ApiResponse> {
           return list('visit', { ...query, status });
         },
       } as const;
@@ -66,14 +76,14 @@ function createAgencyPropertyScope(agencyId: string) {
   const scopedProperty = function scopedProperty(propertyId: string) {
     return {
       offer: {
-        get(): Promise<EstateApiResponse> {
+        get(): Promise<ApiResponse> {
           return list('offer', { agencyId, propertyId });
         },
       },
     } as const;
   };
 
-  scopedProperty.list = function listProperties(): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
+  scopedProperty.list = function listProperties(): Promise<ApiResponse<EstatePropertyListResponseBody>> {
     return listEstateProperties({ agencyId });
   };
 
@@ -102,18 +112,19 @@ export function agency(agencyId: string) {
     inquiry: createCreateListScope('inquiry', query),
     visit: createVisitScope(query),
     offer: {
-      get(): Promise<EstateApiResponse> {
+      get(): Promise<ApiResponse> {
         return list('offer', query);
       },
 
-      list(): Promise<EstateApiResponse> {
+      list(): Promise<ApiResponse> {
         return list('offer', query);
       },
     },
     agent: {
-      list(): Promise<EstateApiResponse> {
-        return requestEstateApi({
-          path: '/bridge/api.v1/agency/agents',
+      list(): Promise<ApiResponse> {
+        return runApi({
+          baseUrl: getBaseUrl('estate'),
+          path: AgencyAgentsEndpoint,
           query,
         });
       },
@@ -123,11 +134,11 @@ export function agency(agencyId: string) {
 
 agency.listProperties = function listProperties(
   agencyId: string,
-): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
+): Promise<ApiResponse<EstatePropertyListResponseBody>> {
   return agency(agencyId).property.list();
 };
 
-agency.listAgents = function listAgents(agencyId: string): Promise<EstateApiResponse> {
+agency.listAgents = function listAgents(agencyId: string): Promise<ApiResponse> {
   return agency(agencyId).agent.list();
 };
 

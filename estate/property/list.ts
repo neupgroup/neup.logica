@@ -64,7 +64,9 @@ field paths and is removed from the returned property object.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
-import type { EstateApiResponse } from '@neup/logica/estate/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+
+const PropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties';
 
 const DEFAULT_LIMIT = 10;
 const DEFAULT_OFFSET = 0;
@@ -111,8 +113,8 @@ function getErrorMessage(error: unknown): string {
 
 export async function listEstateProperties(
   input: EstatePropertyListInput,
-): Promise<EstateApiResponse<EstatePropertyListResponseBody>> {
-  const requestUrl = url.web.path(getBaseUrl('estate')).addPath('/bridge/api.v1/properties');
+): Promise<ApiResponse<EstatePropertyListResponseBody>> {
+  const requestUrl = url.web.path(PropertiesEndpoint);
   const limit = normalizeLimit(input.limit);
   const offset = normalizeOffset(input.offset);
   const query = {

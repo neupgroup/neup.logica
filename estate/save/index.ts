@@ -13,16 +13,21 @@ Use `logica.estate.save(id).remove()`.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const PropertiesSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties/saved';
 
 export type EstateSaveCreateData = { propertyId: string };
 
 export const save = Object.assign(
   function save(id: string) {
     return {
-      remove(): Promise<EstateApiResponse> {
-        return requestEstateApi({
-          path: '/bridge/api.v1/properties/saved',
+      remove(): Promise<ApiResponse> {
+        return runApi({
+          baseUrl: getBaseUrl('estate'),
+          path: PropertiesSavedEndpoint,
           method: 'DELETE',
           query: { id },
         });
@@ -30,20 +35,23 @@ export const save = Object.assign(
     } as const;
   },
   {
-    list(options: { account?: string; limit?: number; offset?: number } = {}): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/properties/saved',
+    list(options: { account?: string; limit?: number; offset?: number } = {}): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: PropertiesSavedEndpoint,
         query: { account: options.account ?? 'me', limit: options.limit, offset: options.offset },
       });
     },
 
-    create(data: EstateSaveCreateData): Promise<EstateApiResponse> {
-      return requestEstateApi({ path: '/bridge/api.v1/properties/saved', method: 'POST', body: data });
+    create(data: EstateSaveCreateData): Promise<ApiResponse> {
+      return runApi({
+    baseUrl: getBaseUrl('estate'), path: PropertiesSavedEndpoint, method: 'POST', body: data });
     },
 
-    removeProperty(propertyId: string): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/properties/saved',
+    removeProperty(propertyId: string): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: PropertiesSavedEndpoint,
         method: 'DELETE',
         query: { propertyId },
       });

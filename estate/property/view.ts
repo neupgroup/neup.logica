@@ -58,7 +58,10 @@ field paths and is removed from the returned property object.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
-import type { EstateApiResponse } from '@neup/logica/estate/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+
+/** Builds the API endpoint for property. */
+const getPropertyEndpoint = (propertyId: string) => `https://neupgroup.com/estate/bridge/api.v1/properties/${encodeURIComponent(propertyId)}`;
 
 export type ViewEstatePropertyInput = {
   propertyId: string;
@@ -99,9 +102,8 @@ function getErrorMessage(error: unknown): string {
 
 export async function viewEstateProperty(
   input: ViewEstatePropertyInput,
-): Promise<EstateApiResponse<ViewEstatePropertyResponseBody>> {
-  const requestUrl = url.web.path(getBaseUrl('estate'))
-    .addPath(`/bridge/api.v1/properties/${encodeURIComponent(input.propertyId)}`)
+): Promise<ApiResponse<ViewEstatePropertyResponseBody>> {
+  const requestUrl = url.web.path(getPropertyEndpoint(input.propertyId))
     .addParam('propertyId', input.propertyId);
   const include = serializeFields(input.include ?? input.fields);
   if (include) requestUrl.addParam('include', include);

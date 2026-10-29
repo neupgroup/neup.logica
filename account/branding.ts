@@ -13,7 +13,12 @@ Use this module for `/bridge/api.v1/branding/logo`.
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const BrandingLogoEndpoint = `${Basepath}/branding/logo`;
 
 /*
 ::neup.documentation::logica-account-get-application-logo-function
@@ -29,9 +34,10 @@ Calls the account bridge branding logo route.
 
 ::end
 */
-export async function getApplicationLogo(): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/branding/logo',
+export async function getApplicationLogo(): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: BrandingLogoEndpoint,
     method: 'GET',
   });
 }

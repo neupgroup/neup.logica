@@ -13,9 +13,13 @@ Use this helper to fetch the accessible accounts that the authenticated caller m
 ::end
 */
 
+
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
-import type { NeupBridgeResponse } from '@neup/logica/account/api';
-import { url } from '@neup/core/helpers/url';
+
+
+const Basepath = 'bridge/api.v1';
+const AccountsEndpoint = `${Basepath}/accounts`;
 
 type NeupAccessibleAccount = {
   id: string;
@@ -42,9 +46,9 @@ type GetNeupAccountsInput = {
 };
 
 function filterAccountsByType(
-  response: NeupBridgeResponse<GetNeupAccountsResponseBody>,
+  response: ApiResponse<GetNeupAccountsResponseBody>,
   accountType: string,
-): NeupBridgeResponse<GetNeupAccountsResponseBody> {
+): ApiResponse<GetNeupAccountsResponseBody> {
   return {
     ...response,
     body: {
@@ -74,34 +78,28 @@ application connection flows.
 */
 export async function getAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
-  const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts');
-  if (input.bearerToken?.trim() && input.appSecret?.trim()) {
-    requestUrl.addParam('appSecret', input.appSecret.trim());
-  }
-
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const headers = new Headers();
 
   if (input.bearerToken?.trim()) {
     headers.set('authorization', `Bearer ${input.bearerToken.trim()}`);
   }
 
-  if (input.authAccountToken?.trim()) {
-    headers.set('cookie', `auth_account=${input.authAccountToken.trim()}`);
-  }
-
-  const response = await fetch(requestUrl.get(), {
+  const response = await runApi<GetNeupAccountsResponseBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccountsEndpoint,
     method: 'GET',
+    query: {
+      appSecret: input.bearerToken?.trim() && input.appSecret?.trim() ? input.appSecret.trim() : undefined,
+    },
     headers,
-    cache: 'no-store',
+    cookies: input.authAccountToken?.trim() ? { auth_account: input.authAccountToken.trim() } : undefined,
   });
-
-  const body = (await response.json().catch(() => null)) as GetNeupAccountsResponseBody;
 
   return {
     ok: response.ok,
     status: response.status,
-    body,
+    body: response.body,
     headers: response.headers,
   };
 }
@@ -122,7 +120,7 @@ Use this helper when the caller needs only accessible brand accounts.
 */
 export async function getBrandAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'brand');
 }
@@ -143,7 +141,7 @@ Use this helper when the caller needs only accessible individual accounts.
 */
 export async function getIndividualAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'individual');
 }
@@ -164,7 +162,7 @@ Use this helper when the caller needs only accessible dependent accounts.
 */
 export async function getDependentAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'dependent');
 }
@@ -185,7 +183,7 @@ Use this helper when the caller needs only accessible subbrand accounts.
 */
 export async function getSubBrandAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'subbrand');
 }

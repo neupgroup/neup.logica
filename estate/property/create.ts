@@ -15,7 +15,9 @@ Submits a property creation payload as an awaiting-review draft.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
-import type { EstateApiResponse } from '@neup/logica/estate/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+
+const PropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties';
 
 export type CreateEstatePropertyInput = {
   accountId: string;
@@ -34,8 +36,8 @@ export type CreateEstatePropertyResponseBody = {
 
 export async function createEstateProperty(
   input: CreateEstatePropertyInput,
-): Promise<EstateApiResponse<CreateEstatePropertyResponseBody>> {
-  const response = await fetch(url.web.path(getBaseUrl('estate')).addPath('/bridge/api.v1/properties').get(), {
+): Promise<ApiResponse<CreateEstatePropertyResponseBody>> {
+  const response = await fetch(PropertiesEndpoint, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',

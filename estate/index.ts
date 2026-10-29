@@ -63,7 +63,6 @@ export {
   viewing,
 };
 
-export { requestEstateApi } from '@neup/logica/estate/api';
 export {
   getPropertiesByAccount,
   getPropertiesListed,
@@ -75,7 +74,6 @@ export {
   getProfileById,
   listProfiles,
 } from '@neup/logica/estate/profile';
-export type { EstateApiResponse } from '@neup/logica/estate/api';
 export type { EstateSaveCreateData } from '@neup/logica/estate/save';
 export type {
   EstateSavedPropertiesListOptions,

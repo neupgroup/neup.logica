@@ -14,7 +14,12 @@ Use `logica.drive.account(accountId).file.get({ fileId })` or
 ::end
 */
 
-import { requestDriveApi, type DriveApiResponse } from '@neup/logica/drive/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const Basepath = 'bridge/api.v1';
+const DriveFileEndpoint = `${Basepath}/drive/file`;
 
 export type DriveAccountFileRecord = {
   id: string;
@@ -49,16 +54,17 @@ export type DriveAccountFileGetInput = {
 
 export function getDriveAccountFile(
   input: DriveAccountFileGetInput,
-): Promise<DriveApiResponse<DriveAccountFileGetResponseBody>> {
-  return requestDriveApi<DriveAccountFileGetResponseBody>({
-    path: '/bridge/api.v1/drive/file',
+): Promise<ApiResponse<DriveAccountFileGetResponseBody>> {
+  return runApi<DriveAccountFileGetResponseBody>({
+    baseUrl: getBaseUrl('drive'),
+    path: DriveFileEndpoint,
     query: {
       account_id: input.accountId,
       file_id: input.fileId,
       path: input.path,
       expires_in: input.expiresIn ?? undefined,
     },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     bearerToken: input.bearerToken,
   });
 }

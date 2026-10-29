@@ -13,7 +13,8 @@ Use this module for `/bridge/api.v1/access/connection` and `/bridge/api.v1/acces
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import {
   getAccessibleAccounts,
   getAccessibleBrandAccounts,
@@ -22,6 +23,11 @@ import {
   getAccountAccess,
 } from '@neup/logica/account/connections/getInfo';
 import { hasAccountPermission, type HasPermissionOptions } from '@neup/logica/account/connections/permissions';
+
+
+const Basepath = 'bridge/api.v1';
+const AccessConnectionEndpoint = `${Basepath}/access/connection`;
+const AccessTeamEndpoint = `${Basepath}/access/team`;
 
 type AccessAuth = {
   authAccountToken?: string | null;
@@ -51,15 +57,16 @@ profile filter.
 export async function getConnectionTeamMembers(input: AccessAuth & {
   connection: string;
   profile?: string;
-}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/access/connection',
+}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccessConnectionEndpoint,
     method: 'GET',
     query: {
       connection: input.connection,
       profile: input.profile,
     },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }
@@ -82,15 +89,16 @@ and optional member profile.
 export async function getConnectionTeamMemberAccess(input: AccessAuth & {
   connection: string;
   profile?: string;
-}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/access/connection',
+}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccessConnectionEndpoint,
     method: 'POST',
     body: {
       connection: input.connection,
       profile: input.profile,
     },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }
@@ -113,15 +121,16 @@ optional profile filter.
 export async function getApplicationTeamMembers(input: AccessAuth & {
   app: string;
   profile?: string;
-}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/access/team',
+}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccessTeamEndpoint,
     method: 'GET',
     query: {
       app: input.app,
       profile: input.profile,
     },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }
@@ -144,22 +153,23 @@ application and optional profile.
 export async function getApplicationTeamMemberAccess(input: AccessAuth & {
   app: string;
   profile?: string;
-}): Promise<NeupBridgeResponse> {
-  return runNeupBridgeApi({
-    path: '/bridge/api.v1/access/team',
+}): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('neupid'),
+    path: AccessTeamEndpoint,
     method: 'POST',
     body: {
       app: input.app,
       profile: input.profile,
     },
-    authAccountToken: input.authAccountToken,
+    cookies: { auth_account: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }
 
 type AccessibleListInput = Parameters<typeof getAccessibleAccounts>[0];
 
-function filterAccessibleAccountsByType<TResponse extends NeupBridgeResponse<{ accounts?: { accountType: string }[] }>>(
+function filterAccessibleAccountsByType<TResponse extends ApiResponse<{ accounts?: { accountType: string }[] }>>(
   response: TResponse,
   accountType: string,
 ): TResponse {

@@ -13,9 +13,10 @@ Use this module to fetch accounts that can create connections and accounts whose
 ::end
 */
 
-import { getBaseUrl } from '@neup/logica/baseurl';
-import type { NeupBridgeResponse } from '@neup/logica/account/api';
+
 import { url } from '@neup/core/helpers/url';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 type NeupConnection = {
   connectionId: string;
@@ -81,9 +82,9 @@ type GetCreatableConnectionsResponseBody = {
 };
 
 function filterConnectionsByType(
-  response: NeupBridgeResponse<GetNeupConnectionsResponseBody>,
+  response: ApiResponse<GetNeupConnectionsResponseBody>,
   accountType: string,
-): NeupBridgeResponse<GetNeupConnectionsResponseBody> {
+): ApiResponse<GetNeupConnectionsResponseBody> {
   return {
     ...response,
     body: {
@@ -113,7 +114,7 @@ optional pagination/date filters.
 */
 export async function getApplicationConnections(
   input: GetNeupConnectionsInput,
-): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
+): Promise<ApiResponse<GetNeupConnectionsResponseBody>> {
   const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/application/users');
   const query = {
     offset: input.offset,
@@ -169,7 +170,7 @@ Calls the accounts bridge route with auth-account or bearer credentials.
 */
 export async function getConnectableAccounts(
   input: GetCreatableConnectionsInput = {},
-): Promise<NeupBridgeResponse<GetCreatableConnectionsResponseBody>> {
+): Promise<ApiResponse<GetCreatableConnectionsResponseBody>> {
   const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts');
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     requestUrl.addParam('appSecret', input.appSecret.trim());
@@ -217,7 +218,7 @@ Filters application connections to brand account records.
 */
 export async function getConnectedBrandAccounts(
   input: GetNeupConnectionsInput,
-): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
+): Promise<ApiResponse<GetNeupConnectionsResponseBody>> {
   const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'brand');
 }
@@ -238,7 +239,7 @@ Filters application connections to individual account records.
 */
 export async function getConnectedIndividualAccounts(
   input: GetNeupConnectionsInput,
-): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
+): Promise<ApiResponse<GetNeupConnectionsResponseBody>> {
   const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'individual');
 }
@@ -259,7 +260,7 @@ Filters application connections to dependent account records.
 */
 export async function getConnectedDependentAccounts(
   input: GetNeupConnectionsInput,
-): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
+): Promise<ApiResponse<GetNeupConnectionsResponseBody>> {
   const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'dependent');
 }
@@ -280,7 +281,7 @@ Filters application connections to subbrand account records.
 */
 export async function getConnectedSubBrandAccounts(
   input: GetNeupConnectionsInput,
-): Promise<NeupBridgeResponse<GetNeupConnectionsResponseBody>> {
+): Promise<ApiResponse<GetNeupConnectionsResponseBody>> {
   const response = await getApplicationConnections(input);
   return filterConnectionsByType(response, 'subbrand');
 }

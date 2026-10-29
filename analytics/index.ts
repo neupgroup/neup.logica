@@ -21,10 +21,6 @@ export const analytics = {
 } as const;
 
 export { project };
-export { requestAnalyticsApi } from '@neup/logica/analytics/api';
-export type {
-  AnalyticsApiResponse,
-} from '@neup/logica/analytics/api';
 export type {
   AnalyticsActivityInput,
   AnalyticsProjectScope,

@@ -13,9 +13,10 @@ Use this module to fetch connection-access info, normalized profile fields, and 
 ::end
 */
 
-import { getBaseUrl } from '@neup/logica/baseurl';
-import type { NeupBridgeResponse } from '@neup/logica/account/api';
+
 import { url } from '@neup/core/helpers/url';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 
 type NeupAccessibleAccount = {
   id: string;
@@ -86,7 +87,7 @@ function asArray(value: unknown): unknown[] {
 
 async function getLookup(
   input: GetLookupInput,
-): Promise<NeupBridgeResponse<AccountLookupResponseBody>> {
+): Promise<ApiResponse<AccountLookupResponseBody>> {
   const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts/lookup').get();
 
   const response = await fetch(requestUrl, {
@@ -114,7 +115,7 @@ async function getLookup(
 
 async function getAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const requestUrl = url.web.path(getBaseUrl('neupid')).addPath('/bridge/api.v1/accounts');
   if (input.bearerToken?.trim() && input.appSecret?.trim()) {
     requestUrl.addParam('appSecret', input.appSecret.trim());
@@ -147,9 +148,9 @@ async function getAccounts(
 }
 
 function filterAccountsByType(
-  response: NeupBridgeResponse<GetNeupAccountsResponseBody>,
+  response: ApiResponse<GetNeupAccountsResponseBody>,
   accountType: string,
-): NeupBridgeResponse<GetNeupAccountsResponseBody> {
+): ApiResponse<GetNeupAccountsResponseBody> {
   return {
     ...response,
     body: {
@@ -179,7 +180,7 @@ payload.
 */
 export async function getAccountAccess(
   input: GetLookupInput,
-): Promise<NeupBridgeResponse<GetAccessResponseBody>> {
+): Promise<ApiResponse<GetAccessResponseBody>> {
   const response = await getLookup(input);
 
   return {
@@ -211,7 +212,7 @@ and display image fields.
 */
 export async function getAccountBasicsById(
   input: GetLookupInput,
-): Promise<NeupBridgeResponse<GetProfileResponseBody>> {
+): Promise<ApiResponse<GetProfileResponseBody>> {
   const response = await getLookup(input);
 
   return {
@@ -245,7 +246,7 @@ Filters accessible accounts to brand account records.
 */
 export async function getAccessibleBrandAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'brand');
 }
@@ -266,7 +267,7 @@ Returns the accessible account collection used by `logica.account.accessible`.
 */
 export async function getAccessibleAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   return getAccounts(input);
 }
 
@@ -286,7 +287,7 @@ Filters accessible accounts to dependent account records.
 */
 export async function getAccessibleDependentAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'dependent');
 }
@@ -307,7 +308,7 @@ Filters accessible accounts to subbrand account records.
 */
 export async function getAccessibleSubBrandAccounts(
   input: GetNeupAccountsInput = {},
-): Promise<NeupBridgeResponse<GetNeupAccountsResponseBody>> {
+): Promise<ApiResponse<GetNeupAccountsResponseBody>> {
   const response = await getAccounts(input);
   return filterAccountsByType(response, 'subbrand');
 }

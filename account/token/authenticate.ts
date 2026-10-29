@@ -19,7 +19,8 @@ The remote check defaults to `/bridge/api.v1/auth/validate` through the shared b
 ::end
 */
 
-import { runNeupBridgeApi, type NeupBridgeResponse } from '@neup/logica/account/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import {
   decodeNeupIdToken,
   isNeupIdTokenExpired,
@@ -50,12 +51,12 @@ optional payload, and optional response on failure.
 ::end
 */
 export type AuthenticateNeupIdTokenResult<TBody = unknown> =
-  | { authenticated: true; payload: NeupIdTokenPayload; response: NeupBridgeResponse<TBody> }
+  | { authenticated: true; payload: NeupIdTokenPayload; response: ApiResponse<TBody> }
   | {
       authenticated: false;
       reason: string;
       payload?: Partial<NeupIdTokenPayload>;
-      response?: NeupBridgeResponse<TBody>;
+      response?: ApiResponse<TBody>;
     };
 
 function isApiValidationSuccess(body: unknown): boolean {
@@ -111,8 +112,9 @@ export async function authenticateNeupIdToken<TBody = unknown>(
     }
   }
 
-  const response = await runNeupBridgeApi<TBody>({
-    path: options.path ?? '/bridge/api.v1/auth/validate',
+  const response = await runApi<TBody>({
+    baseUrl: getBaseUrl('neupid'),
+    path: (options.path ?? '/bridge/api.v1/auth/validate').replace(/^\/+/, ''),
     method: 'POST',
     query: options.app ? { app: options.app } : undefined,
     body: { token: trimmed },

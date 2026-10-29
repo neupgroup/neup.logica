@@ -13,21 +13,31 @@ Use `logica.estate.agent(agentId).*` for agent-scoped collections.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
+
+
+/** Builds the API endpoint for agentcollectionlist. */
+const getAgentCollectionListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;
+/** Builds the API endpoint for agentcollection. */
+const getAgentCollectionEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}`;
+const AgentAssignPropertyEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/agent/assign-property';
+const AgentPropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/agent/properties';
 
 type ListKind = 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 
 function list(kind: ListKind, query: Record<string, string>) {
-  return requestEstateApi({
-    path: `/bridge/api.v1/${kind}/list`,
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: getAgentCollectionListEndpoint(kind),
     query,
   });
 }
 
 function createListScope(kind: ListKind, query: Record<string, string>) {
   return {
-    list(): Promise<EstateApiResponse> {
+    list(): Promise<ApiResponse> {
       return list(kind, query);
     },
   } as const;
@@ -35,15 +45,16 @@ function createListScope(kind: ListKind, query: Record<string, string>) {
 
 function createCreateListScope(kind: 'inquiry', query: Record<string, string>) {
   return {
-    create(data: EstateObjectRecord = {}): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: `/bridge/api.v1/${kind}`,
+    create(data: EstateObjectRecord = {}): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: getAgentCollectionEndpoint(kind),
         method: 'POST',
         body: { ...query, ...data },
       });
     },
 
-    list(): Promise<EstateApiResponse> {
+    list(): Promise<ApiResponse> {
       return list(kind, query);
     },
   } as const;
@@ -53,7 +64,7 @@ function createVisitScope(query: Record<string, string>) {
   return {
     status(status: string) {
       return {
-        list(): Promise<EstateApiResponse> {
+        list(): Promise<ApiResponse> {
           return list('visit', { ...query, status });
         },
       } as const;
@@ -61,9 +72,10 @@ function createVisitScope(query: Record<string, string>) {
   } as const;
 }
 
-function assignAgentProperty(agentId: string, propertyId: string): Promise<EstateApiResponse> {
-  return requestEstateApi({
-    path: '/bridge/api.v1/agent/assign-property',
+function assignAgentProperty(agentId: string, propertyId: string): Promise<ApiResponse> {
+  return runApi({
+    baseUrl: getBaseUrl('estate'),
+    path: AgentAssignPropertyEndpoint,
     method: 'POST',
     body: { agentId, propertyId },
   });
@@ -72,26 +84,27 @@ function assignAgentProperty(agentId: string, propertyId: string): Promise<Estat
 function createAgentPropertyScope(agentId: string) {
   const scopedProperty = function scopedProperty(propertyId: string) {
     return {
-      assign(): Promise<EstateApiResponse> {
+      assign(): Promise<ApiResponse> {
         return assignAgentProperty(agentId, propertyId);
       },
 
       offer: {
-        get(): Promise<EstateApiResponse> {
+        get(): Promise<ApiResponse> {
           return list('offer', { agentId, propertyId });
         },
       },
     } as const;
   };
 
-  scopedProperty.list = function listProperties(): Promise<EstateApiResponse> {
-    return requestEstateApi({
-      path: '/bridge/api.v1/agent/properties',
+  scopedProperty.list = function listProperties(): Promise<ApiResponse> {
+    return runApi({
+      baseUrl: getBaseUrl('estate'),
+      path: AgentPropertiesEndpoint,
       query: { agentId },
     });
   };
 
-  scopedProperty.assign = function assign(propertyId: string): Promise<EstateApiResponse> {
+  scopedProperty.assign = function assign(propertyId: string): Promise<ApiResponse> {
     return assignAgentProperty(agentId, propertyId);
   };
 
@@ -123,11 +136,11 @@ export function agent(agentId: string) {
   } as const;
 }
 
-agent.listProperties = function listProperties(agentId: string): Promise<EstateApiResponse> {
+agent.listProperties = function listProperties(agentId: string): Promise<ApiResponse> {
   return agent(agentId).property.list();
 };
 
-agent.assignProperty = function assignProperty(agentId: string, propertyId: string): Promise<EstateApiResponse> {
+agent.assignProperty = function assignProperty(agentId: string, propertyId: string): Promise<ApiResponse> {
   return agent(agentId).property.assign(propertyId);
 };
 

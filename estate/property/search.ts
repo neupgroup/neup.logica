@@ -15,7 +15,9 @@ Searches active estate properties using API query parameters.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
-import type { EstateApiResponse } from '@neup/logica/estate/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+
+const PropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties';
 
 export type SearchEstatePropertiesInput = {
   q?: string | null;
@@ -63,8 +65,8 @@ function serializeList(value: string[] | string | null | undefined): string | un
 
 export async function searchEstateProperties(
   input: SearchEstatePropertiesInput = {},
-): Promise<EstateApiResponse<SearchEstatePropertiesResponseBody>> {
-  const requestUrl = url.web.path(getBaseUrl('estate')).addPath('/bridge/api.v1/properties');
+): Promise<ApiResponse<SearchEstatePropertiesResponseBody>> {
+  const requestUrl = url.web.path(PropertiesEndpoint);
   const query = {
     search: input.search ?? input.q,
     page: input.page,

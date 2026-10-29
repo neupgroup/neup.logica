@@ -16,7 +16,10 @@ pending create draft or `propertyId` for an approved property.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
-import type { EstateApiResponse } from '@neup/logica/estate/api';
+import type { ApiResponse } from '@neup/core/infrastructure/api';
+
+/** Builds the API endpoint for property. */
+const getPropertyEndpoint = (propertyId: string) => `https://neupgroup.com/estate/bridge/api.v1/properties/${encodeURIComponent(propertyId)}`;
 
 export type ModifyEstatePropertyInput = {
   requestId?: string | null;
@@ -37,8 +40,8 @@ export type ModifyEstatePropertyResponseBody = {
 
 export async function modifyEstateProperty(
   input: ModifyEstatePropertyInput,
-): Promise<EstateApiResponse<ModifyEstatePropertyResponseBody>> {
-  const response = await fetch(url.web.path(getBaseUrl('estate')).addPath(`/bridge/api.v1/properties/${encodeURIComponent(input.propertyId || '')}`).get(), {
+): Promise<ApiResponse<ModifyEstatePropertyResponseBody>> {
+  const response = await fetch(getPropertyEndpoint(input.propertyId || ''), {
     method: 'PATCH',
     headers: {
       'content-type': 'application/json',

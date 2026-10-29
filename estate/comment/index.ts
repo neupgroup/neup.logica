@@ -13,13 +13,18 @@ Use `logica.estate.comment(id).remove()`.
 ::end
 */
 
-import { requestEstateApi, type EstateApiResponse } from '@neup/logica/estate/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import { getBaseUrl } from '@neup/logica/baseurl';
+
+
+const CommentRemoveEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/comment/remove';
 
 export function comment(id: string) {
   return {
-    remove(): Promise<EstateApiResponse> {
-      return requestEstateApi({
-        path: '/bridge/api.v1/comment/remove',
+    remove(): Promise<ApiResponse> {
+      return runApi({
+        baseUrl: getBaseUrl('estate'),
+        path: CommentRemoveEndpoint,
         method: 'POST',
         body: { id },
       });
