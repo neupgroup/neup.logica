@@ -19,10 +19,13 @@ update_logica_index() {
         fi
 
         temp_file=$(mktemp)
-        grep -Fv "import { $module } from '@neup/logica/$module';" "$index_file" |
-            grep -Fv "  $module," |
-            grep -Fv "export { $module };" |
-            sed -E "s/, $module([,}])/,\1/g; s/\{ $module, /\{ /g; s/  $module,//g" > "$temp_file"
+        sed -E \
+            -e "/^import \{ $module \} from '@neup\/logica\/$module';$/d" \
+            -e "s/, $module([,}])/\\1/g" \
+            -e "s/\\{ $module, /{ /g" \
+            -e "s/, $module }/ }/g" \
+            -e "/^[[:space:]]*$module,[[:space:]]*$/d" \
+            "$index_file" > "$temp_file"
         mv "$temp_file" "$index_file"
     done
 
