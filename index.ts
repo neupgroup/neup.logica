@@ -22,6 +22,7 @@ import { estate } from '@neup/logica/estate';
 import { articles } from '@neup/logica/articles';
 import { news } from '@neup/logica/news';
 import { notification } from '@neup/logica/notification';
+import { assist } from '@neup/logica/assist';
 
 export const logica = {
   analytics,
@@ -32,8 +33,9 @@ export const logica = {
   news,
   notification,
   sites,
+  assist,
 } as const;
 
-export { account, analytics, articles, estate, logger, news, notification, sites };
+export { account, analytics, articles, estate, logger, news, notification, sites, assist };
 
 export default logica;
