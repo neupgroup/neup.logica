@@ -16,6 +16,10 @@ connection object scopes.
 
 import type { NeupUserInfoField } from '@neup/logica/account/lookup';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 /*
 ::neup.documentation::logica-account-fields-type
 ::type AccountFields

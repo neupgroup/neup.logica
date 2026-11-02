@@ -57,6 +57,10 @@ import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const ProfileEndpoint = `${Basepath}/profile`;

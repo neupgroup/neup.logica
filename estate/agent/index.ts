@@ -17,6 +17,10 @@ import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 /** Builds the API endpoint for agentcollectionlist. */
 const getAgentCollectionListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;

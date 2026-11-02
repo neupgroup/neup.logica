@@ -16,6 +16,10 @@ Use this helper to fetch a normalized account profile snapshot that returns only
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 
 

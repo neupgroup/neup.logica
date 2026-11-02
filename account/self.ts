@@ -29,6 +29,10 @@ import {
   type LookupResponseBody,
 } from '@neup/logica/account/lookup';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export type AccountSelfAuthenticationCheckType = 'local' | 'remote';
 
 export type AccountSelfBasics = {

@@ -3,6 +3,10 @@ import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import type { SitesNews, SitesNewsItemResponseBody } from '../index';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export function item(projectId: string, reference: string) {
   return {
     async get(): Promise<ApiResponse<SitesNewsItemResponseBody>> {

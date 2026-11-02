@@ -21,6 +21,10 @@ import {
 import { members, member, type PeopleMemberResponseBody } from '@neup/logica/people/members';
 import { teams, team, type PeopleTeamResponseBody } from '@neup/logica/people/teams';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 function resolveProjectId(projectId?: string) {
   const resolved = projectId?.trim() || getEnvVariable('NEUP_SITES_PROJECT_ID', false);
   if (!resolved) {

@@ -14,6 +14,10 @@ objects shaped as `{ id, scopeFor, tag }`.
 import fs from "node:fs";
 import path from "node:path";
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 const ROOT = process.cwd();
 const SCAN_DIRS = ["app", "pages", "services"];
 const EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"];

@@ -17,6 +17,10 @@ match the authenticated account unless the caller has account-view permission.
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 /** Builds the API endpoint for accountpropertycollection. */
 const getAccountPropertyCollectionEndpoint = (accountId: string, collection: Collection) => `https://neupgroup.com/estate/bridge/api.v1/properties/account/${encodeURIComponent(accountId)}/${collection}`;

@@ -177,6 +177,10 @@ import { getBaseUrl } from '@neup/logica/baseurl';
 import endpointConfig from '@neup/logica/estate/endpoints.json';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 const LeadsSharedConfig = (endpointConfig as Record<string, { path: string; method: ApiMethod }>)['leads:shared'];
 const LeadsSharedEndpoint = LeadsSharedConfig.path;
 const LeadsSharedMethod = LeadsSharedConfig.method;

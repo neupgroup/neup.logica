@@ -1,6 +1,10 @@
 import { getEnvVariable } from '@neup/core/helpers/env';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export type NeupBridgeEnvironment = {
   appId: string;
   appSecret: string;

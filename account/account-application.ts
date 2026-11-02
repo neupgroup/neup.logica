@@ -15,6 +15,10 @@ This file backs `logica.account(accountId).application`.
 
 import { getApplicationAccountAccess } from '@neup/logica/account/application';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 /*
 ::neup.documentation::logica-account-create-account-application-function
 ::function createAccountApplication(accountId)

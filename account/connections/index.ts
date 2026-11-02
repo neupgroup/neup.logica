@@ -19,6 +19,10 @@ import { getConnectionTeamMemberAccess, getConnectionTeamMembers } from '@neup/l
 import { getAccountBasics } from '@neup/logica/account/lookup';
 import { normalizeAccountFields, type AccountFields } from '@neup/logica/account/fields';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 type ApplicationConnectionsInput = Parameters<typeof getApplicationConnections>[0];
 
 function getApplicationCredentials(input: Partial<ApplicationConnectionsInput> = {}) {

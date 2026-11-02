@@ -29,6 +29,10 @@ import { user } from '@neup/logica/estate/user';
 import { visit } from '@neup/logica/estate/visit';
 import { viewing } from '@neup/logica/estate/viewing';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export const estate = {
   property,
   profile,

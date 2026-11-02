@@ -17,6 +17,10 @@ import { api, type ApiResponse } from '@neup/core/infrastructure/api';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export interface SitesCareer {
   slug: string;
   projectId: string;

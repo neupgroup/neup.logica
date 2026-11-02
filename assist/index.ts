@@ -19,6 +19,10 @@ callers can provide `authAccountToken`.
 
 import { createAssistChat, type AssistCredentials } from './chat';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 /** Creates the assist facade, optionally overriding the account auth token. */
 function createAssist(credentialsOverride: AssistCredentials = {}) {
   return {

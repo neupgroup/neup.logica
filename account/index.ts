@@ -29,6 +29,10 @@ import { self } from '@neup/logica/account/self';
 import { getMembers, getMember, getTeams, getTeam } from '@neup/logica/account/team';
 import { createAccountScope, type AccountScope } from '@neup/logica/account/scope';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 /*
 ::neup.documentation::logica-account-function
 ::function account(accountId)

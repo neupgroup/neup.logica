@@ -1,3 +1,7 @@
+
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
 /*
 ::neup.documentation::logica-permission-helper
 

@@ -16,6 +16,10 @@ Use `logica.drive.account(accountId).file.*` and
 
 import { createDriveAccountScope, type DriveAccountScope } from '@neup/logica/drive/account/scope';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export function account(accountId: string) {
   return createDriveAccountScope(accountId);
 }

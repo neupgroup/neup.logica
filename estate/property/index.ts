@@ -43,6 +43,10 @@ import {
 } from '@neup/logica/estate/property/saved';
 import type { EstateObjectRecord, EstatePropertyCreateData } from '@neup/logica/estate/types';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 /** Builds the API endpoint for propertycollectionlist. */
 const getPropertyCollectionListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;

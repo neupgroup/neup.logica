@@ -26,6 +26,10 @@ import {
   getCurrentAccountPermissions,
 } from '@neup/logica/account/profile';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 type CurrentTokenInput = string;
 
 function createCurrentPermissionScope(permissionName: string) {

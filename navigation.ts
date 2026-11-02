@@ -32,6 +32,10 @@ import {
   type NavigationBackTargets,
 } from '@neup/core/helpers/link/navigation';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export const LOGICA_NAVIGATION_BACK_TARGETS = {
   ...CORE_NAVIGATION_BACK_TARGETS,
   account: {

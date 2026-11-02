@@ -24,6 +24,10 @@ import { news } from '@neup/logica/news';
 import { notification } from '@neup/logica/notification';
 import { assist } from '@neup/logica/assist';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export const logica = {
   analytics,
   account,

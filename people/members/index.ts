@@ -18,6 +18,10 @@ import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { member as singleMember } from './single';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export interface PeopleMember {
   slug: string;
   name: string;

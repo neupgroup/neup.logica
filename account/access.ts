@@ -24,6 +24,10 @@ import {
 } from '@neup/logica/account/connections/getInfo';
 import { hasAccountPermission, type HasPermissionOptions } from '@neup/logica/account/connections/permissions';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const AccessConnectionEndpoint = `${Basepath}/access/connection`;

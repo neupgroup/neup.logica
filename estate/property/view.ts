@@ -60,6 +60,10 @@ import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
 import type { ApiResponse } from '@neup/core/infrastructure/api';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 /** Builds the API endpoint for property. */
 const getPropertyEndpoint = (propertyId: string) => `https://neupgroup.com/estate/bridge/api.v1/properties/${encodeURIComponent(propertyId)}`;
 

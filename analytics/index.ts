@@ -16,6 +16,10 @@ activity events into this app's analytics bridge.
 
 import { project } from '@neup/logica/analytics/project';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export const analytics = {
   project,
 } as const;

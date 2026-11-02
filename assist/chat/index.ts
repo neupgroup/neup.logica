@@ -17,6 +17,10 @@ conversation. Use `.messages(chatId)` for message operations.
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { createAssistChatMessages, type AssistCredentials, type AssistPagination, type AssistChatMessages } from './messages';
+
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
 export type { AssistCredentials, AssistPagination } from './messages';
 
 const ChatsPath = 'bridge/api.v1/chats';

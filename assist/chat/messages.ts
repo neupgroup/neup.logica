@@ -17,6 +17,10 @@ Use `logica.assist.chats(chatId).messages.get()` to read a page of messages and
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 const MessagesPath = 'bridge/api.v1/chats';
 
 export type AssistCredentials = { authAccountToken?: string | null };

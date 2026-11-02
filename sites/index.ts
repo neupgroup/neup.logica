@@ -16,6 +16,10 @@ People resources are available through `logica.people(projectId)`.
 import { getEnvVariable } from '@neup/core/helpers/env';
 import { people } from '@neup/logica/people';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export interface SitesMemberDirectoryItem {
   id: string;
   assetId: string | null;

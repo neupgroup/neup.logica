@@ -24,6 +24,10 @@ connection creation should live in a different flow with its own creation token.
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const AccountsEndpoint = `${Basepath}/accounts`;

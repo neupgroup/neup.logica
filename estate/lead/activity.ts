@@ -3,6 +3,10 @@ import { getAccountById } from '@/services/accounts/id/get';
 import { getAgencyAgentMapsByAgent } from '@/services/agencies/agent-maps/service';
 import { createLeadActivity, type LeadActivityType } from '@/services/leads/activity/create';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export type FollowUpMethod = 'phone call' | 'whatsapp' | 'email';
 
 export interface AddLeadActivityInput {

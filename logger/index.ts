@@ -28,6 +28,10 @@ import { getEnvVariable } from '@neup/core/helpers/env';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 const Basepath: string = "https://neupgroup.com/cloud/bridge/api.v1/logger";
 const ErrorEndpoint: string = "https://neupgroup.com/cloud/bridge/api.v1/logger/error";
 

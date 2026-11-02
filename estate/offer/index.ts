@@ -18,6 +18,10 @@ import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import type { EstateObjectRecord, EstateOfferData } from '@neup/logica/estate/types';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const OfferViewEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/view';
 const OfferAcceptEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/offer/accept';

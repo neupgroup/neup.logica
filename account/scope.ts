@@ -22,6 +22,10 @@ import { getAccountBasics } from '@neup/logica/account/lookup';
 import { createAccountProfile } from '@neup/logica/account/profile';
 import { createAccountRole } from '@neup/logica/account/role';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 /*
 ::neup.documentation::logica-account-create-account-scope-function
 ::function createAccountScope(accountId)

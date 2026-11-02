@@ -20,6 +20,10 @@ import {
   type CreateInternalNeupConnectionInput,
 } from '@neup/logica/account/connections/create';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 /*
 ::neup.documentation::logica-account-create-account-connection-function
 ::function createAccountConnection(accountId)

@@ -13,6 +13,12 @@ running a Next.js build.
 import { resolve, relative, sep } from 'node:path';
 import ts from 'typescript';
 
+// External packages required by this logic module.
+const requiredPackages = [
+  "typescript:^5.5.2"
+] as const;
+
+
 const IGNORED_PATH_PARTS = new Set(['node_modules', '.next', 'dist', 'build', 'coverage']);
 
 export type ProjectScanner = {

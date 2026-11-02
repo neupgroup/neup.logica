@@ -16,6 +16,10 @@ This file composes account-scoped file and storage status children.
 import { createDriveAccountFileScope } from '@neup/logica/drive/account/file';
 import { getDriveAccountStatus } from '@neup/logica/drive/account/status';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export function createDriveAccountScope(accountId: string) {
   return {
     file: createDriveAccountFileScope(accountId),

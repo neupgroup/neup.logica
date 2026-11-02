@@ -16,6 +16,12 @@ import { dirname, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
 import { createProjectScanner } from '../ast/project-scanner';
 
+// External packages required by this logic module.
+const requiredPackages = [
+  "typescript:^5.5.2"
+] as const;
+
+
 const PERMISSION_HELPER_MODULES = new Set([
   '@logica/permission',
   '@neup/logica/permission',

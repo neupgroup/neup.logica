@@ -26,6 +26,10 @@ import { getAccountBasics } from '@neup/logica/account/lookup';
 import { getApplicationLogo } from '@neup/logica/account/branding';
 import { normalizeAccountFields, type AccountFields } from '@neup/logica/account/fields';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const ApplicationAccessEndpoint = `${Basepath}/application/access`;

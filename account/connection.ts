@@ -17,6 +17,10 @@ import { getNeupBridgeEnvironment } from '@neup/logica/account/environment';
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const ConnectionSigngetEndpoint = `${Basepath}/connection/sign&get`;

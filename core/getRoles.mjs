@@ -16,6 +16,10 @@ import { resolve } from 'node:path';
 import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 const ROOT = process.cwd();
 const BRIDGE_URL = (process.env.NEUP_BRIDGE_URL || 'http://127.0.0.1:2226').replace(/\/+$/, '');
 const NEUP_APP_ID = process.env.NEUP_APP_ID || process.env.neup_app_id;

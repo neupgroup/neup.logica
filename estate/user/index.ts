@@ -16,6 +16,10 @@ Use `logica.estate.user(userId).*` for user-scoped estate collections.
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 /** Builds the API endpoint for userlist. */
 const getUserListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;

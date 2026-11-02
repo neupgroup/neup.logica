@@ -12,6 +12,10 @@ application.
 
 import { mapPermission } from './commands/mapPermission';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 const command = process.argv[2];
 
 async function main() {

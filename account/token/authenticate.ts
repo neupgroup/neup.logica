@@ -28,6 +28,10 @@ import {
   type NeupIdTokenPayload,
 } from './verify';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 type AuthenticateNeupIdTokenOptions = {
   app?: string;
   path?: string;

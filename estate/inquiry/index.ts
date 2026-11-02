@@ -18,6 +18,10 @@ import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import type { EstateInquiryCreateData, EstateObjectRecord } from '@neup/logica/estate/types';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const InquiryEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry';
 const InquiryViewEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/view';

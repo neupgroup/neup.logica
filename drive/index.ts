@@ -18,6 +18,10 @@ portable clients.
 import { account } from '@neup/logica/drive/account';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 function getBasepath() {

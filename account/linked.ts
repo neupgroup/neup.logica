@@ -22,6 +22,10 @@ This module resolves the current `auth_account` token from browser or server con
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const AccountsLinkedGithubEndpoint = `${Basepath}/accounts/linked/github`;

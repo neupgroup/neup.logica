@@ -27,6 +27,10 @@ import { url } from '@neup/core/helpers/url';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { article } from './single';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export interface SitesArticle {
   slug: string;
   writtenAt: string | null;

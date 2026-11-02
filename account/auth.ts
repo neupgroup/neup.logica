@@ -26,6 +26,10 @@ import {
 } from '@neup/logica/account/token/authenticate';
 import { verifyNeupIdToken } from '@neup/logica/account/token/verify';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 type AuthCheckBody = {
   success?: boolean;
   error?: string;

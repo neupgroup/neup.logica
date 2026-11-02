@@ -28,6 +28,12 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 
+// External packages required by this logic module.
+const requiredPackages = [
+  "next:^16.2.2"
+] as const;
+
+
 type LogType = 'ai' | 'database' | 'validation' | 'auth' | 'unknown' | 'webhook';
 type ReportType = 'auto' | 'submitted';
 

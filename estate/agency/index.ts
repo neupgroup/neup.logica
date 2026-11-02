@@ -18,6 +18,10 @@ import { getBaseUrl } from '@neup/logica/baseurl';
 import { listEstateProperties, type EstatePropertyListResponseBody } from '@neup/logica/estate/property/list';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 /** Builds the API endpoint for agencycollectionlist. */
 const getAgencyCollectionListEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}/list`;

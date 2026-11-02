@@ -66,6 +66,10 @@ import { getBaseUrl } from '@neup/logica/baseurl';
 import { url } from '@neup/core/helpers/url';
 import type { ApiResponse } from '@neup/core/infrastructure/api';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 const PropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties';
 
 const DEFAULT_LIMIT = 10;

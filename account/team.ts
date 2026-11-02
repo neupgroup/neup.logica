@@ -19,6 +19,10 @@ import type { ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { getApplicationTeamMembers, getConnectionTeamMembers } from '@neup/logica/account/access';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const MembersEndpoint = `${Basepath}/members`;

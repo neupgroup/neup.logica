@@ -1,3 +1,7 @@
+
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
 // Define the base URLs.
 const baseUrls = {
   'analytics': 'https://neupgroup.com/analytics',

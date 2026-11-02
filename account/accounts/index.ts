@@ -13,6 +13,10 @@ Import from this file when you want accessible-account bridge helpers grouped un
 import type { ApiResponse } from '@neup/core/infrastructure/api';
 import { getAccounts } from '@neup/logica/account/accounts/getAccounts';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 
 type AccountListInput = Parameters<typeof getAccounts>[0];

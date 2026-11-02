@@ -17,6 +17,10 @@ Use this helper to fetch the accessible accounts that the authenticated caller m
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const AccountsEndpoint = `${Basepath}/accounts`;

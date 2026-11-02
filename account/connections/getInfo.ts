@@ -18,6 +18,10 @@ import { url } from '@neup/core/helpers/url';
 import type { ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 type NeupAccessibleAccount = {
   id: string;
   displayName: string | null;

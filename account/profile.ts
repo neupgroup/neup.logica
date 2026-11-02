@@ -18,6 +18,10 @@ import { getBaseUrl } from '@neup/logica/baseurl';
 import { normalizeAccountFields, type AccountFields } from '@neup/logica/account/fields';
 import { getAccountBasics } from '@neup/logica/account/lookup';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const ProfileEndpoint = `${Basepath}/profile`;

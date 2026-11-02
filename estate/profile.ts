@@ -16,6 +16,10 @@ or `logica.estate.profile(accountId).get()` to load a full account profile.
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 /** Builds the API endpoint for accountprofile. */
 const getAccountProfileEndpoint = (accountId: string) => `https://neupgroup.com/estate/bridge/api.v1/accounts/${encodeURIComponent(accountId)}`;

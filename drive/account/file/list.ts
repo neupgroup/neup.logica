@@ -18,6 +18,10 @@ import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
 import type { DriveAccountFileRecord } from '@neup/logica/drive/account/file/get';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 
 const Basepath = 'bridge/api.v1';
 const DriveFilesEndpoint = `${Basepath}/drive/files`;

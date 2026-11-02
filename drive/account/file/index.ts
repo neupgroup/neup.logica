@@ -26,6 +26,10 @@ import {
 } from '@neup/logica/drive/account/file/list';
 import type { ApiResponse } from '@neup/core/infrastructure/api';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 export function createDriveAccountFileScope(accountId: string) {
   return {
     get(input: Omit<DriveAccountFileGetInput, 'accountId'> = {}) {

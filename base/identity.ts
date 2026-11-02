@@ -1,5 +1,9 @@
 import identity from '@base/identity.json';
 
+// External packages required by this logic module.
+const requiredPackages = [] as const;
+
+
 type Locale = string;
 
 export function getAppName(locale: Locale = 'en'): string {
