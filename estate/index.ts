@@ -19,6 +19,7 @@ import { agent } from '@neup/logica/estate/agent';
 import { favorite } from '@neup/logica/estate/favorite';
 import { inquiry } from '@neup/logica/estate/inquiry';
 import { lead } from '@neup/logica/estate/lead';
+import { locations } from '@neup/logica/estate/locations';
 import { requirement } from '@neup/logica/estate/requirement';
 import { offer } from '@neup/logica/estate/offer';
 import { property } from '@neup/logica/estate/property';
@@ -40,6 +41,7 @@ export const estate = {
   agency,
   inquiry,
   lead,
+  locations,
   requirement,
   favorite,
   viewing,
@@ -57,6 +59,7 @@ export {
   favorite,
   inquiry,
   lead,
+  locations,
   offer,
   property,
   profile,
