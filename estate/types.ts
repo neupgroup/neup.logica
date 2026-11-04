@@ -27,7 +27,7 @@ export type EstateListingCreateData = EstateObjectRecord & {
 };
 
 export type EstateInquiryCreateData = EstateObjectRecord & {
-  propertyId?: string;
+  listingId?: string;
   listing?: string;
   listing_id?: string;
   phone?: string;
