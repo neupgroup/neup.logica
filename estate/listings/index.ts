@@ -39,7 +39,7 @@ import {
   type EstateSavedListingsListOptions,
   type EstateSavedListingRemoval,
 } from '@neup/logica/estate/listings/saved';
-import type { EstateObjectRecord, EstateListingCreateData } from '@neup/logica/estate/types';
+import type { EstateListingCreateData, EstateListingRecord } from '@neup/logica/estate/types';
 
 const LISTINGS_PATH = 'bridge/api.v1/listings';
 type Fields = string[] | string | null;
@@ -66,7 +66,7 @@ export function listings(propertyId: string) {
     get(include?: Fields): Promise<ApiResponse<ViewEstateListingResponseBody>> {
       return viewEstateListing({ propertyId, include });
     },
-    update(data: EstateObjectRecord & { accountId?: string }): Promise<ApiResponse<ModifyEstateListingResponseBody>> {
+    update(data: EstateListingRecord & { accountId?: string }): Promise<ApiResponse<ModifyEstateListingResponseBody>> {
       const { accountId, ...listing } = data;
       return modifyEstateListing({ listingId: propertyId, accountId, listing });
     },
@@ -111,7 +111,7 @@ listings.code = function code(listingCode: string) {
 };
 
 // Update a listing through its current PATCH endpoint.
-listings.update = function update(propertyId: string, data: EstateObjectRecord) {
+listings.update = function update(propertyId: string, data: EstateListingRecord) {
   return listings(propertyId).update(data);
 };
 
@@ -135,6 +135,7 @@ export {
 export type {
   CreateEstateListingResponseBody,
   EstateListingCreateData,
+  EstateListingRecord,
   ModifyEstateListingResponseBody,
   EstateListingsSearchInput,
   EstateListingsSearchResponseBody,

@@ -16,6 +16,7 @@ match the authenticated account unless the caller has account-view permission.
 */
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
+import type { EstateListingRecord } from '@neup/logica/estate/types';
 
 // External packages required by this logic module.
 const requiredPackages = [] as const;
@@ -27,7 +28,7 @@ const getAccountListingCollectionPath = (accountId: string, collection: Collecti
   `bridge/api.v1/listings/account/${encodeURIComponent(accountId)}/${collection}`;
 export type EstateAccountListingListResponseBody = {
   success: boolean;
-  listings: unknown[];
+  listings: EstateListingRecord[];
   pagination?: { offset: number; limit: number };
   error?: string;
 };

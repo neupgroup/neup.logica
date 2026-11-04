@@ -32,7 +32,7 @@ Accepted `fields` values:
 - Copy: `title`, `description`
 - Pricing: `price`, `pricing`
 - Location: `location`, `structuredLocation`
-- Classification: `purpose`, `purposes`, `category`, `type`
+- Classification: `purpose`, `category`, `types`
 - Media and content: `images`, `amenities`, `documents`
 - Listing accounts: `agency`, `listingAgent`, `isOwnerListing`
 - Flags and status: `isFeatured`, `isApproved`, `status`
@@ -63,6 +63,7 @@ field paths and is removed from the returned property object.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import type { EstateListingRecord } from '@neup/logica/estate/types';
 
 // External packages required by this logic module.
 const requiredPackages = [] as const;
@@ -87,7 +88,7 @@ export type EstateListingListResponseBody = {
   success: boolean;
   limit: number;
   offset: number;
-  listings: unknown[];
+  listings: EstateListingRecord[];
   totalCount?: number;
   appliedFilters?: Record<string, unknown>;
   error?: string;

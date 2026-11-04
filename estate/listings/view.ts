@@ -28,7 +28,7 @@ Accepted scalar `include` values:
 
 - Identity: `id`, `customId`, `slug`
 - Copy and discovery: `title`, `description`, `keywords`, `tags`
-- Classification: `purpose`, `category`, `type`, `status`, `visibility`
+- Classification: `purpose`, `category`, `types`, `status`, `visibility`
 - Media: `images`, `images.id`, `images.url`, `images.type`,
   `images.isCover`, `images.order`
 - Representatives: `representatives.*`, `representatives.listingOwner`,
@@ -89,6 +89,9 @@ export type EstateListingRepresentative = {
 
 export type EstateListingView = Record<string, unknown> & {
   id?: string;
+  purpose?: string;
+  category?: string;
+  types?: string[];
   representatives: EstateListingRepresentative[];
 };
 

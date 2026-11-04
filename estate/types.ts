@@ -19,9 +19,15 @@ These types are reused by nested estate object modules.
 
 export type EstateObjectRecord = Record<string, unknown>;
 
+export type EstateListingRecord = EstateObjectRecord & {
+  purpose?: string;
+  category?: string;
+  types?: string[];
+};
+
 export type EstateListingCreateData = EstateObjectRecord & {
   accountId: string;
-  listing: EstateObjectRecord;
+  listing: EstateListingRecord;
   postingAgencyId?: string | null;
   workingProfileId?: string | null;
 };

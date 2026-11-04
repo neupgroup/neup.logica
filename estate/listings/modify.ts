@@ -16,6 +16,7 @@ path. Supply `accountId` in the body unless the API request adds it as a header.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import type { EstateListingRecord } from '@neup/logica/estate/types';
 
 // External packages required by this logic module.
 const requiredPackages = [] as const;
@@ -26,7 +27,7 @@ const LISTINGS_PATH = 'bridge/api.v1/listings';
 export type ModifyEstateListingInput = {
   listingId: string;
   accountId?: string | null;
-  listing: Record<string, unknown>;
+  listing: EstateListingRecord;
 };
 
 export type ModifyEstateListingResponseBody = {

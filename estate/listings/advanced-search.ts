@@ -16,6 +16,7 @@ when it is longer.
 
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
+import type { EstateListingRecord } from '@neup/logica/estate/types';
 
 const ListingsSearchPath = 'bridge/api.v1/listings/search';
 const MAX_GET_URL_BYTES = 2_000;
@@ -35,7 +36,7 @@ export type EstateListingsSearchInput = {
 
 export type EstateListingsSearchResponseBody = {
   success: boolean;
-  listings?: unknown[];
+  listings?: EstateListingRecord[];
   totalCount?: number;
   offset?: number;
   limit?: number;

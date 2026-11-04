@@ -15,6 +15,7 @@ Submits a listing creation payload as an awaiting-review draft.
 
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
+import type { EstateListingRecord } from '@neup/logica/estate/types';
 
 // External packages required by this logic module.
 const requiredPackages = [] as const;
@@ -24,7 +25,7 @@ const ListingsPath = 'bridge/api.v1/listings';
 
 export type CreateEstateListingInput = {
   accountId: string;
-  listing: Record<string, unknown>;
+  listing: EstateListingRecord;
   postingAgencyId?: string | null;
   workingProfileId?: string | null;
 };
