@@ -15,7 +15,7 @@ Use `logica.estate.agency(agencyId).*` for agency-scoped collections.
 
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 import { getBaseUrl } from '@neup/logica/baseurl';
-import { listEstateProperties, type EstatePropertyListResponseBody } from '@neup/logica/estate/property/list';
+import { listEstateListings, type EstateListingListResponseBody } from '@neup/logica/estate/listings/list';
 import type { EstateObjectRecord } from '@neup/logica/estate/types';
 
 // External packages required by this logic module.
@@ -76,8 +76,8 @@ function createVisitScope(query: Record<string, string>) {
   } as const;
 }
 
-function createAgencyPropertyScope(agencyId: string) {
-  const scopedProperty = function scopedProperty(propertyId: string) {
+function createAgencyListingScope(agencyId: string) {
+  const scopedListing = function scopedListing(propertyId: string) {
     return {
       offer: {
         get(): Promise<ApiResponse> {
@@ -87,11 +87,11 @@ function createAgencyPropertyScope(agencyId: string) {
     } as const;
   };
 
-  scopedProperty.list = function listProperties(): Promise<ApiResponse<EstatePropertyListResponseBody>> {
-    return listEstateProperties({ agencyId });
+  scopedListing.list = function listProperties(): Promise<ApiResponse<EstateListingListResponseBody>> {
+    return listEstateListings({ agencyId });
   };
 
-  return scopedProperty;
+  return scopedListing;
 }
 
 function createAgencyUserScope(agencyId: string) {
@@ -109,7 +109,7 @@ function createAgencyUserScope(agencyId: string) {
 export function agency(agencyId: string) {
   const query = { agencyId };
   return {
-    property: createAgencyPropertyScope(agencyId),
+    listings: createAgencyListingScope(agencyId),
     user: createAgencyUserScope(agencyId),
     save: createListScope('save', query),
     comment: createListScope('comment', query),
@@ -138,17 +138,17 @@ export function agency(agencyId: string) {
 
 agency.listProperties = function listProperties(
   agencyId: string,
-): Promise<ApiResponse<EstatePropertyListResponseBody>> {
-  return agency(agencyId).property.list();
+): Promise<ApiResponse<EstateListingListResponseBody>> {
+  return agency(agencyId).listings.list();
 };
 
 agency.listAgents = function listAgents(agencyId: string): Promise<ApiResponse> {
   return agency(agencyId).agent.list();
 };
 
-export { listEstateProperties };
+export { listEstateListings };
 
-export type { EstatePropertyListResponseBody };
+export type { EstateListingListResponseBody };
 
 export type EstateAgencyScope = ReturnType<typeof agency>;
 

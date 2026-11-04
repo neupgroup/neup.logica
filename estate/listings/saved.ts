@@ -1,14 +1,14 @@
 /*
-::neup.documentation::logica-estate-property-saved
-::title Logica Estate Saved Properties
+::neup.documentation::logica-estate-listings-saved
+::title Logica Estate Saved Listings
 
-Saved-property collection methods for the estate property namespace.
+Saved-listing collection methods for the estate listings namespace.
 
 ::public
 
-Use `logica.estate.property.saved.list({ account: 'me' })` to list saved
-property records. Use `logica.estate.property(id).get()` with each returned
-`propertyId` to fetch the property details.
+Use `logica.estate.listings.saved.list({ account: 'me' })` to list saved
+listing records. Use `logica.estate.listings(id).get()` with each returned
+`propertyId` to fetch listing details.
 
 ::public end
 ::end
@@ -22,23 +22,23 @@ const requiredPackages = [] as const;
 
 
 
-const PropertiesSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties/saved';
+const ListingsSavedEndpoint = 'bridge/api.v1/listings/saved';
 
-export type EstateSavedPropertiesListOptions = {
+export type EstateSavedListingsListOptions = {
   account?: string;
   limit?: number;
   offset?: number;
 };
 
-export type EstateSavedPropertyRemoval =
+export type EstateSavedListingRemoval =
   | { id: string; propertyId?: never }
   | { propertyId: string; id?: never };
 
-export const savedProperties = {
-  list(options: EstateSavedPropertiesListOptions = {}): Promise<ApiResponse> {
+export const savedListings = {
+  list(options: EstateSavedListingsListOptions = {}): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
-      path: PropertiesSavedEndpoint,
+      path: ListingsSavedEndpoint,
       query: {
         account: options.account ?? 'me',
         limit: options.limit,
@@ -50,20 +50,20 @@ export const savedProperties = {
   save(propertyId: string): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
-      path: PropertiesSavedEndpoint,
+      path: ListingsSavedEndpoint,
       method: 'POST',
       body: { propertyId },
     });
   },
 
-  remove(input: EstateSavedPropertyRemoval): Promise<ApiResponse> {
+  remove(input: EstateSavedListingRemoval): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
-      path: PropertiesSavedEndpoint,
+      path: ListingsSavedEndpoint,
       method: 'DELETE',
       query: input,
     });
   },
 } as const;
 
-export default savedProperties;
+export default savedListings;

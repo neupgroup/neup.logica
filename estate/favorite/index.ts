@@ -21,13 +21,13 @@ const requiredPackages = [] as const;
 
 
 
-const PropertiesSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties/saved';
+const ListingsSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/listings/saved';
 
 export const favorite = {
   save(propertyId: string): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
-      path: PropertiesSavedEndpoint,
+      path: ListingsSavedEndpoint,
       method: 'POST',
       body: { propertyId },
     });
@@ -36,7 +36,7 @@ export const favorite = {
   remove(propertyId: string): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
-      path: PropertiesSavedEndpoint,
+      path: ListingsSavedEndpoint,
       method: 'DELETE',
       query: { propertyId },
     });
@@ -45,7 +45,7 @@ export const favorite = {
   list(account = 'me'): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
-      path: PropertiesSavedEndpoint,
+      path: ListingsSavedEndpoint,
       query: { account },
     });
   },

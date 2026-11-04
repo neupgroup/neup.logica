@@ -27,7 +27,7 @@ const getAgentCollectionListEndpoint = (kind: string) => `https://neupgroup.com/
 /** Builds the API endpoint for agentcollection. */
 const getAgentCollectionEndpoint = (kind: string) => `https://neupgroup.com/estate/bridge/api.v1/${kind}`;
 const AgentAssignPropertyEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/agent/assign-property';
-const AgentPropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/agent/properties';
+const AgentListingsEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/agent/listings';
 
 type ListKind = 'save' | 'comment' | 'inquiry' | 'visit' | 'offer';
 
@@ -85,8 +85,8 @@ function assignAgentProperty(agentId: string, propertyId: string): Promise<ApiRe
   });
 }
 
-function createAgentPropertyScope(agentId: string) {
-  const scopedProperty = function scopedProperty(propertyId: string) {
+function createAgentListingScope(agentId: string) {
+  const scopedListing = function scopedListing(propertyId: string) {
     return {
       assign(): Promise<ApiResponse> {
         return assignAgentProperty(agentId, propertyId);
@@ -100,19 +100,19 @@ function createAgentPropertyScope(agentId: string) {
     } as const;
   };
 
-  scopedProperty.list = function listProperties(): Promise<ApiResponse> {
+  scopedListing.list = function listProperties(): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
-      path: AgentPropertiesEndpoint,
+      path: AgentListingsEndpoint,
       query: { agentId },
     });
   };
 
-  scopedProperty.assign = function assign(propertyId: string): Promise<ApiResponse> {
+  scopedListing.assign = function assign(propertyId: string): Promise<ApiResponse> {
     return assignAgentProperty(agentId, propertyId);
   };
 
-  return scopedProperty;
+  return scopedListing;
 }
 
 function createAgentUserScope(agentId: string) {
@@ -130,7 +130,7 @@ function createAgentUserScope(agentId: string) {
 export function agent(agentId: string) {
   const query = { agentId };
   return {
-    property: createAgentPropertyScope(agentId),
+    listings: createAgentListingScope(agentId),
     user: createAgentUserScope(agentId),
     save: createListScope('save', query),
     comment: createListScope('comment', query),
@@ -141,11 +141,11 @@ export function agent(agentId: string) {
 }
 
 agent.listProperties = function listProperties(agentId: string): Promise<ApiResponse> {
-  return agent(agentId).property.list();
+  return agent(agentId).listings.list();
 };
 
 agent.assignProperty = function assignProperty(agentId: string, propertyId: string): Promise<ApiResponse> {
-  return agent(agentId).property.assign(propertyId);
+  return agent(agentId).listings.assign(propertyId);
 };
 
 export type EstateAgentScope = ReturnType<typeof agent>;

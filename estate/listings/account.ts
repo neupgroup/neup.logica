@@ -2,13 +2,13 @@
 ::neup.documentation::logica-estate-property-account-collections
 ::title Logica Estate Account Property Collections
 
-Read account-scoped property collections with offset pagination.
+Read account-scoped listing collections with offset pagination.
 
 ::public
 
-Use `logica.estate.property.getPropertiesListed(accountId, offset, limit)`,
-`getPropertiesSaved`, `getPropertiesOwned`, `getPropertiesBeingWorked`, or
-`getPropertiesByAccount` for account property collections. The account must
+Use `logica.estate.listings.getListingsListed(accountId, offset, limit)`,
+`getListingsSaved`, `getListingsOwned`, `getListingsBeingWorked`, or
+`getListingsByAccount` for account listing collections. The account must
 match the authenticated account unless the caller has account-view permission.
 
 ::public end
@@ -22,11 +22,12 @@ const requiredPackages = [] as const;
 
 
 
-/** Builds the API endpoint for accountpropertycollection. */
-const getAccountPropertyCollectionEndpoint = (accountId: string, collection: Collection) => `https://neupgroup.com/estate/bridge/api.v1/properties/account/${encodeURIComponent(accountId)}/${collection}`;
-export type EstateAccountPropertyListResponseBody = {
+// Build a relative listings collection path so the configured estate base URL is retained.
+const getAccountListingCollectionPath = (accountId: string, collection: Collection) =>
+  `bridge/api.v1/listings/account/${encodeURIComponent(accountId)}/${collection}`;
+export type EstateAccountListingListResponseBody = {
   success: boolean;
-  properties: unknown[];
+  listings: unknown[];
   pagination?: { offset: number; limit: number };
   error?: string;
 };
@@ -45,31 +46,31 @@ function getProperties(
   collection: Collection,
   offset = 0,
   limit = 20,
-): Promise<ApiResponse<EstateAccountPropertyListResponseBody>> {
+): Promise<ApiResponse<EstateAccountListingListResponseBody>> {
   const page = normalizePage(offset, limit);
   return runApi({
     baseUrl: getBaseUrl('estate'),
-    path: getAccountPropertyCollectionEndpoint(accountId, collection),
+    path: getAccountListingCollectionPath(accountId, collection),
     query: page,
   });
 }
 
-export function getPropertiesByAccount(accountId: string, offset = 0, limit = 20) {
+export function getListingsByAccount(accountId: string, offset = 0, limit = 20) {
   return getProperties(accountId, 'by-account', offset, limit);
 }
 
-export function getPropertiesListed(accountId: string, offset = 0, limit = 20) {
+export function getListingsListed(accountId: string, offset = 0, limit = 20) {
   return getProperties(accountId, 'listed', offset, limit);
 }
 
-export function getPropertiesSaved(accountId: string, offset = 0, limit = 20) {
+export function getListingsSaved(accountId: string, offset = 0, limit = 20) {
   return getProperties(accountId, 'saved', offset, limit);
 }
 
-export function getPropertiesOwned(accountId: string, offset = 0, limit = 20) {
+export function getListingsOwned(accountId: string, offset = 0, limit = 20) {
   return getProperties(accountId, 'owned', offset, limit);
 }
 
-export function getPropertiesBeingWorked(accountId: string, offset = 0, limit = 20) {
+export function getListingsBeingWorked(accountId: string, offset = 0, limit = 20) {
   return getProperties(accountId, 'being-worked', offset, limit);
 }

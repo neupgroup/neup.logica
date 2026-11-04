@@ -21,7 +21,7 @@ const requiredPackages = [] as const;
 
 
 
-const PropertiesSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties/saved';
+const ListingsSavedEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/listings/saved';
 
 export type EstateSaveCreateData = { propertyId: string };
 
@@ -31,7 +31,7 @@ export const save = Object.assign(
       remove(): Promise<ApiResponse> {
         return runApi({
           baseUrl: getBaseUrl('estate'),
-          path: PropertiesSavedEndpoint,
+          path: ListingsSavedEndpoint,
           method: 'DELETE',
           query: { id },
         });
@@ -42,20 +42,20 @@ export const save = Object.assign(
     list(options: { account?: string; limit?: number; offset?: number } = {}): Promise<ApiResponse> {
       return runApi({
         baseUrl: getBaseUrl('estate'),
-        path: PropertiesSavedEndpoint,
+        path: ListingsSavedEndpoint,
         query: { account: options.account ?? 'me', limit: options.limit, offset: options.offset },
       });
     },
 
     create(data: EstateSaveCreateData): Promise<ApiResponse> {
       return runApi({
-    baseUrl: getBaseUrl('estate'), path: PropertiesSavedEndpoint, method: 'POST', body: data });
+    baseUrl: getBaseUrl('estate'), path: ListingsSavedEndpoint, method: 'POST', body: data });
     },
 
     removeProperty(propertyId: string): Promise<ApiResponse> {
       return runApi({
         baseUrl: getBaseUrl('estate'),
-        path: PropertiesSavedEndpoint,
+        path: ListingsSavedEndpoint,
         method: 'DELETE',
         query: { propertyId },
       });

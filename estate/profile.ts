@@ -58,7 +58,7 @@ export type EstateAccountProfileResponseBody = {
   success: true;
   profile: EstateAccountProfile;
   agencies: EstateAccountAgency[];
-  properties: { count: number };
+  listings: { count: number };
 } | {
   success: false;
   error: string;

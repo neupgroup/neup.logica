@@ -2,23 +2,22 @@
 ::neup.documentation::logica-estate-property-list
 ::title Logica Estate Property List Helper
 
-Portable SDK helper for `GET /bridge/api.v1/properties`.
+Portable SDK helper for `GET /bridge/api.v1/listings`.
 
 ::public
 
-Fetches API property payloads for exactly one agency or account. Without
-`status`, the endpoint returns only active properties. Supply a comma-separated
+Fetches listing payloads with optional agency or account filtering. Without
+`status`, the endpoint returns only active listings. Supply a comma-separated
 value (or string array) to request other statuses, for example:
-`property.list({ accountId: 'account-id', status: ['drafts', 'pending'] })`
-sends `GET /bridge/api.v1/properties?agent=account-id&status=drafts,pending`.
-`property.list({ accountId: 'account-id', status: 'rejected' })` requests only
+`listings.list({ accountId: 'account-id', status: ['drafts', 'pending'] })`
+sends `GET /bridge/api.v1/listings?agent=account-id&status=drafts,pending`.
+`listings.list({ accountId: 'account-id', status: 'rejected' })` requests only
 rejected properties.
-The response retains each property's own `status`, for example
-`{"success":true,"properties":[{"id":"property-id","status":"PENDING"}],"totalCount":1,"limit":10,"offset":0}`.
+The response retains each listing's own `status`, for example
+`{"success":true,"listings":[{"id":"listing-id","status":"PENDING"}],"totalCount":1,"limit":15,"offset":0}`.
 
-Pagination defaults to `limit: 10` and `offset: 0` when omitted. The endpoint
-returns at most 15 properties per request, so larger `limit` values are capped
-to 15.
+Pagination defaults to `limit: 15` and `offset: 0` when omitted. The endpoint
+caps `limit` at 100.
 
 Supported statuses are `drafts`, `pending`, `rejected`, `active`, `sold`,
 `rented`, `archived`, `awaiting_creation`, and `awaiting_deletion`; `draft` and
@@ -40,21 +39,21 @@ Accepted `fields` values:
 - Dates: `createdAt`, `updatedAt`
 - Simple measurements: `area`, `areaUnit`, `facing`, `roadAccess`, `buildStart`,
   `buildCompleted`
-- Spacing: `property.spacing`, `spacing`
-- Property details: `property.details`, `details`
+- Spacing: `listings.spacing`, `spacing`
+- Property details: `listings.details`, `details`
 
-Request `property.spacing` to return one `spacing` object with `bedrooms`,
+Request `listings.spacing` to return one `spacing` object with `bedrooms`,
 `bathrooms`, `floors`, `onFloor`, `kitchens`, `diningRooms`, `livingRooms`,
 `carParkingSpots`, and `bikeParkingSpots`.
 
-Request `property.details` when the caller does not know the property type. It
+Request `listings.details` when the caller does not know the property type. It
 returns one `details` object with the available type-specific details:
 `landDetails`, `plots`, `apartmentDetails`, `apartmentUnits`, `details`,
 `roadAccessDetails`, `distancing`, `earnings`, `specifics.rooms`, and
 `specifics.space`. `specifics.space` only includes the general area values
 `area` and `areaUnit`.
 
-Dot paths return nested JSON objects. The `property.` prefix is accepted for
+Dot paths return nested JSON objects. The `listings.` prefix is accepted for
 field paths and is removed from the returned property object.
 
 ::public end
@@ -63,20 +62,19 @@ field paths and is removed from the returned property object.
 */
 
 import { getBaseUrl } from '@neup/logica/baseurl';
-import { url } from '@neup/core/helpers/url';
-import type { ApiResponse } from '@neup/core/infrastructure/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 
 // External packages required by this logic module.
 const requiredPackages = [] as const;
 
 
-const PropertiesEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/properties';
+const ListingsPath = 'bridge/api.v1/listings';
 
-const DEFAULT_LIMIT = 10;
+const DEFAULT_LIMIT = 15;
 const DEFAULT_OFFSET = 0;
-const MAX_LIMIT = 15;
+const MAX_LIMIT = 100;
 
-export type EstatePropertyListInput = {
+export type EstateListingListInput = {
   agencyId?: string | null;
   accountId?: string | null;
   status?: string[] | string | null;
@@ -85,26 +83,28 @@ export type EstatePropertyListInput = {
   offset?: number | null;
 };
 
-export type EstatePropertyListResponseBody = {
+export type EstateListingListResponseBody = {
   success: boolean;
   limit: number;
   offset: number;
-  properties: unknown[];
+  listings: unknown[];
+  totalCount?: number;
+  appliedFilters?: Record<string, unknown>;
   error?: string;
 };
 
-function serializeFields(fields: EstatePropertyListInput['fields']): string | undefined {
+function serializeFields(fields: EstateListingListInput['fields']): string | undefined {
   if (!fields) return undefined;
   if (Array.isArray(fields)) return fields.map((field) => field.trim()).filter(Boolean).join(',');
   return fields.trim() || undefined;
 }
 
-function normalizeLimit(limit: EstatePropertyListInput['limit']): number {
+function normalizeLimit(limit: EstateListingListInput['limit']): number {
   if (!Number.isInteger(limit) || !limit || limit <= 0) return DEFAULT_LIMIT;
   return Math.min(limit, MAX_LIMIT);
 }
 
-function normalizeOffset(offset: EstatePropertyListInput['offset']): number {
+function normalizeOffset(offset: EstateListingListInput['offset']): number {
   if (!Number.isInteger(offset) || offset === null || offset === undefined || offset < 0) {
     return DEFAULT_OFFSET;
   }
@@ -112,13 +112,12 @@ function normalizeOffset(offset: EstatePropertyListInput['offset']): number {
 }
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error || 'Failed to fetch property list.');
+  return error instanceof Error ? error.message : String(error || 'Failed to fetch listings.');
 }
 
-export async function listEstateProperties(
-  input: EstatePropertyListInput,
-): Promise<ApiResponse<EstatePropertyListResponseBody>> {
-  const requestUrl = url.web.path(PropertiesEndpoint);
+export async function listEstateListings(
+  input: EstateListingListInput,
+): Promise<ApiResponse<EstateListingListResponseBody>> {
   const limit = normalizeLimit(input.limit);
   const offset = normalizeOffset(input.offset);
   const query = {
@@ -130,40 +129,34 @@ export async function listEstateProperties(
     offset,
   };
 
-  for (const [key, value] of Object.entries(query)) {
-    if (value !== null && value !== undefined && value !== '') {
-      requestUrl.addParam(key, String(value));
-    }
-  }
-
   try {
-    const response = await fetch(requestUrl.get(), {
-      method: 'GET',
-      cache: 'no-store',
+    const result = await runApi<EstateListingListResponseBody>({
+      baseUrl: getBaseUrl('estate'),
+      path: ListingsPath,
+      query,
     });
-
-    const body = (await response.json().catch(() => null)) as EstatePropertyListResponseBody | null;
+    const body = result.body;
 
     if (!body) {
       return {
         ok: false,
-        status: response.status,
+        status: result.status,
         body: {
           success: false,
           limit,
           offset,
-          properties: [],
-          error: 'Invalid property list response.',
+          listings: [],
+          error: 'Invalid listing list response.',
         },
-        headers: response.headers,
+        headers: result.headers,
       };
     }
 
     return {
-      ok: response.ok,
-      status: response.status,
+      ok: result.ok,
+      status: result.status,
       body,
-      headers: response.headers,
+      headers: result.headers,
     };
   } catch (error) {
     return {
@@ -173,7 +166,7 @@ export async function listEstateProperties(
         success: false,
         limit,
         offset,
-        properties: [],
+        listings: [],
         error: getErrorMessage(error),
       },
       headers: new Headers(),

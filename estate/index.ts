@@ -7,7 +7,7 @@ Estate object composed from nested estate domain folders.
 ::public
 
 `logica.estate` is assembled from objects exported by child folders such as
-`property`, `profile`, `agent`, `agency`, and `inquiry`.
+`listings`, `profile`, `agent`, `agency`, and `inquiry`.
 
 ::public end
 
@@ -22,7 +22,7 @@ import { lead } from '@neup/logica/estate/lead';
 import { locations } from '@neup/logica/estate/locations';
 import { requirement } from '@neup/logica/estate/requirement';
 import { offer } from '@neup/logica/estate/offer';
-import { property } from '@neup/logica/estate/property';
+import { listings } from '@neup/logica/estate/listings';
 import { profile } from '@neup/logica/estate/profile';
 import { save } from '@neup/logica/estate/save';
 import { comment } from '@neup/logica/estate/comment';
@@ -35,7 +35,7 @@ const requiredPackages = [] as const;
 
 
 export const estate = {
-  property,
+  listings,
   profile,
   agent,
   agency,
@@ -61,7 +61,7 @@ export {
   lead,
   locations,
   offer,
-  property,
+  listings,
   profile,
   requirement,
   save,
@@ -71,22 +71,22 @@ export {
 };
 
 export {
-  getPropertiesByAccount,
-  getPropertiesListed,
-  getPropertiesSaved,
-  getPropertiesOwned,
-  getPropertiesBeingWorked,
-} from '@neup/logica/estate/property';
+  getListingsByAccount,
+  getListingsListed,
+  getListingsSaved,
+  getListingsOwned,
+  getListingsBeingWorked,
+} from '@neup/logica/estate/listings';
 export {
   getProfileById,
   listProfiles,
 } from '@neup/logica/estate/profile';
 export type { EstateSaveCreateData } from '@neup/logica/estate/save';
 export type {
-  EstateSavedPropertiesListOptions,
-  EstateSavedPropertyRemoval,
-  EstateAccountPropertyListResponseBody,
-} from '@neup/logica/estate/property';
+  EstateSavedListingsListOptions,
+  EstateSavedListingRemoval,
+  EstateAccountListingListResponseBody,
+} from '@neup/logica/estate/listings';
 export type {
   EstateAccountAgency,
   EstateAccountProfile,
@@ -101,7 +101,7 @@ export type {
   EstateInquiryCreateData,
   EstateObjectRecord,
   EstateOfferData,
-  EstatePropertyCreateData,
+  EstateListingCreateData,
   EstateRequirementData,
   EstateViewingData,
 } from '@neup/logica/estate/types';

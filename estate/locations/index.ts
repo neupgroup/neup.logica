@@ -24,6 +24,7 @@ const LocationsEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/locations'
 export type EstateLocation = {
   id: string;
   title: string;
+  slug: string | null;
   type: string;
   childOf: string | null;
   postalCode: string | null;

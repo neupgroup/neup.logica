@@ -7,7 +7,7 @@ Offer helpers for the estate SDK.
 ::public
 
 Most offer operations are exposed through scoped chains such as
-`property(id).offer(data).create()` and `agent(id).offer.list()`.
+`listings(id).offer(data).create()` and `agent(id).offer.list()`.
 
 ::public end
 

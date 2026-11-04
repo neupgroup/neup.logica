@@ -1,17 +1,17 @@
 /*
-::neup.documentation::logica-estate-property-view
-::title Logica Estate Property View Helper
+::neup.documentation::logica-estate-listing-view
+::title Logica Estate Listing View Helper
 
-Portable SDK helper for `GET /bridge/api.v1/properties/[id]`.
+Portable SDK helper for `GET /bridge/api.v1/listings/[id]`.
 
 ::public
 
-Fetches one approved property's public API payload by `propertyId`.
+Fetches one approved listing's public API payload by its listing ID.
 
 Pass `include` as a comma-separated string or string array to select property
 fields and representatives. For example:
-`property.get('representatives.*')` sends
-`GET /bridge/api.v1/properties/[id]?include=representatives.*` and returns all
+`listings.get('representatives.*')` sends
+`GET /bridge/api.v1/listings/[id]?include=representatives.*` and returns all
 representatives in one array: the listing owner, agents, agency, and property
 owners. Select one group with `representatives.listingOwner`,
 `representatives.agents`, `representatives.agent`, `representatives.agency`, or
@@ -20,7 +20,7 @@ and includes the listing owner when that account is an agent. The singular
 `agent` selection returns only the listing owner when that account is an agent.
 Entries include `id`, `type`, and available `name` and `image` values; agent
 entries also have a `role`. For example:
-`{"success":true,"property":{"id":"property-id","representatives":[{"id":"account-id","type":"agent","role":"listingOwner","name":"Agent Name","image":"https://example.com/agent.jpg"},{"id":"supporting-account-id","type":"agent","role":"supportingAgent","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"},{"id":"agency-id","type":"agency","name":"Agency Name","image":"https://example.com/logo.jpg"},{"id":"owner-id","type":"owner","name":"Property Owner","isPrimaryOwner":true}]}}`.
+`{"success":true,"listing":{"id":"listing-id","representatives":[{"id":"account-id","type":"agent","role":"listingOwner","name":"Agent Name","image":"https://example.com/agent.jpg"},{"id":"supporting-account-id","type":"agent","role":"supportingAgent","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"},{"id":"agency-id","type":"agency","name":"Agency Name","image":"https://example.com/logo.jpg"},{"id":"owner-id","type":"owner","name":"Property Owner","isPrimaryOwner":true}]}}`.
 
 The legacy `fields` input remains accepted as an alias for `include`.
 
@@ -42,13 +42,13 @@ Accepted scalar `include` values:
   `roadAccess.roadWidthUnit`, `roadAccess.roadType`
 - Distance: `distance`
 - Amenities: `amenities`
-- Property details: `property.details`, `details`
+- Property details: `listings.details`, `details`
 
-Request `property.details` when the caller does not know the property type. It
+Request `listings.details` when the caller does not know the property type. It
 returns one `details` object with the available type-specific groups: `house`,
 `apartment`, `land`, `flat`, and `space`.
 
-Dot paths return nested JSON objects. The `property.` prefix is accepted for
+Dot paths return nested JSON objects. The `listings.` prefix is accepted for
 field paths and is removed from the returned property object.
 
 ::public end
@@ -57,30 +57,28 @@ field paths and is removed from the returned property object.
 */
 
 import { getBaseUrl } from '@neup/logica/baseurl';
-import { url } from '@neup/core/helpers/url';
-import type { ApiResponse } from '@neup/core/infrastructure/api';
+import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
 
 // External packages required by this logic module.
 const requiredPackages = [] as const;
 
 
-/** Builds the API endpoint for property. */
-const getPropertyEndpoint = (propertyId: string) => `https://neupgroup.com/estate/bridge/api.v1/properties/${encodeURIComponent(propertyId)}`;
+const LISTINGS_PATH = 'bridge/api.v1/listings';
 
-export type ViewEstatePropertyInput = {
+export type ViewEstateListingInput = {
   propertyId: string;
   include?: string[] | string | null;
   /** @deprecated Use include. */
   fields?: string[] | string | null;
 };
 
-export type ViewEstatePropertyResponseBody = {
+export type ViewEstateListingResponseBody = {
   success: boolean;
-  property?: EstatePropertyView;
+  listing?: EstateListingView;
   error?: string;
 };
 
-export type EstatePropertyRepresentative = {
+export type EstateListingRepresentative = {
   id: string;
   type: 'listingOwner' | 'agent' | 'agency' | 'owner';
   role?: 'listingOwner' | 'supportingAgent';
@@ -89,36 +87,33 @@ export type EstatePropertyRepresentative = {
   isPrimaryOwner?: boolean;
 };
 
-export type EstatePropertyView = Record<string, unknown> & {
+export type EstateListingView = Record<string, unknown> & {
   id?: string;
-  representatives: EstatePropertyRepresentative[];
+  representatives: EstateListingRepresentative[];
 };
 
-function serializeFields(fields: ViewEstatePropertyInput['fields']): string | undefined {
+function serializeFields(fields: ViewEstateListingInput['fields']): string | undefined {
   if (!fields) return undefined;
   if (Array.isArray(fields)) return fields.map((field) => field.trim()).filter(Boolean).join(',');
   return fields.trim() || undefined;
 }
 
 function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error || 'Failed to fetch property.');
+  return error instanceof Error ? error.message : String(error || 'Failed to fetch listings.');
 }
 
-export async function viewEstateProperty(
-  input: ViewEstatePropertyInput,
-): Promise<ApiResponse<ViewEstatePropertyResponseBody>> {
-  const requestUrl = url.web.path(getPropertyEndpoint(input.propertyId))
-    .addParam('propertyId', input.propertyId);
+export async function viewEstateListing(
+  input: ViewEstateListingInput,
+): Promise<ApiResponse<ViewEstateListingResponseBody>> {
   const include = serializeFields(input.include ?? input.fields);
-  if (include) requestUrl.addParam('include', include);
 
   try {
-    const response = await fetch(requestUrl.get(), {
-      method: 'GET',
-      cache: 'no-store',
+    const response = await runApi<ViewEstateListingResponseBody>({
+      baseUrl: getBaseUrl('estate'),
+      path: `${LISTINGS_PATH}/${encodeURIComponent(input.propertyId)}`,
+      query: { include },
     });
-
-    const body = (await response.json().catch(() => null)) as ViewEstatePropertyResponseBody | null;
+    const body = response.body;
 
     if (!body) {
       return {
