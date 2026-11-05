@@ -22,6 +22,10 @@ Entries include `id`, `type`, and available `name` and `image` values; agent
 entries also have a `role`. For example:
 `{"success":true,"listing":{"id":"listing-id","representatives":[{"id":"account-id","type":"agent","role":"listingOwner","name":"Agent Name","image":"https://example.com/agent.jpg"},{"id":"supporting-account-id","type":"agent","role":"supportingAgent","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"},{"id":"agency-id","type":"agency","name":"Agency Name","image":"https://example.com/logo.jpg"},{"id":"owner-id","type":"owner","name":"Property Owner","isPrimaryOwner":true}]}}`.
 
+Listing responses return the primary price in one object with `currency`,
+`basis`, and `amount`, for example
+`{"success":true,"listing":{"id":"listing-id","price":{"currency":"NPR","basis":"perMonth","amount":45000},"representatives":[]}}`.
+
 The legacy `fields` input remains accepted as an alias for `include`.
 
 Accepted scalar `include` values:
@@ -36,8 +40,7 @@ Accepted scalar `include` values:
   `representatives.agency`, `representatives.owners`
 - Location: `location`, `location.id`, `location.text`, `location.geo`,
   `location.structured`
-- Pricing: `pricing`, `pricing.type`, `pricing.askingAmount`,
-  `pricing.currency`, `pricing.basis`, `pricing.unit`
+- Pricing: `price`, `price.currency`, `price.basis`, `price.amount`, `pricing`
 - Road access: `roadAccess`, `roadAccess.roadWidth`,
   `roadAccess.roadWidthUnit`, `roadAccess.roadType`
 - Distance: `distance`
@@ -58,6 +61,7 @@ field paths and is removed from the returned property object.
 
 import { getBaseUrl } from '@neup/logica/baseurl';
 import { runApi, type ApiResponse } from '@neup/core/infrastructure/api';
+import type { EstateListingPrice } from '@neup/logica/estate/types';
 
 // External packages required by this logic module.
 const requiredPackages = [] as const;
@@ -89,6 +93,7 @@ export type EstateListingRepresentative = {
 
 export type EstateListingView = Record<string, unknown> & {
   id?: string;
+  price?: EstateListingPrice;
   purpose?: string;
   category?: string;
   types?: string[];

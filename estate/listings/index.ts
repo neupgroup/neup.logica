@@ -39,7 +39,7 @@ import {
   type EstateSavedListingsListOptions,
   type EstateSavedListingRemoval,
 } from '@neup/logica/estate/listings/saved';
-import type { EstateListingCreateData, EstateListingRecord } from '@neup/logica/estate/types';
+import type { EstateListingCreateData, EstateListingPrice, EstateListingPricingMetadata, EstateListingRecord } from '@neup/logica/estate/types';
 
 const LISTINGS_PATH = 'bridge/api.v1/listings';
 type Fields = string[] | string | null;
@@ -135,6 +135,8 @@ export {
 export type {
   CreateEstateListingResponseBody,
   EstateListingCreateData,
+  EstateListingPrice,
+  EstateListingPricingMetadata,
   EstateListingRecord,
   ModifyEstateListingResponseBody,
   EstateListingsSearchInput,

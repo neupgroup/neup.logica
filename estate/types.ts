@@ -19,7 +19,36 @@ These types are reused by nested estate object modules.
 
 export type EstateObjectRecord = Record<string, unknown>;
 
+export type EstateListingPrice = {
+  currency: string;
+  basis: 'total' | 'perUnit' | 'perMonth' | 'perYear' | 'perUnitPerMonth' | 'perUnitPerYear' | null;
+  amount: number | null;
+};
+
+export type EstateListingPricingMetadata = {
+  priceDisplayMode?: 'show-price' | 'price-on-call' | 'offer-yours-first';
+  minimum?: number;
+  maximum?: number;
+  negotiable?: boolean;
+  options?: string[];
+  currency?: never;
+  listed?: never;
+  basis?: never;
+  basisPrices?: never;
+  basisNegotiable?: never;
+  basisNegotiablePrices?: never;
+  basisFrequencies?: never;
+  basisUnits?: never;
+};
+
 export type EstateListingRecord = EstateObjectRecord & {
+  price?: EstateListingPrice;
+  pricing?: EstateListingPricingMetadata;
+  /** Legacy multi-price fields are excluded from the Logica listing contract. */
+  prices?: never;
+  priceBasis?: never;
+  priceCurrency?: never;
+  priceAmount?: never;
   purpose?: string;
   category?: string;
   types?: string[];

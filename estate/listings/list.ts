@@ -13,8 +13,9 @@ value (or string array) to request other statuses, for example:
 sends `GET /bridge/api.v1/listings?agent=account-id&status=drafts,pending`.
 `listings.list({ accountId: 'account-id', status: 'rejected' })` requests only
 rejected properties.
-The response retains each listing's own `status`, for example
-`{"success":true,"listings":[{"id":"listing-id","status":"PENDING"}],"totalCount":1,"limit":15,"offset":0}`.
+The response retains each listing's own `status` and represents its primary
+price as one object, for example
+`{"success":true,"listings":[{"id":"listing-id","status":"PENDING","price":{"currency":"NPR","basis":"perMonth","amount":45000}}],"totalCount":1,"limit":15,"offset":0}`.
 
 Pagination defaults to `limit: 15` and `offset: 0` when omitted. The endpoint
 caps `limit` at 100.
@@ -30,7 +31,7 @@ Accepted `fields` values:
 
 - Identity: `id`, `slug`
 - Copy: `title`, `description`
-- Pricing: `price`, `pricing`
+- Pricing: `price` (`currency`, `basis`, `amount`), `pricing` (display and negotiation metadata)
 - Location: `location`, `structuredLocation`
 - Classification: `purpose`, `category`, `types`
 - Media and content: `images`, `amenities`, `documents`
