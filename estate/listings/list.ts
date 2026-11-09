@@ -9,12 +9,12 @@ Portable SDK helper for `GET /bridge/api.v1/listings`.
 Fetches listing payloads with optional agency or account filtering. Without
 `status`, the endpoint returns only active listings. Supply a comma-separated
 value (or string array) to request other statuses, for example:
-`listings.list({ accountId: 'account-id', status: ['drafts', 'pending'] })`
+`listings.list({ accountId: 'account-id', filter: { status: ['drafts', 'pending'] } })`
 sends `GET /bridge/api.v1/listings?agent=account-id&status=drafts,pending`.
-`listings.list({ accountId: 'account-id', status: 'rejected' })` requests only
+`listings.list({ accountId: 'account-id', filter: { status: 'rejected' } })` requests only
 rejected properties.
 Pass `filter` as an object to apply property filters. Supported keys are
-`id`, `ids`, `searchTerm`, `minPrice`, `maxPrice`, `location`, `purpose`,
+`status`, `id`, `ids`, `searchTerm`, `minPrice`, `maxPrice`, `location`, `purpose`,
 `category`, `type`, `minArea`, `maxArea`, `agencyName`, `listingAgent`,
 `isOwnerListing`, `postedAfter`, `postedBefore`, `minFloors`, `maxFloors`,
 `minRoadAccess`, `maxRoadAccess`, `bedrooms`, `bathrooms`, `kitchens`,
@@ -96,13 +96,13 @@ export type EstateListingListInput = {
   agencyId?: string | null;
   accountId?: string | null;
   filter?: EstateListingListFilter | null;
-  status?: string[] | string | null;
   fields?: string[] | string | null;
   limit?: number | null;
   offset?: number | null;
 };
 
 export type EstateListingListFilter = {
+  status?: string[] | string;
   id?: string;
   ids?: string[];
   searchTerm?: string;
@@ -199,7 +199,6 @@ export async function listEstateListings(
   const query = {
     agency: input.agencyId,
     agent: input.accountId,
-    status: serializeFields(input.status),
     fields: serializeFields(input.fields),
     limit,
     offset,
