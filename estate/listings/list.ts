@@ -15,7 +15,7 @@ sends `GET /bridge/api.v1/listings?agent=account-id&status=drafts,pending`.
 rejected properties.
 Pass `filter` as an object to apply property filters. Supported keys are
 `status`, `id`, `ids`, `searchTerm`, `minPrice`, `maxPrice`, `location`, `purpose`,
-`category`, `type`, `minArea`, `maxArea`, `agencyName`, `listingAgent`,
+`category`, `type` (also named `nature` in the filter object), `minArea`, `maxArea`, `agencyName`, `listingAgent`,
 `isOwnerListing`, `postedAfter`, `postedBefore`, `minFloors`, `maxFloors`,
 `minRoadAccess`, `maxRoadAccess`, `bedrooms`, `bathrooms`, `kitchens`,
 `diningRooms`, `livingRooms`, `carParkingSpots`, `bikeParkingSpots`,
@@ -103,6 +103,7 @@ export type EstateListingListInput = {
 
 export type EstateListingListFilter = {
   status?: string[] | string;
+  nature?: string[] | string;
   id?: string;
   ids?: string[];
   searchTerm?: string;
@@ -170,7 +171,8 @@ function serializeFilter(filter: EstateListingListFilter | null | undefined): Re
   if (!filter) return query;
   for (const [key, value] of Object.entries(filter)) {
     if (value === undefined || value === null) continue;
-    query[key] = Array.isArray(value) ? value.map(String).join(',') : value;
+    const queryKey = key === 'nature' ? 'type' : key;
+    query[queryKey] = Array.isArray(value) ? value.map(String).join(',') : value;
   }
   return query;
 }
