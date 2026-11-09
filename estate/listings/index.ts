@@ -19,7 +19,7 @@ import { getBaseUrl } from '@neup/logica/baseurl';
 import { createEstateListing, type CreateEstateListingResponseBody } from '@neup/logica/estate/listings/create';
 import { modifyEstateListing, type ModifyEstateListingResponseBody } from '@neup/logica/estate/listings/modify';
 import { searchEstateListings, type EstateListingsSearchInput, type EstateListingsSearchResponseBody } from '@neup/logica/estate/listings/advanced-search';
-import { listEstateListings, type EstateListingListInput, type EstateListingListResponseBody } from '@neup/logica/estate/listings/list';
+import { listEstateListings, type EstateListingListFilter, type EstateListingListInput, type EstateListingListResponseBody } from '@neup/logica/estate/listings/list';
 import {
   getListingsBeingWorked,
   getListingsByAccount,
@@ -142,6 +142,7 @@ export type {
   EstateListingsSearchInput,
   EstateListingsSearchResponseBody,
   EstateListingListInput,
+  EstateListingListFilter,
   EstateListingListResponseBody,
   EstateAccountListingListResponseBody,
   EstateListingRepresentative,

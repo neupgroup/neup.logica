@@ -13,6 +13,22 @@ value (or string array) to request other statuses, for example:
 sends `GET /bridge/api.v1/listings?agent=account-id&status=drafts,pending`.
 `listings.list({ accountId: 'account-id', status: 'rejected' })` requests only
 rejected properties.
+Pass `filter` as an object to apply property filters. Supported keys are
+`id`, `ids`, `searchTerm`, `minPrice`, `maxPrice`, `location`, `purpose`,
+`category`, `type`, `minArea`, `maxArea`, `agencyName`, `listingAgent`,
+`isOwnerListing`, `postedAfter`, `postedBefore`, `minFloors`, `maxFloors`,
+`minRoadAccess`, `maxRoadAccess`, `bedrooms`, `bathrooms`, `kitchens`,
+`diningRooms`, `livingRooms`, `carParkingSpots`, `bikeParkingSpots`,
+`listingBy`, `tags`, and the corresponding `min`/`max` bedroom, bathroom,
+kitchen, dining room, living room, car parking, and bike parking keys.
+`purpose` accepts `Sale`, `Rent`, `Lease`, or `Exchange`; `category` accepts
+`House`, `Bungalow`, `Villa`, `Multiplex`, `Land`, `Apartment`, `Penthouse`,
+`Commercial Space`, `Shop Space`, or `Flat`; `type` accepts `Residential`,
+`Semi-Commercial`, `Commercial`, `Industrial`, or `Agricultural`. The three
+list filters (`purpose`, `category`, `type`) and `listingBy`/`tags` accept an
+array or a comma-separated string. `postedAfter` and `postedBefore` use ISO
+8601 datetimes. Example:
+`listings.list({ filter: { type: ['Residential'], purpose: ['Sale'] } })`.
 The response retains each listing's own `status` and represents its primary
 price as one object, for example
 `{"success":true,"listings":[{"id":"listing-id","status":"PENDING","price":{"currency":"NPR","basis":"perMonth","amount":45000}}],"totalCount":1,"limit":15,"offset":0}`.
@@ -79,10 +95,57 @@ const MAX_LIMIT = 100;
 export type EstateListingListInput = {
   agencyId?: string | null;
   accountId?: string | null;
+  filter?: EstateListingListFilter | null;
   status?: string[] | string | null;
   fields?: string[] | string | null;
   limit?: number | null;
   offset?: number | null;
+};
+
+export type EstateListingListFilter = {
+  id?: string;
+  ids?: string[];
+  searchTerm?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  location?: string;
+  purpose?: string[] | string;
+  category?: string[] | string;
+  type?: string[] | string;
+  minArea?: number;
+  maxArea?: number;
+  agencyName?: string;
+  listingAgent?: string;
+  isOwnerListing?: boolean;
+  postedAfter?: string;
+  postedBefore?: string;
+  minFloors?: number;
+  maxFloors?: number;
+  minRoadAccess?: number;
+  maxRoadAccess?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  kitchens?: number;
+  diningRooms?: number;
+  livingRooms?: number;
+  carParkingSpots?: number;
+  bikeParkingSpots?: number;
+  listingBy?: string[] | string;
+  tags?: string[] | string;
+  minBedrooms?: number;
+  maxBedrooms?: number;
+  minBathrooms?: number;
+  maxBathrooms?: number;
+  minKitchens?: number;
+  maxKitchens?: number;
+  minDiningRooms?: number;
+  maxDiningRooms?: number;
+  minLivingRooms?: number;
+  maxLivingRooms?: number;
+  minCarParkingSpots?: number;
+  maxCarParkingSpots?: number;
+  minBikeParkingSpots?: number;
+  maxBikeParkingSpots?: number;
 };
 
 export type EstateListingListResponseBody = {
@@ -99,6 +162,17 @@ function serializeFields(fields: EstateListingListInput['fields']): string | und
   if (!fields) return undefined;
   if (Array.isArray(fields)) return fields.map((field) => field.trim()).filter(Boolean).join(',');
   return fields.trim() || undefined;
+}
+
+// Serialize list filters as collection endpoint query parameters.
+function serializeFilter(filter: EstateListingListFilter | null | undefined): Record<string, string | number | boolean> {
+  const query: Record<string, string | number | boolean> = {};
+  if (!filter) return query;
+  for (const [key, value] of Object.entries(filter)) {
+    if (value === undefined || value === null) continue;
+    query[key] = Array.isArray(value) ? value.map(String).join(',') : value;
+  }
+  return query;
 }
 
 function normalizeLimit(limit: EstateListingListInput['limit']): number {
@@ -129,6 +203,7 @@ export async function listEstateListings(
     fields: serializeFields(input.fields),
     limit,
     offset,
+    ...serializeFilter(input.filter),
   };
 
   try {
@@ -175,3 +250,4 @@ export async function listEstateListings(
     };
   }
 }
+
