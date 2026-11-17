@@ -67,18 +67,6 @@ export async function createNiaResponse(input: CreateNiaResponseInput): Promise<
   } catch {
     payload = responseText;
   }
-  console.dir({
-    status: response.status,
-    statusText: response.statusText,
-    headers: Object.fromEntries(response.headers.entries()),
-    body: payload,
-  }, {
-    depth: null,
-    maxArrayLength: null,
-    maxStringLength: null,
-    compact: false,
-  });
-
   if (!response.ok) {
     const responseDetails = typeof payload === 'string' ? payload : JSON.stringify(payload);
     throw new Error(`Nia request failed (HTTP ${response.status}): ${responseDetails}`);
