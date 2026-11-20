@@ -36,7 +36,7 @@ connection and may return only `connectionId`, `appId`, `displayName`,
 
 ::private
 
-The auth-cookie mode forwards `authAccountToken` as an `auth_account` cookie
+The auth-cookie mode forwards `authAccountToken` as an `auth` cookie
 header because the bridge rejects account authentication supplied through custom
 headers or query parameters.
 
@@ -317,12 +317,12 @@ export async function getAccountBasics(
     'content-type': 'application/json',
   };
 
-  // The bridge accepts auth_account only as a cookie, not as a custom auth header.
+  // The bridge accepts auth only as a cookie, not as a custom auth header.
   // Localhost-to-neupgroup.com testing can fail here because the account cookie is domain-bound.
   if ('authAccountToken' in input && typeof input.authAccountToken === 'string') {
     const authAccountToken = input.authAccountToken.trim();
     if (authAccountToken) {
-      headers.cookie = `auth_account=${authAccountToken}`;
+      headers.cookie = `auth=${authAccountToken}`;
     }
   }
 

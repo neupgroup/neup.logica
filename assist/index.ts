@@ -9,7 +9,7 @@ Client facade for assistant conversations and messages.
 Use `logica.assist.chats.get()` to list conversations,
 `logica.assist.chats.create()` to create one, and
 `logica.assist.chats.messages(chatId).get()` / `.send(content)` for messages.
-The current `auth_account` cookie is sent automatically in browsers; server
+The current `auth` cookie is sent automatically in browsers; server
 callers can provide `authAccountToken`.
 
 ::public end

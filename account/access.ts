@@ -70,7 +70,7 @@ export async function getConnectionTeamMembers(input: AccessAuth & {
       connection: input.connection,
       profile: input.profile,
     },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }
@@ -102,7 +102,7 @@ export async function getConnectionTeamMemberAccess(input: AccessAuth & {
       connection: input.connection,
       profile: input.profile,
     },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }
@@ -134,7 +134,7 @@ export async function getApplicationTeamMembers(input: AccessAuth & {
       app: input.app,
       profile: input.profile,
     },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }
@@ -166,7 +166,7 @@ export async function getApplicationTeamMemberAccess(input: AccessAuth & {
       app: input.app,
       profile: input.profile,
     },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     headers: buildAccessHeaders(input),
   });
 }

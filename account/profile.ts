@@ -95,7 +95,7 @@ export async function getPublicAccountProfile(input: {
     path: ProfilePublicEndpoint,
     method: 'GET',
     query: { accountId: input.accountId },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
   });
 }
 
@@ -120,7 +120,7 @@ export async function getCurrentAccount(
     baseUrl: getBaseUrl('neupid'),
     path: ProfileSignedEndpoint,
     method: 'GET',
-    cookies: { auth_account: authAccountToken },
+    cookies: { auth: authAccountToken },
   });
 }
 
@@ -145,7 +145,7 @@ export async function getCurrentAccountPermissions(
     baseUrl: getBaseUrl('neupid'),
     path: PermissionsEndpoint,
     method: 'GET',
-    cookies: { auth_account: authAccountToken },
+    cookies: { auth: authAccountToken },
   });
 }
 

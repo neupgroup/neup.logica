@@ -12,7 +12,7 @@ Use `logica.account.linked.github.get()` to fetch the latest encrypted GitHub li
 
 ::private
 
-This module resolves the current `auth_account` token from browser or server context, then calls the bridge endpoint that validates the session and returns the encrypted linked-account token payload.
+This module resolves the current `auth` token from browser or server context, then calls the bridge endpoint that validates the session and returns the encrypted linked-account token payload.
 
 ::private end
 
@@ -57,7 +57,7 @@ async function getServerAuthAccountToken(): Promise<string | null> {
 
   try {
     const { getCookie } = await import('@neup/core/helpers/cookie');
-    return (await getCookie('auth_account'))?.trim() || null;
+    return (await getCookie('auth'))?.trim() || null;
   } catch {
     return null;
   }
@@ -69,14 +69,14 @@ function getBrowserAuthAccountToken(): string | null {
   const cookie = document.cookie
     .split(';')
     .map((part) => part.trim())
-    .find((part) => part.startsWith('auth_account='));
+    .find((part) => part.startsWith('auth='));
 
   if (!cookie) return null;
 
   try {
-    return decodeURIComponent(cookie.slice('auth_account='.length)).trim() || null;
+    return decodeURIComponent(cookie.slice('auth='.length)).trim() || null;
   } catch {
-    return cookie.slice('auth_account='.length).trim() || null;
+    return cookie.slice('auth='.length).trim() || null;
   }
 }
 
@@ -92,7 +92,7 @@ Returns the latest encrypted linked GitHub token for the current account session
 
 ::public
 
-When `authAccountToken` is omitted, the helper automatically reads the current `auth_account` cookie from the browser or current server request context.
+When `authAccountToken` is omitted, the helper automatically reads the current `auth` cookie from the browser or current server request context.
 
 ::public end
 
@@ -100,7 +100,7 @@ When `authAccountToken` is omitted, the helper automatically reads the current `
 ::datatype string
 ::required false
 
-Explicit auth token override. When omitted, the helper resolves the current `auth_account` cookie automatically.
+Explicit auth token override. When omitted, the helper resolves the current `auth` cookie automatically.
 
 ::end
 */
@@ -115,8 +115,8 @@ export async function getLinkedGithubToken(
       status: 401,
       body: {
         success: false,
-        error: 'missing_auth_account_token',
-        error_description: 'auth_account token is required.',
+        error: 'missing_auth_token',
+        error_description: 'auth token is required.',
       },
       headers: new Headers(),
     };

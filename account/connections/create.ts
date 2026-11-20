@@ -97,7 +97,7 @@ async function createInternalConnection(
     baseUrl: getBaseUrl('neupid'),
     path: AccountsEndpoint,
     method: 'POST',
-    cookies: { auth_account: authAccountToken },
+    cookies: { auth: authAccountToken },
     headers: input.headers,
     body: {
       appId,

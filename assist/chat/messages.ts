@@ -38,7 +38,7 @@ export type AssistSendMessageResponseBody = { id: string; result: string; messag
 /** Builds the auth cookie map when the caller supplied an account token. */
 function getAuthCookies(credentials: AssistCredentials = {}) {
   return credentials.authAccountToken?.trim()
-    ? { auth_account: credentials.authAccountToken.trim() }
+    ? { auth: credentials.authAccountToken.trim() }
     : undefined;
 }
 

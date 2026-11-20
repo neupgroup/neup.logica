@@ -53,11 +53,11 @@ function readAuthAccountId(rawCookie: string): string | null {
   const authCookie = rawCookie
     .split(';')
     .map((part) => part.trim())
-    .find((part) => part.startsWith('auth_account='));
+    .find((part) => part.startsWith('auth='));
 
   if (!authCookie) return null;
 
-  const token = decodeURIComponent(authCookie.slice('auth_account='.length));
+  const token = decodeURIComponent(authCookie.slice('auth='.length));
   const [, body] = token.split('.');
   if (!body) return null;
 

@@ -68,7 +68,7 @@ export function getDriveAccountFile(
       path: input.path,
       expires_in: input.expiresIn ?? undefined,
     },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     bearerToken: input.bearerToken,
   });
 }

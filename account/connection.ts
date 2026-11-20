@@ -124,7 +124,7 @@ export async function connectCurrentAccount(
     baseUrl: getBaseUrl('neupid'),
     path: ConnectionSigngetEndpoint,
     method: 'POST',
-    cookies: { auth_account: token },
+    cookies: { auth: token },
     body: {
       appId: env.appId,
       appSecret: env.appSecret,

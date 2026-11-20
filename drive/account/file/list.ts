@@ -47,7 +47,7 @@ export function listDriveAccountFiles(
       path: input.path,
       limit: input.limit,
     },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     bearerToken: input.bearerToken,
   });
 }

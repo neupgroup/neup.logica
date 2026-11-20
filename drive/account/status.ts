@@ -50,7 +50,7 @@ export function getDriveAccountStatus(
     query: {
       account_id: input.accountId,
     },
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     bearerToken: input.bearerToken,
   });
 }

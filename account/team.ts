@@ -114,7 +114,7 @@ export async function getMembers(
     baseUrl: getBaseUrl('neupid'),
     path: MembersEndpoint,
     method: 'GET',
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }
@@ -130,7 +130,7 @@ export async function getMember(
     baseUrl: getBaseUrl('neupid'),
     path: `${Basepath}/members/${encodeURIComponent(memberId)}`,
     method: 'GET',
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }
@@ -143,7 +143,7 @@ export async function getTeams(
     baseUrl: getBaseUrl('neupid'),
     path: MembersTeamEndpoint,
     method: 'GET',
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }
@@ -159,7 +159,7 @@ export async function getTeam(
     baseUrl: getBaseUrl('neupid'),
     path: `${Basepath}/members/team/${encodeURIComponent(teamId)}`,
     method: 'GET',
-    cookies: { auth_account: input.authAccountToken },
+    cookies: { auth: input.authAccountToken },
     bearerToken: input.authTokenHeader,
   });
 }

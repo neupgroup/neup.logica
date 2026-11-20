@@ -55,14 +55,14 @@ function getBrowserAuthAccountToken(): string | null {
   const cookie = document.cookie
     .split(';')
     .map((part) => part.trim())
-    .find((part) => part.startsWith('auth_account='));
+    .find((part) => part.startsWith('auth='));
 
   if (!cookie) return null;
 
   try {
-    return decodeURIComponent(cookie.slice('auth_account='.length)).trim() || null;
+    return decodeURIComponent(cookie.slice('auth='.length)).trim() || null;
   } catch {
-    return cookie.slice('auth_account='.length).trim() || null;
+    return cookie.slice('auth='.length).trim() || null;
   }
 }
 
@@ -71,7 +71,7 @@ async function getServerAuthAccountToken(): Promise<string | null> {
 
   try {
     const { getCookie } = await import('@neup/core/helpers/cookie');
-    return (await getCookie('auth_account'))?.trim() || null;
+    return (await getCookie('auth'))?.trim() || null;
   } catch {
     return null;
   }
@@ -165,7 +165,7 @@ Checks whether the current account is authenticated.
 
 When `checkType` is omitted or `local`, the function verifies the auth token
 locally. When `checkType` is `remote`, it checks the account bridge and forwards
-the provided token, or reads the `auth_account` cookie when no token is passed.
+the provided token, or reads the `auth` cookie when no token is passed.
 
 ::public end
 
@@ -179,7 +179,7 @@ Selects local token verification or remote bridge validation.
 ::datatype string
 ::required false
 
-Explicit auth token. When omitted, the `auth_account` cookie is used when
+Explicit auth token. When omitted, the `auth` cookie is used when
 available.
 
 ::end
@@ -215,7 +215,7 @@ return an empty array.
 ::datatype string
 ::required false
 
-Explicit auth token. When omitted, the `auth_account` cookie is used when
+Explicit auth token. When omitted, the `auth` cookie is used when
 available.
 
 ::end

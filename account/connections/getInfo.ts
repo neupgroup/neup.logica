@@ -132,7 +132,7 @@ async function getAccounts(
   }
 
   if (input.authAccountToken?.trim()) {
-    headers.set('cookie', `auth_account=${input.authAccountToken.trim()}`);
+    headers.set('cookie', `auth=${input.authAccountToken.trim()}`);
   }
 
   const response = await fetch(requestUrl.get(), {

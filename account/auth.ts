@@ -4,13 +4,13 @@
 
 ::public
 
-Use `checkAuthSession()` to check whether an `auth_account` session is currently authenticated.
+Use `checkAuthSession()` to check whether an `auth` session is currently authenticated.
 
 ::public end
 
 ::private
 
-On `neupgroup.com`, the helper calls the account auth endpoint from the client with browser credentials. On other domains, callers may pass the `auth_account` cookie value, or server-side calls can read it from the current request cookies before forwarding it to the account bridge.
+On `neupgroup.com`, the helper calls the account auth endpoint from the client with browser credentials. On other domains, callers may pass the `auth` cookie value, or server-side calls can read it from the current request cookies before forwarding it to the account bridge.
 
 ::private end
 
@@ -149,7 +149,7 @@ async function runForwardedAuthCheck<TBody = AuthCheckBody>(
       workingProfile: input.workingProfile,
     },
     headers,
-    cookies: { auth_account: authAccountToken },
+    cookies: { auth: authAccountToken },
   });
 }
 
@@ -158,7 +158,7 @@ async function getServerAuthAccountToken(): Promise<string | null> {
 
   try {
     const { getCookie } = await import('@neup/core/helpers/cookie');
-    return (await getCookie('auth_account'))?.trim() || null;
+    return (await getCookie('auth'))?.trim() || null;
   } catch {
     return null;
   }
@@ -178,7 +178,7 @@ Checks whether a Neup account session is authenticated.
 
 ::public
 
-When running in a browser on `neupgroup.com`, this function calls the app-scoped auth endpoint built from `APP_BASEPATH` and `/bridge/api.v1/auth/me` with browser credentials. On other domains, it forwards the explicit `authAccountToken`, or reads `auth_account` from the current server request cookies when called server-side.
+When running in a browser on `neupgroup.com`, this function calls the app-scoped auth endpoint built from `APP_BASEPATH` and `/bridge/api.v1/auth/me` with browser credentials. On other domains, it forwards the explicit `authAccountToken`, or reads `auth` from the current server request cookies when called server-side.
 
 ::public end
 
@@ -186,7 +186,7 @@ When running in a browser on `neupgroup.com`, this function calls the app-scoped
 ::datatype string
 ::required false
 
-The raw `auth_account` cookie value to forward when the caller is not running on `neupgroup.com`. When omitted in a server context, the helper reads the current request cookie automatically.
+The raw `auth` cookie value to forward when the caller is not running on `neupgroup.com`. When omitted in a server context, the helper reads the current request cookie automatically.
 
 ::end
 */
@@ -203,7 +203,7 @@ export async function checkAuthSession<TBody = AuthCheckBody>(
     const authAccountToken = await resolveAuthAccountToken(input);
 
     if (!authAccountToken) {
-      return { authenticated: false, reason: 'missing_auth_account_token' };
+      return { authenticated: false, reason: 'missing_auth_token' };
     }
 
     response = await runForwardedAuthCheck<TBody>(input, authAccountToken);

@@ -97,7 +97,7 @@ export async function getAccounts(
       appSecret: input.bearerToken?.trim() && input.appSecret?.trim() ? input.appSecret.trim() : undefined,
     },
     headers,
-    cookies: input.authAccountToken?.trim() ? { auth_account: input.authAccountToken.trim() } : undefined,
+    cookies: input.authAccountToken?.trim() ? { auth: input.authAccountToken.trim() } : undefined,
   });
 
   return {
