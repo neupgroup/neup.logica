@@ -14,7 +14,7 @@ sends `GET /bridge/api.v1/listings?agent=account-id&status=drafts,pending`.
 `listings.list({ accountId: 'account-id', filter: { status: 'rejected' } })` requests only
 rejected properties.
 Pass `filter` as an object to apply property filters. Supported keys are
-`status`, `id`, `ids`, `searchTerm`, `minPrice`, `maxPrice`, `location`, `purpose`,
+`status`, `searchTerm`, `minPrice`, `maxPrice`, `location`, `purpose`,
 `category`, `type` (also named `nature` in the filter object), `minArea`, `maxArea`, `agencyName`, `listingAgent`,
 `isOwnerListing`, `postedAfter`, `postedBefore`, `minFloors`, `maxFloors`,
 `minRoadAccess`, `maxRoadAccess`, `bedrooms`, `bathrooms`, `kitchens`,
@@ -31,7 +31,7 @@ array or a comma-separated string. `postedAfter` and `postedBefore` use ISO
 `listings.list({ filter: { type: ['Residential'], purpose: ['Sale'] } })`.
 The response retains each listing's own `status` and represents its primary
 price as one object, for example
-`{"success":true,"listings":[{"id":"listing-id","status":"PENDING","price":{"currency":"NPR","basis":"perMonth","amount":45000}}],"totalCount":1,"limit":15,"offset":0}`.
+`{"success":true,"listings":[{"id":"listing-id","slug":"modern-home","status":"PENDING","price":{"currency":"NPR","basis":"perMonth","amount":45000}}],"totalCount":1,"limit":15,"offset":0}`. Address that listing with `logica.estate.listings('modern-home--listing-id')`.
 
 Pagination defaults to `limit: 15` and `offset: 0` when omitted. The endpoint
 caps `limit` at 100.
@@ -45,7 +45,7 @@ comma-separated string or a string array.
 
 Accepted `fields` values:
 
-- Identity: `id`, `slug`
+- Identity: `slug` (database `id` may be returned as data, but cannot be used to address a listing)
 - Copy: `title`, `description`
 - Pricing: `price` (`currency`, `basis`, `amount`), `pricing` (display and negotiation metadata)
 - Location: `location`, `structuredLocation`
@@ -104,8 +104,6 @@ export type EstateListingListInput = {
 export type EstateListingListFilter = {
   status?: string[] | string;
   nature?: string[] | string;
-  id?: string;
-  ids?: string[];
   searchTerm?: string;
   minPrice?: number;
   maxPrice?: number;

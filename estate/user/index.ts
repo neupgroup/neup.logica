@@ -73,8 +73,8 @@ function createUserAgentScope(userId: string) {
 }
 
 function createUserListingScope(userId: string) {
-  return function listings(propertyId: string) {
-    const query = { userId, propertyId };
+  return function listings(slug: string) {
+    const query = { userId, slug };
     return {
       offer: createListScope('offer', query),
     } as const;

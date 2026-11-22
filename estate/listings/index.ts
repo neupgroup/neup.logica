@@ -7,8 +7,8 @@ Callable listings object for the estate SDK.
 ::public
 
 Use `logica.estate.listings.create(data)` and `logica.estate.listings.search(data)`
-for collection operations. Use `logica.estate.listings(id).get()` or `.update(data)`
-for one listing.
+for collection operations. Use `logica.estate.listings(slug).get()` or `.update(data)`
+for one listing, where `slug` is the canonical `listing-slug--listing-id` value.
 
 ::public end
 ::end
@@ -51,7 +51,7 @@ function serializeFields(fields: Fields | undefined): string | undefined {
   return fields.trim() || undefined;
 }
 
-// Fetch one listing by its path identifier or custom listing code.
+// Fetch one listing by custom listing code.
 function getListingByCode(listingCode: string, include?: Fields) {
   return runApi<ViewEstateListingResponseBody>({
     baseUrl: getBaseUrl('estate'),
@@ -61,14 +61,14 @@ function getListingByCode(listingCode: string, include?: Fields) {
 }
 
 // Create a listing scoped to its API path identifier.
-export function listings(propertyId: string) {
+export function listings(slug: string) {
   return {
     get(include?: Fields): Promise<ApiResponse<ViewEstateListingResponseBody>> {
-      return viewEstateListing({ propertyId, include });
+      return viewEstateListing({ slug, include });
     },
     update(data: EstateListingRecord & { accountId?: string }): Promise<ApiResponse<ModifyEstateListingResponseBody>> {
       const { accountId, ...listing } = data;
-      return modifyEstateListing({ listingId: propertyId, accountId, listing });
+      return modifyEstateListing({ slug, accountId, listing });
     },
   } as const;
 }
@@ -99,9 +99,9 @@ listings.getListingsSaved = getListingsSaved;
 listings.getListingsOwned = getListingsOwned;
 listings.getListingsBeingWorked = getListingsBeingWorked;
 
-// Retrieve a single listing by ID or custom code.
-listings.getById = function getById(propertyId: string, include?: Fields) {
-  return listings(propertyId).get(include);
+// Retrieve a single listing by canonical slug-and-ID identifier.
+listings.get = function get(slug: string, include?: Fields) {
+  return listings(slug).get(include);
 };
 listings.getByCode = function getByCode(listingCode: string, include?: Fields) {
   return getListingByCode(listingCode, include);
@@ -111,8 +111,8 @@ listings.code = function code(listingCode: string) {
 };
 
 // Update a listing through its current PATCH endpoint.
-listings.update = function update(propertyId: string, data: EstateListingRecord) {
-  return listings(propertyId).update(data);
+listings.update = function update(slug: string, data: EstateListingRecord) {
+  return listings(slug).update(data);
 };
 
 export namespace listings {

@@ -2,16 +2,17 @@
 ::neup.documentation::logica-estate-listing-view
 ::title Logica Estate Listing View Helper
 
-Portable SDK helper for `GET /bridge/api.v1/listings/[id]`.
+Portable SDK helper for `GET /bridge/api.v1/listings/[slug]`.
 
 ::public
 
-Fetches one approved listing's public API payload by its listing ID.
+Fetches one approved listing's public API payload by its canonical `slug--id` identifier.
 
-Pass `include` as a comma-separated string or string array to select property
+Pass `slug--id` to `listings(slug).get(include)`. Raw IDs and bare slugs are not
+accepted as listing identifiers. Pass `include` as a comma-separated string or string array to select property
 fields and representatives. For example:
-`listings.get('representatives.*')` sends
-`GET /bridge/api.v1/listings/[id]?include=representatives.*` and returns all
+`listings('modern-home--listing-id').get('representatives.*')` sends
+`GET /bridge/api.v1/listings/modern-home--listing-id?include=representatives.*` and returns all
 representatives in one array: the listing owner, agents, agency, and property
 owners. Select one group with `representatives.listingOwner`,
 `representatives.agents`, `representatives.agent`, `representatives.agency`, or
@@ -30,7 +31,7 @@ The legacy `fields` input remains accepted as an alias for `include`.
 
 Accepted scalar `include` values:
 
-- Identity: `id`, `customId`, `slug`
+- Identity: `slug`, `customId` (database `id` may be returned as data, but cannot be used to address a listing)
 - Copy and discovery: `title`, `description`, `keywords`, `tags`
 - Classification: `purpose`, `category`, `types`, `status`, `visibility`
 - Media: `images`, `images.id`, `images.url`, `images.type`,
@@ -70,7 +71,7 @@ const requiredPackages = [] as const;
 const LISTINGS_PATH = 'bridge/api.v1/listings';
 
 export type ViewEstateListingInput = {
-  propertyId: string;
+  slug: string;
   include?: string[] | string | null;
   /** @deprecated Use include. */
   fields?: string[] | string | null;
@@ -118,7 +119,7 @@ export async function viewEstateListing(
   try {
     const response = await runApi<ViewEstateListingResponseBody>({
       baseUrl: getBaseUrl('estate'),
-      path: `${LISTINGS_PATH}/${encodeURIComponent(input.propertyId)}`,
+      path: `${LISTINGS_PATH}/${encodeURIComponent(input.slug)}`,
       query: { include },
     });
     const body = response.body;

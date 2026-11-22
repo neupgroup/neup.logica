@@ -7,8 +7,8 @@ Saved-listing collection methods for the estate listings namespace.
 ::public
 
 Use `logica.estate.listings.saved.list({ account: 'me' })` to list saved
-listing records. Use `logica.estate.listings(id).get()` with each returned
-`propertyId` to fetch listing details.
+listing records. Use each record's listing slug identifier with
+`logica.estate.listings(slug).get()` to fetch listing details.
 
 ::public end
 ::end
@@ -31,8 +31,8 @@ export type EstateSavedListingsListOptions = {
 };
 
 export type EstateSavedListingRemoval =
-  | { id: string; propertyId?: never }
-  | { propertyId: string; id?: never };
+  | { id: string; slug?: never }
+  | { slug: string; id?: never };
 
 export const savedListings = {
   list(options: EstateSavedListingsListOptions = {}): Promise<ApiResponse> {
@@ -47,12 +47,12 @@ export const savedListings = {
     });
   },
 
-  save(propertyId: string): Promise<ApiResponse> {
+  save(slug: string): Promise<ApiResponse> {
     return runApi({
       baseUrl: getBaseUrl('estate'),
       path: ListingsSavedEndpoint,
       method: 'POST',
-      body: { propertyId },
+      body: { slug },
     });
   },
 
