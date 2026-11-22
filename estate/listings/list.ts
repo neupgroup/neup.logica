@@ -31,7 +31,7 @@ array or a comma-separated string. `postedAfter` and `postedBefore` use ISO
 `listings.list({ filter: { type: ['Residential'], purpose: ['Sale'] } })`.
 The response retains each listing's own `status` and represents its primary
 price as one object, for example
-`{"success":true,"listings":[{"id":"listing-id","slug":"modern-home","status":"PENDING","price":{"currency":"NPR","basis":"perMonth","amount":45000}}],"totalCount":1,"limit":15,"offset":0}`. Address that listing with `logica.estate.listings('modern-home--listing-id')`.
+`{"success":true,"listings":[{"slug":"modern-home--listing-id","status":"PENDING","price":{"currency":"NPR","basis":"perMonth","amount":45000}}],"totalCount":1,"limit":15,"offset":0}`. Address that listing with `logica.estate.listings('modern-home--listing-id')`.
 
 Pagination defaults to `limit: 15` and `offset: 0` when omitted. The endpoint
 caps `limit` at 100.
@@ -45,7 +45,7 @@ comma-separated string or a string array.
 
 Accepted `fields` values:
 
-- Identity: `slug` (database `id` may be returned as data, but cannot be used to address a listing)
+- Identity: canonical `slug` (`slug--id`; database `id` is not returned)
 - Copy: `title`, `description`
 - Pricing: `price` (`currency`, `basis`, `amount`), `pricing` (display and negotiation metadata)
 - Location: `location`, `structuredLocation`
@@ -151,7 +151,7 @@ export type EstateListingListResponseBody = {
   success: boolean;
   limit: number;
   offset: number;
-  listings: EstateListingRecord[];
+  listings: Array<EstateListingRecord & { id?: never; slug: string }>;
   totalCount?: number;
   appliedFilters?: Record<string, unknown>;
   error?: string;

@@ -7,7 +7,7 @@ Read-only location collection API for the estate SDK.
 ::public
 
 Use `logica.estate.locations.list()` to retrieve locations. Optional `query`,
-`id`, `type`, and `status` filters are supported, with `limit` and `offset`
+`id`, `slug`, `type`, and `status` filters are supported, with `limit` and `offset`
 for pagination. The API defaults to 50 locations per page and caps pages at
 100 locations.
 
@@ -34,6 +34,7 @@ export type EstateLocation = {
 
 export type EstateLocationsListInput = {
   id?: string;
+  slug?: string;
   type?: string;
   status?: string;
   query?: string;

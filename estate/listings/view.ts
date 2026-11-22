@@ -21,17 +21,17 @@ and includes the listing owner when that account is an agent. The singular
 `agent` selection returns only the listing owner when that account is an agent.
 Entries include `id`, `type`, and available `name` and `image` values; agent
 entries also have a `role`. For example:
-`{"success":true,"listing":{"id":"listing-id","representatives":[{"id":"account-id","type":"agent","role":"listingOwner","name":"Agent Name","image":"https://example.com/agent.jpg"},{"id":"supporting-account-id","type":"agent","role":"supportingAgent","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"},{"id":"agency-id","type":"agency","name":"Agency Name","image":"https://example.com/logo.jpg"},{"id":"owner-id","type":"owner","name":"Property Owner","isPrimaryOwner":true}]}}`.
+`{"success":true,"listing":{"slug":"modern-home--listing-id","representatives":[{"id":"account-id","type":"agent","role":"listingOwner","name":"Agent Name","image":"https://example.com/agent.jpg"},{"id":"supporting-account-id","type":"agent","role":"supportingAgent","name":"Supporting Agent","image":"https://example.com/supporting-agent.jpg"},{"id":"agency-id","type":"agency","name":"Agency Name","image":"https://example.com/logo.jpg"},{"id":"owner-id","type":"owner","name":"Property Owner","isPrimaryOwner":true}]}}`.
 
 Listing responses return the primary price in one object with `currency`,
 `basis`, and `amount`, for example
-`{"success":true,"listing":{"id":"listing-id","price":{"currency":"NPR","basis":"perMonth","amount":45000},"representatives":[]}}`.
+`{"success":true,"listing":{"slug":"modern-home--listing-id","price":{"currency":"NPR","basis":"perMonth","amount":45000},"representatives":[]}}`.
 
 The legacy `fields` input remains accepted as an alias for `include`.
 
 Accepted scalar `include` values:
 
-- Identity: `slug`, `customId` (database `id` may be returned as data, but cannot be used to address a listing)
+- Identity: canonical `slug` (`slug--id`) and `customId`; database `id` is not returned
 - Copy and discovery: `title`, `description`, `keywords`, `tags`
 - Classification: `purpose`, `category`, `types`, `status`, `visibility`
 - Media: `images`, `images.id`, `images.url`, `images.type`,
@@ -93,7 +93,8 @@ export type EstateListingRepresentative = {
 };
 
 export type EstateListingView = Record<string, unknown> & {
-  id?: string;
+  id?: never;
+  slug?: string;
   price?: EstateListingPrice;
   purpose?: string;
   category?: string;

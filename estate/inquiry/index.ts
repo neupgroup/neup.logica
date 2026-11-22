@@ -32,12 +32,13 @@ const InquiryListEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/
 const InquiryAssignAgentEndpoint = 'https://neupgroup.com/estate/bridge/api.v1/inquiry/assign-agent';
 
 function createInquiry(data: EstateInquiryCreateData): Promise<ApiResponse> {
+  const { slug, ...contact } = data;
   return runApi({
     baseUrl: getBaseUrl('estate'),
     path: InquiryEndpoint,
     method: 'POST',
-    query: { listing: data.slug },
-    body: data,
+    query: { listing: slug },
+    body: contact,
   });
 }
 
